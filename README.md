@@ -7,14 +7,14 @@ Perl6 module to write Zip archives.
 
 ```
 
-use Archive::Zip;
+use Archive::SimpleZip;
 
 # Create a zip file in filesystem
-my $obj = Archive::Zip.new("mine.zip");
+my $obj = SimpleZip.new("mine.zip");
 
 # Create a zip file in memory
 my $blob = Blob.new();
-my $obj2 = Archive::Zip.new($blob);
+my $obj2 = SimpleZip.new($blob);
 
 # Add a file to the zip archive
 $obj.add("somefile.txt".IO);
