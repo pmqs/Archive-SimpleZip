@@ -7,40 +7,31 @@ Perl6 module to write Zip archives.
 
 ```
 
-use Archive::Zip
+use Archive::Zip;
 
-my $obj = Archive::Zip.new("mine.zip")
+# Create a zip file in filesystem
+my $obj = Archive::Zip.new("mine.zip");
 
-$obj.add("somefile.txt");
+# Create a zip file in memory
+my $blob = Blob.new();
+my $obj2 = Archive::Zip.new($blob);
 
+# Add a file to the zip archive
+$obj.add("somefile.txt".IO);
+
+# Add a Blob/String
+$obj.add("payload data here", :name<data1>);
+
+$obj.close();
 ```
+
 
 ## Description
 
-## Installation
+Simple write-only interface from creation of Zip files.
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
+This is a proof of concept. The interface will change.
 
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
-
-    # From the source directory
-   
-    panda install .
-
-    # Remote installation
-
-    panda install Archive::SimpleZip
-
-Other install mechanisms may be become available in the future.
 
 ## Support
 
@@ -48,7 +39,7 @@ This should be considered experimental software until such time that
 Perl 6 reaches an official release.  However suggestions/patches are
 welcomed via github at
 
-   https://github.com/pmws/Archive-SimpleZip
+   https://github.com/pmqs/Archive-SimpleZip
 
 ## Licence
 
