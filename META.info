@@ -18,9 +18,9 @@
         "IO::Blob"
     ],
     "resources" : [ ],
-    "source-url" : "git://github.com/pmqs/Archive-Zip.git",
+    "source-url" : "git://github.com/pmqs/Archive-SimpleZip.git",
     "support" : { 
-       "source" : "git://github.com/pmqs/Archive-Zip.git" 
+       "source" : "git://github.com/pmqs/Archive-SimpleZip.git" 
     }, 
     "license" : "Artistic"
 }
