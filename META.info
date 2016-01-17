@@ -9,7 +9,8 @@
     },
     "test-depends" : [ 
        "Test",
-       "Test::META"
+       "Test::META",
+       "File::Temp"
     ], 
     "depends" : [ 
         "Compress::Zlib::Raw",
