@@ -344,11 +344,11 @@ class SimpleZip is export
     {
         #say "add IO";
         my IO::Handle $fh = open($path, :r, :bin);
-        samewith($fh, |c);
+        samewith($fh, :name(Str($path)), |c);
     }
 
     multi method add(IO::Handle  $handle, 
-                     Str        :$name?, 
+                     Str        :$name    = '', 
                      Str        :$comment = '',
                      Zip-CM     :$method  = Zip-CM-Deflate)
     {
@@ -359,7 +359,7 @@ class SimpleZip is export
         my $hdr = Local-File-Header.new();
 
         $hdr.compression-method = $method ;
-        $hdr.file-name = ($name // "name").encode ;
+        $hdr.file-name = $name.encode ;
         $hdr.file-comment = $comment.encode;
 
         $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask 
@@ -449,4 +449,109 @@ class SimpleZip is export
     }
 
 };
+
+=begin pod
+=NAME       Archive::SimpleZip
+=SYNOPSIS
+
+    use Archive::SimpleZip;
+
+    # Create a zip archive in filesystem
+    my $obj = SimpleZip.new("mine.zip");
+
+    # Create a zip archive in memory
+    my $blob = Blob.new();
+    my $obj2 = SimpleZip.new($blob);
+
+    # Add a file to the zip archive
+    $obj.add("somefile.txt".IO);
+
+    # Add a Blob/String
+    $obj.add("payload data here", :name<data1>);
+
+    $obj.close();
+
+=DESCRIPTION
+
+Simple write-only interface to allow creation of Zip files.
+
+Please note - this is module is a prototype. The interface will change.
+
+=head1 METHODS
+
+=head2 method new
+
+Instantiate a SimpleZip object
+
+    my $zip = SimpleZip.new("my.zip");
+
+If the first parameter is a string or IO::Path the zip archive will be
+created in the filesystem.
+
+To create an in-memory zip archive the first parmameter must be a Blob.
+
+    my $archive = Blob.new;
+    my $zip = SimpleZip.new($archive);
+
+=head3 Options
+
+=head4 stream
+
+Write the zip archive in streaming mode.
+
+=head4 comment
+
+TODO
+
+=head4 zip64
+
+TODO
+
+=head2 method add
+
+Used to add a file or blob to a Zip archive. The method expects one
+mandatory parameter and zero or more optional parameters.
+
+To add a file from the filesystem the first parameter must be of type
+IO::Path
+
+    # Add a file to the zip archive
+    $zip.add("/tmp/fred".IO);
+
+To add a string/blob to 
+
+    # Add a string to the zip archive
+    $zip.add("payload data here", :name<data1>);
+
+    # Add a blob to the zip archive
+    my Blob $data .= new;
+    $zip.add($data, :name<data1>);
+
+=head3 Options
+
+=head4 name
+
+Set the B<name> field in the zip archive. 
+
+When a filename is passed to C<add>, this option will 
+
+=head4 stream
+
+Write this member in streaming mode.
+
+=head4 comment
+
+TODO
+
+=head4 zip64
+
+=head1 TODO
+
+=item Add timestamp to archive.
+=item Make member name compiliant with appnote.txt
+=item Zip64
+=item comment
+
+=AUTHOR Paul Marquess <pmqs@cpan.org>
+=end pod
 

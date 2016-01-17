@@ -5,33 +5,53 @@ use lib 'lib';
  
 use Test; 
  
-plan 9; 
+plan 15; 
 
+use File::Temp;
 use Archive::SimpleZip;
 
-my $outfile = "/tmp/test.zip" ;
+# Keep the test directory?
+my $wipe = True;
 
-unlink $outfile;
+my $base_dir_name = tempdir(:unlink($wipe));
+ok $base_dir_name.IO.d, "tempdir { $base_dir_name } created";
 
-ok ! $outfile.IO.e, "$outfile does not exists";
+ok chdir($base_dir_name), "chdir ok";
 
-my $zip = SimpleZip.new($outfile);
+my $dir1 = 'dir1';
+ok mkdir 0o777, $dir1 ;
+
+my $zipfile = "test.zip" ;
+my $datafile = "$dir1/data123";
+my $datafile1 = "data124";
+
+unlink $zipfile;
+spurt $datafile, "some data" ;
+spurt $datafile1, "more data" ;
+
+ok   $datafile.IO.e, "$datafile does exists";
+ok ! $zipfile.IO.e, "$zipfile does not exists";
+
+my $zip = SimpleZip.new($zipfile);
 isa-ok $zip, SimpleZip;
 
-ok $zip.add("abcde", :name<fred>), "add ok";
-ok $zip.add("def", :name<joe>, :method(Zip-CM-Store), :stream), "add ok";
+ok $zip.add($datafile.IO), "add file";
+
+ok $zip.add($datafile.IO, :name<new>), "add file but override name";
+ok $zip.add("abcde", :name<fred>), "add string ok";
+ok $zip.add("def", :name<joe>, :method(Zip-CM-Store), :stream), "add string, STORE";
 ok $zip.close(), "closed";
 
-ok $outfile.IO.e, "$outfile exists";
+ok $zipfile.IO.e, "$zipfile exists";
 
 
 my Blob $data .= new();
 my $zip2 = SimpleZip.new($data);
 isa-ok $zip2, SimpleZip;
-ok $zip2.add("abcde", :name<fred>), "add ok";
+ok $zip2.add("abcde", :name<fred>), "add";
 ok $zip2.close(), "closed";
 
-#unlink $outfile;
+#unlink $zipfile;
 
 done-testing();
 

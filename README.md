@@ -28,16 +28,13 @@ $obj.close();
 
 ## Description
 
-Simple write-only interface from creation of Zip files.
+Simple write-only interface to allow creation of Zip files.
 
-This is a proof of concept. The interface will change.
-
+Please note - this is module is a prototype. The interface will change.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
 
    https://github.com/pmqs/Archive-SimpleZip
 
