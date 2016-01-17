@@ -8,7 +8,8 @@
         "Archive::SimpleZip" : "lib/Archive/SimpleZip.pm6"
     },
     "test-depends" : [ 
-       "Test"
+       "Test",
+       "Test::META"
     ], 
     "depends" : [ 
         "Compress::Zlib::Raw",
