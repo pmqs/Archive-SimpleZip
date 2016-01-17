@@ -71,7 +71,7 @@ class Local-File-Header
     has Int   $.general-purpose-bit-flag is rw = 0;    # 2 bytes
     has Int   $.compression-method is rw = 0;          # 2 bytes
     has Int   $.last-mod-file-time is rw = 0;          # 2 bytes
-    has Int   $.last-mod-file-date is rw = 0;          # 2 bytes
+    #has Int   $.last-mod-file-date is rw = 0;          # 2 bytes
     has Int   $.crc32 is rw = 0;                       # 4 bytes
     has Int   $.compressed-size is rw = 0;             # 4 bytes
     has Int   $.uncompressed-size is rw = 0;           # 4 bytes
@@ -102,8 +102,8 @@ class Local-File-Header
         $hdr ~= pack 'v', $.version-needed-to-extract   ; # 2 bytes
         $hdr ~= pack 'v', $.general-purpose-bit-flag ;    # 2 bytes
         $hdr ~= pack 'v', $.compression-method ;          # 2 bytes
-        $hdr ~= pack 'v', $.last-mod-file-time ;          # 2 bytes
-        $hdr ~= pack 'v', $.last-mod-file-date ;          # 2 bytes
+        $hdr ~= pack 'V', $.last-mod-file-time ;          # 2 bytes
+        #$hdr ~= pack 'v', $.last-mod-file-date ;          # 2 bytes
         $hdr ~= pack 'V', $.crc32 ;                       # 4 bytes
         $hdr ~= pack 'V', $.compressed-size ;             # 4 bytes
         $hdr ~= pack 'V', $.uncompressed-size ;           # 4 bytes
@@ -231,8 +231,8 @@ class Central-Header-Directory
         $ctl ~= pack 'v', $hdr.version-needed-to-extract   ; # extract Version & OS
         $ctl ~= pack 'v', $hdr.general-purpose-bit-flag ;    # 2 bytes
         $ctl ~= pack 'v', $hdr.compression-method ;          # 2 bytes
-        $ctl ~= pack 'v', $hdr.last-mod-file-time ;          # 2 bytes
-        $ctl ~= pack 'v', $hdr.last-mod-file-date ;          # 2 bytes
+        $ctl ~= pack 'V', $hdr.last-mod-file-time ;          # 2 bytes
+        #$ctl ~= pack 'v', $hdr.last-mod-file-date ;          # 2 bytes
         $ctl ~= pack 'V', $hdr.crc32 ;                       # 4 bytes
         $ctl ~= pack 'V', $hdr.compressed-size ;             # 4 bytes
         $ctl ~= pack 'V', $hdr.uncompressed-size ;           # 4 bytes
@@ -287,12 +287,76 @@ class ProxyWrite
     }
 }
 
+sub get-DOS-time(Instant $timestamp)    
+{
+    # TODO - add something to cope with time < 1980 
+
+    my $dt = DateTime.new($timestamp) ;
+
+	my Int $time = 0;
+	$time += $dt.second        +>  1 ;
+	$time += $dt.minute        +<  5 ;
+	$time += $dt.hour          +< 11 ;
+
+	$time += $dt.day-of-month  +< 16 ;
+	$time += $dt.month         +< 21 ;
+	$time += ($dt.year - 1980) +< 25 ;
+
+	return $time;
+}
+
+sub canonical-name(Str $name, Bool $forceDir = False)
+{
+    # TODO - use this sub
+
+    # This sub is derived from Archive::Zip::_asZipDirName
+
+    # Return the normalized name as used in a zip file (path
+    # separators become slashes, etc.).
+    # Will translate internal slashes in path components (i.e. on Macs) to
+    # underscores.  Discards volume names.
+    # When $forceDir is set, returns paths with trailing slashes 
+    #
+    # input         output
+    # .             '.'
+    # ./a           a
+    # ./a/b         a/b
+    # ./a/b/        a/b
+    # a/b/          a/b
+    # /a/b/         a/b
+    # c:\a\b\c.doc  a/b/c.doc      # on Windows
+    # "i/o maps:whatever"   i_o maps/whatever   # on Macs
+
+    my ( $volume, $directories, $file ) =
+      $*SPEC.splitpath( $*SPEC.canonpath($name), $forceDir );
+      
+    my @dirs = $*SPEC.splitdir($directories)>>.subst('/', '_', :g) ; 
+
+    if  @dirs > 0  
+        { @dirs.pop if @dirs[*-1] eq '' }   # remove empty component
+    @dirs.push: $file // '' ;
+
+    my $normalised-path = @dirs.join: '/' ;
+
+    # Leading directory separators should not be stored in zip archives.
+    # Example:
+    #   C:\a\b\c\      a/b/c
+    #   C:\a\b\c.txt   a/b/c.txt
+    #   /a/b/c/        a/b/c
+    #   /a/b/c.txt     a/b/c.txt
+    $normalised-path.subst(m/ ^ "/" /, '') ;  # remove leading separator
+
+    return $normalised-path;
+}
+
+
 class SimpleZip is export
 {
     has IO::Handle               $!zip-filehandle ;
     has IO::Path                 $.filename ;
     has Str                      $.comment ;
     has Bool                     $.stream ;
+    has Instant                  $!now  = DateTime.now.Instant;
  
     has Bool                     $!any-zip64 = False;
     has Bool                     $!zip64 = False ;
@@ -344,12 +408,13 @@ class SimpleZip is export
     {
         #say "add IO";
         my IO::Handle $fh = open($path, :r, :bin);
-        samewith($fh, :name(Str($path)), |c);
+        samewith($fh, :name(Str($path)), :time($path.modified), |c);
     }
 
     multi method add(IO::Handle  $handle, 
                      Str        :$name    = '', 
                      Str        :$comment = '',
+                     Instant    :$time = $!now,
                      Zip-CM     :$method  = Zip-CM-Deflate)
     {
         my $compressed-size = 0;
@@ -358,6 +423,7 @@ class SimpleZip is export
 
         my $hdr = Local-File-Header.new();
 
+        $hdr.last-mod-file-time = get-DOS-time($time);
         $hdr.compression-method = $method ;
         $hdr.file-name = $name.encode ;
         $hdr.file-comment = $comment.encode;
@@ -501,7 +567,9 @@ Write the zip archive in streaming mode.
 
 =head4 comment
 
-TODO
+Creates a comment for the archive.
+
+    my $zip = SimpleZip.new($archive, comment => "my comment");
 
 =head4 zip64
 
@@ -541,7 +609,9 @@ Write this member in streaming mode.
 
 =head4 comment
 
-TODO
+Creates a comment for the member.
+
+    my $zip = SimpleZip.new($archive, comment => "my comment");
 
 =head4 zip64
 
@@ -550,7 +620,6 @@ TODO
 =item Add timestamp to archive.
 =item Make member name compiliant with appnote.txt
 =item Zip64
-=item comment
 
 =AUTHOR Paul Marquess <pmqs@cpan.org>
 =end pod

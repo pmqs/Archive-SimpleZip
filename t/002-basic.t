@@ -32,13 +32,13 @@ spurt $datafile1, "more data" ;
 ok   $datafile.IO.e, "$datafile does exists";
 ok ! $zipfile.IO.e, "$zipfile does not exists";
 
-my $zip = SimpleZip.new($zipfile);
+my $zip = SimpleZip.new($zipfile, :stream, comment => 'file comment');
 isa-ok $zip, SimpleZip;
 
 ok $zip.add($datafile.IO), "add file";
 
 ok $zip.add($datafile.IO, :name<new>), "add file but override name";
-ok $zip.add("abcde", :name<fred>), "add string ok";
+ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
 ok $zip.add("def", :name<joe>, :method(Zip-CM-Store), :stream), "add string, STORE";
 ok $zip.close(), "closed";
 
