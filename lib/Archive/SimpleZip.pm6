@@ -6,6 +6,7 @@ use experimental :pack;
 
 need Compress::Zlib::Raw;
 need Compress::Zlib;
+use Compress::Bzip2;
 
 use NativeCall;
 use IO::Blob;
@@ -22,7 +23,7 @@ sub crc32(int32 $crc, Blob $data)
 enum Zip-CM is export (
     Zip-CM-Store      => 0 ,
     Zip-CM-Deflate    => 8 ,
-    #Zip-CM-BZIP2      => 12 , # Not supported yet
+    Zip-CM-Bzip2      => 12 , # Not supported yet
     #Zip-CM-LZMA       => 14 , # Not Supported yet
     #Zip-CM-PPMD       => 98 , # Not Supported yet
 );
@@ -40,7 +41,7 @@ enum Zip-GP-Flag (
 our %Zip-CM-Min-Versions = 
             Zip-CM-Store                     => 20,
             Zip-CM-Deflate                   => 20,
-            #Zip-CM-BZIP2                     => 46,
+            Zip-CM-Bzip2                     => 46,
             #Zip-CM-LZMA                      => 63,
             #Zip-CM-PPMD                      => 63,
             ;
@@ -445,6 +446,13 @@ class SimpleZip is export
                 my $zlib = Compress::Zlib::Stream.new(:deflate);
                 $read-action  = -> $in { $zlib.deflate($in) } ;
                 $flush-action = ->     { $zlib.finish()     } ;
+            }
+
+            when Zip-CM-Bzip2 
+            {
+                my $zlib = Compress::Bzip2::Stream.new(:deflate);
+                $read-action  = -> $in { $zlib.compress($in) } ;
+                $flush-action = ->     { $zlib.finish()      } ;
             }
 
             when Zip-CM-Store
