@@ -28,7 +28,7 @@ ok $base_dir_name.IO.d, "tempdir { $base_dir_name } created";
 ok chdir($base_dir_name), "chdir ok";
 
 my $dir1 = 'dir1';
-ok mkdir 0o777, $dir1 ;
+ok mkdir $dir1, 0o777;
 
 my $zipfile = "test.zip" ;
 my $datafile = "$dir1/data123";
