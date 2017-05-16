@@ -3,4 +3,4 @@ perl6:
   - latest
 install:
     - rakudobrew build-zef
-    - zef --depsonly .
+    - zef --depsonly install Archive::SimpleZip
