@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Archive::SimpleZip",
-    "version" : "0.1.1",
+    "version" : "0.1.2",
     "description" : "Write Zip Files.",
     "authors" : [ "Paul Marquess <pmqs@cpan.org" ],
     "provides" : {
@@ -27,6 +27,6 @@
     "support" : { 
        "source" : "git://github.com/pmqs/Archive-SimpleZip.git" 
     }, 
-    "license" : "Artistic"
+    "license" : "Artistic-2.0"
 }
 
