@@ -1,6 +1,9 @@
 language: perl6
 perl6:
   - latest
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y zip unzip  
 install:
     - rakudobrew build-zef
     - zef --depsonly install Archive::SimpleZip
