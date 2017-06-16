@@ -85,7 +85,7 @@ sub pipe-in-from-unzip($file, $name='') is export
 {
     my @comp = $UNZIP, '-p', $file;
     @comp.push($name) if $name ;
-    my $proc = run |@comp, :out :err :bin ;
+    my $proc = run |@comp, :out :err ;
     
     if $proc.exitcode == 0
     {
