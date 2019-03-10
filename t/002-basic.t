@@ -51,7 +51,7 @@ subtest
     ok $zip.add($datafile.IO, :name<new>), "add file but override name";
     ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
     ok $zip.add("def", :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string, STORE";
-    ok $zip.add("ghi", :name</jim/>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
+    ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
     ok $zip.close(), "closed";
 
     ok $zipfile.IO.e, "$zipfile exists";
@@ -63,7 +63,7 @@ subtest
     is pipe-in-from-unzip($zipfile, $datafile1), "more data", "member $datafile1 ok";
     is pipe-in-from-unzip($zipfile, "fred"), "abcde", "member fred ok";
     is pipe-in-from-unzip($zipfile, "/joe//bad"), "def", "member /joe//bad ok";
-    is pipe-in-from-unzip($zipfile, "jim"), "ghi", "member jim ok";
+    is pipe-in-from-unzip($zipfile, "jim", :binary).decode, "\x2\x4\x6", "member jim ok";
 
     # Write zip to Blob
 

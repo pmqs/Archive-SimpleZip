@@ -65,6 +65,12 @@ class SimpleZip is export
         samewith($fh, |c);
     }
 
+    multi method add(Blob $blob, |c)
+    {
+        my IO::Blob $fh .= new($blob);
+        samewith($fh, |c);
+    }
+
     multi method add(IO::Path $path, |c)
     {
         my IO::Handle $fh = open($path, :r, :bin);
@@ -217,6 +223,7 @@ class SimpleZip is export
 
     # Add a Blob/String to the zip archive
     $obj.add("payload data here", :name<data1>);
+    $obj.add(Blob.new([2,4,6]), :name<data1>);
 
     $obj.close();
 
