@@ -34,12 +34,16 @@ ok mkdir $dir1, 0o777;
 my $zipfile = "test.zip" ;
 my $datafile = "$dir1/data123";
 my $datafile1 = "data124";
+my $datafile2 = "data125".IO;
 
 subtest
 {
     unlink $zipfile;
     spurt $datafile, "some data" ;
     spurt $datafile1, "more data" ;
+    my $text = "line 1\nline 2\nline 3";
+    
+    spurt $datafile2, $text ;
 
     ok  $datafile.IO.e, "$datafile does exists";
     nok $zipfile.IO.e, "$zipfile does not exists";
@@ -52,6 +56,7 @@ subtest
     ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
     ok $zip.add("def", :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string, STORE";
     ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
+    ok $zip.add($datafile2.open, :name<handle>), "Add filehandle";
     ok $zip.close(), "closed";
 
     ok $zipfile.IO.e, "$zipfile exists";
@@ -64,6 +69,7 @@ subtest
     is pipe-in-from-unzip($zipfile, "fred"), "abcde", "member fred ok";
     is pipe-in-from-unzip($zipfile, "/joe//bad"), "def", "member /joe//bad ok";
     is pipe-in-from-unzip($zipfile, "jim", :binary).decode, "\x2\x4\x6", "member jim ok";
+    is pipe-in-from-unzip($zipfile, "handle"), $text, "member handle ok";
 
     # Write zip to Blob
 

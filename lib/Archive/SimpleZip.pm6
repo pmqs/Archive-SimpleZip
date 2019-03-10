@@ -225,6 +225,10 @@ class SimpleZip is export
     $obj.add("payload data here", :name<data1>);
     $obj.add(Blob.new([2,4,6]), :name<data1>);
 
+    # Drop a filehandle into the zip archive
+    my $handle = "some file".IO.open;
+    $obj.add($handle, :name<data2>);
+
     $obj.close();
 
 =DESCRIPTION
@@ -339,7 +343,7 @@ IO::Path
     # Add a file to the zip archive
     $zip.add("/tmp/fred".IO);
 
-To add a string/blob to 
+To add a string/blob to the archive
 
     # Add a string to the zip archive
     $zip.add("payload data here", :name<data1>);
