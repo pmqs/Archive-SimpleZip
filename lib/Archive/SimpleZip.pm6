@@ -45,12 +45,6 @@ class SimpleZip is export
         self.bless(:$zip-filehandle, :$filename, |c);
     }
 
-    multi method new(Blob $data, |c)
-    {
-        my IO::Blob $zip-filehandle .= new($data);
-        self.bless(:$zip-filehandle, |c);
-    }
-
     multi submethod BUILD(IO::Handle :$!zip-filehandle?, 
                           IO::Path   :$!filename?,
                           Str        :$!comment = "",
@@ -207,10 +201,6 @@ class SimpleZip is export
     # Create a zip archive in filesystem
     my $obj = SimpleZip.new("mine.zip");
 
-    # Create a zip archive in memory
-    my $blob = Blob.new();
-    my $obj2 = SimpleZip.new($blob);
-
     # Add a file to the zip archive
     $obj.add("somefile.txt".IO);
 
@@ -235,11 +225,6 @@ Instantiate a SimpleZip object
 
 If the first parameter is a string or IO::Path the zip archive will be
 created in the filesystem.
-
-To create an in-memory zip archive the first parmameter must be a Blob.
-
-    my $archive = Blob.new;
-    my $zip = SimpleZip.new($archive);
 
 =head3 Options
 
