@@ -24,6 +24,7 @@ class SimpleZip is export
     has Instant                  $!now = DateTime.now.Instant;
     has Zip-CM                   $!default-method ;
     has Bool                     $!any-zip64 = False;
+
     # Defaults
     has Bool                     $!zip64 = False ;
     has Bool                     $.default-stream ;
@@ -60,14 +61,12 @@ class SimpleZip is export
 
     multi method add(Str $string, |c)
     {
-        #say "add Str";
         my IO::Blob $fh .= new($string);
         samewith($fh, |c);
     }
 
     multi method add(IO::Path $path, |c)
     {
-        #say "add IO";
         my IO::Handle $fh = open($path, :r, :bin);
         samewith($fh, :name(Str($path)), :time($path.modified), |c);
     }
@@ -88,14 +87,26 @@ class SimpleZip is export
 
         $hdr.last-mod-file-time = get-DOS-time($time);
         $hdr.compression-method = $method ;
-        if $canonical-name
-            { $hdr.file-name = make-canonical-name($name).encode }
-        else
-            { $hdr.file-name = $name.encode }
+
+        my Str $filename = $name ;
+        $filename = make-canonical-name($filename)
+            if $canonical-name ;
+
+        # Check if the filename or comment are not 7-bit ASCII
+        # If either is not, set the Language encoding bit
+        # in general purpose flags.
+        my Bool $high-bit = ( ? $filename.ords.first: * > 127 ) || 
+                            ( ? $comment.ords.first:  * > 127 );
+
+        $hdr.file-name = $filename.encode ;
+
         $hdr.file-comment = $comment.encode;
 
         $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask 
             if $stream ;
+
+        $hdr.general-purpose-bit-flag +|= Zip-GP-Language-Encoding 
+            if $high-bit ;
 
         my $start-local-hdr = $!zip-filehandle.tell();
         my $local-hdr = $hdr.get();
@@ -312,7 +323,7 @@ this default.
 
 =head2 method add
 
-Used to add a file or blob to a Zip archive. The method expects one
+Used to add a file, string or blob to a Zip archive. The method expects one
 mandatory parameter and zero or more optional parameters.
 
 To add a file from the filesystem the first parameter must be of type
