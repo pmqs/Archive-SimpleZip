@@ -1,6 +1,6 @@
     
     
-0.2.3 10 March 2019
+0.2.0 10 March 2019
 
     * Drop support for in-memory zip files. 
       IO::Blob doesn't allow seekable writing to a blob at the moment.
