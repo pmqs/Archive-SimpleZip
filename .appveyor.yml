@@ -53,7 +53,7 @@ install:
   - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
   - ps: refreshenv
   - perl6 -v
-  - zef --verbose install .
+  - zef --debug install .
 
 build: off
 
