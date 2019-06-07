@@ -42,7 +42,7 @@ environment:
     HARNESS_PERL_SWITCHES: -MDevel::Cover
 
 install:
-  - vcpkg install bzip2:x86-windows
+  - vcpkg install bzip2:x64-windows
   # Install Strawberry Perl with chocolately.
   # Strawberry Perl comes with `prove`, which we use to run the tests.
   # http://strawberryperl.com
