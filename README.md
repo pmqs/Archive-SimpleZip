@@ -1,3 +1,5 @@
+[![Travis Build Status](https://travis-ci.org/pmqs/Archive-SimpleZip.svg?branch=master)](https://travis-ci.org/pmqs/Archive-SimpleZip)
+
 # Archive::SimpleZip
 
 Perl6 module to write Zip archives.
