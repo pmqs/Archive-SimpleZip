@@ -10,24 +10,22 @@
         "Archive::SimpleZip::Headers" : "lib/Archive/SimpleZip/Headers.pm6",
         "Archive::SimpleZip::Utils" : "lib/Archive/SimpleZip/Utils.pm6"
     },
-    "test-depends" : [ 
+    "test-depends" : [
        "Test",
        "Test::META",
        "File::Temp",
        "File::Which"
-    ], 
-    "depends" : [ 
+    ],
+    "depends" : [
         "Compress::Zlib::Raw",
         "Compress::Zlib",
-        "Compress::Bzip2",
         "CompUnit::Util",
         "IO::Blob"
     ],
     "resources" : [ ],
     "source-url" : "git://github.com/pmqs/Archive-SimpleZip.git",
-    "support" : { 
-       "source" : "git://github.com/pmqs/Archive-SimpleZip.git" 
-    }, 
+    "support" : {
+       "source" : "git://github.com/pmqs/Archive-SimpleZip.git"
+    },
     "license" : "Artistic-2.0"
 }
-
