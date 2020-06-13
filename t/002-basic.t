@@ -55,7 +55,7 @@ subtest
     ok $zip.add($datafile.IO, :name<new>), "add file but override name";
     ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
     ok $zip.add("def", :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string, STORE";
-    ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
+    ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :stream), "add string, Stream";
     ok $zip.add($datafile2.open, :name<handle>), "Add filehandle";
     ok $zip.close(), "closed";
 

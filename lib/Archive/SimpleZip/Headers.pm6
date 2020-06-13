@@ -5,7 +5,7 @@ unit module Archive::SimpleZip::Headers:ver<0.2.0>:auth<Paul Marquess (pmqs@cpan
 enum Zip-CM is export (
     Zip-CM-Store      => 0 ,
     Zip-CM-Deflate    => 8 ,
-    Zip-CM-Bzip2      => 12 ,
+    #Zip-CM-Bzip2      => 12 ,
     #Zip-CM-LZMA       => 14 , # Not Supported
     #Zip-CM-PPMD       => 98 , # Not Supported
 );
@@ -24,7 +24,7 @@ enum Zip-GP-Flag is export (
 our %Zip-CM-Min-Versions =
             Zip-CM-Store.value   => 20,
             Zip-CM-Deflate.value => 20,
-            Zip-CM-Bzip2.value   => 46,
+            #Zip-CM-Bzip2.value   => 46,
             #Zip-CM-LZMA.value   => 63,
             #Zip-CM-PPMD.value   => 63,
             ;

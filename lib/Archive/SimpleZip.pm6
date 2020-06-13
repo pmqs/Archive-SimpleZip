@@ -2,7 +2,7 @@
 unit module Archive::SimpleZip:ver<0.2.0>:auth<Paul Marquess (pmqs@cpan.org)>;
 
 need Compress::Zlib;
-need Compress::Bzip2;
+# need Compress::Bzip2;
 
 use IO::Blob;
 
@@ -130,12 +130,12 @@ class SimpleZip is export
                 $flush-action = ->     { $zlib.finish()     } ;
             }
 
-            when Zip-CM-Bzip2
-            {
-                my $zlib = Compress::Bzip2::Stream.new(:deflate);
-                $read-action  = -> $in { $zlib.compress($in) } ;
-                $flush-action = ->     { $zlib.finish()      } ;
-            }
+            # when Zip-CM-Bzip2
+            # {
+            #     my $zlib = Compress::Bzip2::Stream.new(:deflate);
+            #     $read-action  = -> $in { $zlib.compress($in) } ;
+            #     $flush-action = ->     { $zlib.finish()      } ;
+            # }
 
             when Zip-CM-Store
             {
@@ -280,7 +280,7 @@ Write the zip archive in streaming mode. Default is False.
 Specify the C<stream> option on individual call to C<add> to override
 this default.
 
-=head4 method => Zip-CM-Deflate|Zip-CM-Bzip2|Zip-CM-Store
+=head4 method => Zip-CM-Deflate|Zip-CM-Store
 
 Used to set the default compression algorithm used for all members of the
 archive. If not specified then <Zip-CM-Deflate> is the default.
@@ -291,7 +291,6 @@ this default.
 Valid values are
 
 =item Zip-CM-Deflate
-=item Zip-CM-Bzip2
 =item Zip-CM-Store
 
 =head4 comment => String
@@ -364,7 +363,7 @@ be stored in the Zip archive, rather than the filename.
 If the canonical-name option is True, the name will be normalized to Unix
 format before being written to the Zip archive.
 
-=head4 method => Zip-CM-Deflate|Zip-CM-Bzip2|Zip-CM-Store
+=head4 method => Zip-CM-Deflate|Zip-CM-Store
 
 Used to set the compression algorithm used for this member. If C<method>
 has not been specifed here or in C<new> it will default to
@@ -373,7 +372,6 @@ C<Zip-CM-Deflate>.
 Valid values are
 
 =item Zip-CM-Deflate
-=item Zip-CM-Bzip2
 =item Zip-CM-Store
 
 =head4 Bool stream => True|False
