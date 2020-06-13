@@ -101,7 +101,7 @@ sub pipe-in-from-unzip($file, $name='', :$options='', Bool :$binary=False) is ex
         return $proc.out.slurp but True
             if ! $binary;
 
-        return $proc.out.read ; 
+        return $proc.out.read ;
 
     }
 
@@ -190,7 +190,3 @@ sub unzipToTempDir($file)
 #
 #    return $status ;
 #}
-
-
-
-

@@ -14,7 +14,7 @@ sub crc32(int32 $crc, Blob $data) is export
 
 sub get-DOS-time(Instant $timestamp) is export
 {
-    # TODO - add something to cope with time < 1980 
+    # TODO - add something to cope with time < 1980
 
     my $dt = DateTime.new($timestamp) ;
 
@@ -38,7 +38,7 @@ sub make-canonical-name(Str $name, Bool $forceDir = False, :$SPEC = $*SPEC) is e
     # separators become slashes, etc.).
     # Will translate internal slashes in path components (i.e. on Macs) to
     # underscores.  Discards volume names.
-    # When $forceDir is set, returns paths with trailing slashes 
+    # When $forceDir is set, returns paths with trailing slashes
     #
     # input         output
     # .             '.'
@@ -52,10 +52,10 @@ sub make-canonical-name(Str $name, Bool $forceDir = False, :$SPEC = $*SPEC) is e
 
     my ($volume, $directories, $file) =
       $SPEC.splitpath( $SPEC.canonpath($name), nofile=>$forceDir);
-      
-    my @dirs = $SPEC.splitdir($directories)>>.subst('/', '_', :g) ; 
 
-    if  @dirs > 0  
+    my @dirs = $SPEC.splitdir($directories)>>.subst('/', '_', :g) ;
+
+    if  @dirs > 0
         { @dirs.pop if @dirs[*-1] eq '' }   # remove empty component
     @dirs.push: $file // '' ;
 

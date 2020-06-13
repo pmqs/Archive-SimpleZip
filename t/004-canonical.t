@@ -1,12 +1,12 @@
-#!perl6 
- 
-use v6; 
-use lib 'lib'; 
-use lib 't'; 
- 
-use Test; 
- 
-plan 22; 
+#!perl6
+
+use v6;
+use lib 'lib';
+use lib 't';
+
+use Test;
+
+plan 22;
 
 use Archive::SimpleZip::Utils;
 
@@ -51,7 +51,7 @@ use Archive::SimpleZip::Utils;
         my $got = make-canonical-name($input, True);
 
         is $got, $expected ~ $dir, "got $expected$dir" ;
-    }    
+    }
 
 }
 

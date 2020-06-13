@@ -39,4 +39,3 @@ Suggestions/patches are welcomed via github at
 Please see the LICENCE file in the distribution
 
 (C) Paul Marquess 2016-2019
-

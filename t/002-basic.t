@@ -1,14 +1,14 @@
-#!perl6 
- 
-use v6; 
-use lib 'lib'; 
-use lib 't'; 
- 
-use Test; 
- 
-plan 5; 
+#!perl6
 
-use ZipTest; 
+use v6;
+use lib 'lib';
+use lib 't';
+
+use Test;
+
+plan 5;
+
+use ZipTest;
 
 if ! external-zip-works()
 {
@@ -42,7 +42,7 @@ subtest
     spurt $datafile, "some data" ;
     spurt $datafile1, "more data" ;
     my $text = "line 1\nline 2\nline 3";
-    
+
     spurt $datafile2, $text ;
 
     ok  $datafile.IO.e, "$datafile does exists";

@@ -9,8 +9,8 @@ use IO::Blob;
 use Archive::SimpleZip::Utils ;
 use Archive::SimpleZip::Headers ;#:ALL :DEFAULT<Zip-CM>;
 
-# Use CompUnit::Util for now to re-export the Zip-CM enum 
-# from Archive::SimpleZip::Headers. 
+# Use CompUnit::Util for now to re-export the Zip-CM enum
+# from Archive::SimpleZip::Headers.
 # rakudo issue seems to be this ticket: https://github.com/perl6/roast/issues/45
 use CompUnit::Util :re-export;
 BEGIN re-export('Archive::SimpleZip::Headers');
@@ -46,16 +46,16 @@ class SimpleZip is export
         self.bless(:$zip-filehandle, :$filename, |c);
     }
 
-    multi submethod BUILD(IO::Handle :$!zip-filehandle?, 
+    multi submethod BUILD(IO::Handle :$!zip-filehandle?,
                           IO::Path   :$!filename?,
                           Str        :$!comment = "",
-                          Bool       :stream($!default-stream) = False, 
+                          Bool       :stream($!default-stream) = False,
                           Bool       :canonical-name($!default-canonical) = True,
                           Zip-CM     :method($!default-method) = Zip-CM-Deflate,
-                         #Bool       :$!zip64   = False, 
+                         #Bool       :$!zip64   = False,
                          )
     {
-        $!any-zip64 = True 
+        $!any-zip64 = True
             if $!zip64 ;
     }
 
@@ -77,8 +77,8 @@ class SimpleZip is export
         samewith($fh, :name(Str($path)), :time($path.modified), |c);
     }
 
-    multi method add(IO::Handle  $handle, 
-                     Str        :$name    = '', 
+    multi method add(IO::Handle  $handle,
+                     Str        :$name    = '',
                      Str        :$comment = '',
                      Instant    :$time    = $!now,
                      Bool       :$stream  = $!default-stream,
@@ -101,17 +101,17 @@ class SimpleZip is export
         # Check if the filename or comment are not 7-bit ASCII
         # If either is not, set the Language encoding bit
         # in general purpose flags.
-        my Bool $high-bit = ( ? $filename.ords.first: * > 127 ) || 
+        my Bool $high-bit = ( ? $filename.ords.first: * > 127 ) ||
                             ( ? $comment.ords.first:  * > 127 );
 
         $hdr.file-name = $filename.encode ;
 
         $hdr.file-comment = $comment.encode;
 
-        $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask 
+        $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask
             if $stream ;
 
-        $hdr.general-purpose-bit-flag +|= Zip-GP-Language-Encoding 
+        $hdr.general-purpose-bit-flag +|= Zip-GP-Language-Encoding
             if $high-bit ;
 
         my $start-local-hdr = $!zip-filehandle.tell();
@@ -123,14 +123,14 @@ class SimpleZip is export
 
         given $method
         {
-            when Zip-CM-Deflate 
+            when Zip-CM-Deflate
             {
                 my $zlib = Compress::Zlib::Stream.new(:deflate);
                 $read-action  = -> $in { $zlib.deflate($in) } ;
                 $flush-action = ->     { $zlib.finish()     } ;
             }
 
-            when Zip-CM-Bzip2 
+            when Zip-CM-Bzip2
             {
                 my $zlib = Compress::Bzip2::Stream.new(:deflate);
                 $read-action  = -> $in { $zlib.compress($in) } ;
@@ -145,14 +145,14 @@ class SimpleZip is export
         }
 
         # These are done for all compression formats
-        my $reader  = -> $in { $uncompressed-size += $in.elems;  
+        my $reader  = -> $in { $uncompressed-size += $in.elems;
                                $crc32 = crc32($crc32, $in);
-                               my $out = $read-action($in); 
-                               $compressed-size += $out.elems; 
+                               my $out = $read-action($in);
+                               $compressed-size += $out.elems;
                                $out
-                             } ; 
-        my $flusher = ->     { my $out = $flush-action(); 
-                               $compressed-size += $out.elems; 
+                             } ;
+        my $flusher = ->     { my $out = $flush-action();
+                               $compressed-size += $out.elems;
                                $out
                              } ;
 
@@ -189,7 +189,7 @@ class SimpleZip is export
         $!opened = False;
 
         my $start-cd = $!zip-filehandle.tell();
-        
+
         for $!cd.get-hdrs() -> $ch
         {
             $!zip-filehandle.write($ch) ;
@@ -314,7 +314,7 @@ archives) has to say on what should be stored in the zip name header field.
     device letter, or a leading slash.  All slashes
     MUST be forward slashes '/' as opposed to
     backwards slashes '\' for compatibility with Amiga
-    and UNIX file systems etc.  
+    and UNIX file systems etc.
 
 Unless you have a use-case that needs non-standard Zip member names, you
 should leave this option well alone.
@@ -323,7 +323,7 @@ Unsurprizingly then, the default for this option is True.
 
 Example
 
-    my $zip = SimpleZip.new($archive, :!canonical-name); # 
+    my $zip = SimpleZip.new($archive, :!canonical-name); #
 
 =head4 Bool zip64 => True|False
 
@@ -356,7 +356,7 @@ To add a string/blob to the archive
 
 =head4 name => String
 
-Set the B<name> field in the zip archive. 
+Set the B<name> field in the zip archive.
 
 When a filename is passed to C<add>, the value passed in this option will
 be stored in the Zip archive, rather than the filename.
@@ -388,7 +388,7 @@ Creates a comment for the member.
 
 =head4 canonical-name  => True|False
 
-Controls how the I<name> field is written top the zip archive. See the 
+Controls how the I<name> field is written top the zip archive. See the
 
 =head4 zip64 => True|False
 
@@ -401,4 +401,3 @@ Controls how the I<name> field is written top the zip archive. See the
 
 =AUTHOR Paul Marquess <pmqs@cpan.org>
 =end pod
-

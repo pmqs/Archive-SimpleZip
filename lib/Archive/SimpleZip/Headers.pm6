@@ -5,7 +5,7 @@ unit module Archive::SimpleZip::Headers:ver<0.2.0>:auth<Paul Marquess (pmqs@cpan
 enum Zip-CM is export (
     Zip-CM-Store      => 0 ,
     Zip-CM-Deflate    => 8 ,
-    Zip-CM-Bzip2      => 12 , 
+    Zip-CM-Bzip2      => 12 ,
     #Zip-CM-LZMA       => 14 , # Not Supported
     #Zip-CM-PPMD       => 98 , # Not Supported
 );
@@ -21,7 +21,7 @@ enum Zip-GP-Flag is export (
 );
 
 
-our %Zip-CM-Min-Versions = 
+our %Zip-CM-Min-Versions =
             Zip-CM-Store.value   => 20,
             Zip-CM-Deflate.value => 20,
             Zip-CM-Bzip2.value   => 46,
@@ -100,7 +100,7 @@ class Local-File-Header is export # does CustomeMarshaller
         #
         #        crc-32                          4 bytes
         #        compressed size                 4 bytes
-        #        uncompressed size               4 bytes    
+        #        uncompressed size               4 bytes
 
         constant signature = 0x08074b50 ; # 4 bytes  (0x04034b50)
 
@@ -123,7 +123,7 @@ class Local-File-Header is export # does CustomeMarshaller
 
         return $header;
     }
-} 
+}
 
 class Central-Header-Directory is export
 {
@@ -176,9 +176,9 @@ class Central-Header-Directory is export
         #      [central directory header 1]
         #      .
         #      .
-        #      . 
+        #      .
         #      [central directory header n]
-        #      [digital signature] 
+        #      [digital signature]
         #
         #      File header:
         #
@@ -203,7 +203,7 @@ class Central-Header-Directory is export
         #        file name (variable size)
         #        extra field (variable size)
         #        file comment (variable size)
-        
+
         my $ctl = buf8.allocate(46 + $hdr.file-name.elems + $hdr.file-comment.elems);
         $ctl.write-uint32( 0, 0x02014b50,                    LittleEndian);
         $ctl.write-uint16( 4, $hdr.version-made-by,          LittleEndian);
@@ -225,8 +225,7 @@ class Central-Header-Directory is export
         $ctl.subbuf-rw(46 + $hdr.file-name.elems, $hdr.file-comment.elems) = $hdr.file-comment ;
 
         @!central-headers.push($ctl) ;
-        $!cd-len += $ctl.elems ; 
+        $!cd-len += $ctl.elems ;
         ++ $!entries;
     }
 }
-
