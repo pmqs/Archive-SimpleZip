@@ -2,6 +2,10 @@
 
 Perl6 module to write Zip archives.
 
+[![Travis Build Status](https://travis-ci.org/pmqs/Archive-SimpleZip.svg?branch=master)](https://travis-ci.org/pmqs/Archive-SimpleZip) 
+[![Build status](https://ci.appveyor.com/api/projects/status/github/pmqs/Archive-SimpleZip?svg=true)](https://ci.appveyor.com/project/pmqs/Archive-SimpleZip/branch/master)
+ 
+
 ## Synopsis
 
 

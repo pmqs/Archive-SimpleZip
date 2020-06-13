@@ -4,4 +4,4 @@ perl6:
   - 2018.12
 install:
     - rakudobrew build-zef
-    - zef --debug install .
+    - zef --debug --depsonly install .
