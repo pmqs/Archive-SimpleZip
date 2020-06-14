@@ -1,10 +1,11 @@
 
-unit module Archive::SimpleZip:ver<0.2.0>:auth<Paul Marquess (pmqs@cpan.org)>;
+unit module Archive::SimpleZip:ver<0.3.0>:auth<Paul Marquess (pmqs@cpan.org)>;
 
 need Compress::Zlib;
-# need Compress::Bzip2;
+# need Compress::Bzip2; # disable for now
 
 use IO::Blob;
+use IO::Glob;
 
 use Archive::SimpleZip::Utils ;
 use Archive::SimpleZip::Headers ;#:ALL :DEFAULT<Zip-CM>;
@@ -34,62 +35,87 @@ class SimpleZip is export
 
     has Bool                     $!opened = True;
 
-    multi method new(Str $filename, |c)
+    multi method new(IO:D() $filename, |c)
     {
         my $zip-filehandle = open $filename, :w, :bin ;
         self.bless(:$zip-filehandle, filename => $filename.IO, |c);
     }
 
-    multi method new(IO::Path $filename, |c)
-    {
-        my $zip-filehandle = open $filename, :w, :bin ;
-        self.bless(:$zip-filehandle, :$filename, |c);
-    }
-
-    multi submethod BUILD(IO::Handle :$!zip-filehandle?,
-                          IO::Path   :$!filename?,
-                          Str        :$!comment = "",
-                          Bool       :stream($!default-stream) = False,
-                          Bool       :canonical-name($!default-canonical) = True,
-                          Zip-CM     :method($!default-method) = Zip-CM-Deflate,
-                         #Bool       :$!zip64   = False,
+    multi submethod BUILD(IO::Handle:D :$!zip-filehandle?,
+                          IO::Path:D   :$!filename?,
+                          Str:D        :$!comment = "",
+                          Bool:D       :stream($!default-stream) = False,
+                          Bool:D       :canonical-name($!default-canonical) = True,
+                          Zip-CM:D     :method($!default-method) = Zip-CM-Deflate,
+                         #Bool:D       :$!zip64   = False,
                          )
     {
         $!any-zip64 = True
             if $!zip64 ;
     }
 
-    multi method add(Str $string, |c)
+    multi method add(Str:D $string, |c --> Int:D)
     {
+        # say "ADDING String [{$string.^name}][$string]";
+
         my IO::Blob $fh .= new($string);
         samewith($fh, |c);
     }
 
-    multi method add(Blob $blob, |c)
+    multi method add(Blob:D $blob, |c --> Int:D)
     {
         my IO::Blob $fh .= new($blob);
         samewith($fh, |c);
     }
 
-    multi method add(IO::Path $path, |c)
+    multi method add(IO::Path:D $path, |c --> Int:D)
     {
-        my IO::Handle $fh = open($path, :r, :bin);
+        # If file doesn't exist or isn't readable fail immediately
+        my $fh = open($path, :r, :bin)
+            or fail $fh ;
+
         samewith($fh, :name(Str($path)), :time($path.modified), |c);
     }
 
-    multi method add(IO::Handle  $handle,
-                     Str        :$name    = '',
-                     Str        :$comment = '',
-                     Instant    :$time    = $!now,
-                     Bool       :$stream  = $!default-stream,
-                     Bool       :$canonical-name = $!default-canonical,
-                     Zip-CM     :$method  = $!default-method)
+    multi method add(IO::Glob:D $glob, |c --> Int:D)
+    {
+        samewith($glob.dir, |c);
+    }
+
+    multi method add(Seq:D $s, |c --> Int:D)
+    {
+        # say "ADDING Seq [{$s.^name}][$s]";
+
+        my $count = 0;
+        $s.map: { samewith($^a, |c) ; ++ $count} ;
+
+        return $count;
+    }
+
+    multi method add(List:D $l, |c --> Int:D)
+    {
+        # say "ADDING List [{$l.^name}][$l]";
+
+         $l.map: { samewith($^a, |c) } ;
+
+        return $l.elems;
+    }
+
+    multi method add(IO::Handle:D  $handle,
+                     Str:D        :$name    = '',
+                     Str:D        :$comment = '',
+                     Instant:D    :$time    = $!now,
+                     Bool:D       :$stream  = $!default-stream,
+                     Bool:D       :$canonical-name = $!default-canonical,
+                     Zip-CM:D     :$method  = $!default-method
+                     --> Int:D)
     {
         my $compressed-size = 0;
         my $uncompressed-size = 0;
         my $crc32 = 0;
-
         my $hdr = Local-File-Header.new();
+
+        # say "   ADDING [$name]";
 
         $hdr.last-mod-file-time = get-DOS-time($time);
         $hdr.compression-method = $method ;
@@ -179,6 +205,8 @@ class SimpleZip is export
         }
 
         $!cd.save-hdr($hdr, $start-local-hdr);
+
+        return 1;
     }
 
     method close()
@@ -223,11 +251,19 @@ class SimpleZip is export
 
     # Add a Blob/String to the zip archive
     $obj.add("payload data here", :name<data1>);
-    $obj.add(Blob.new([2,4,6]), :name<data1>);
+    $obj.add(Blob.new([2,4,6]), :name<data2>);
 
     # Drop a filehandle into the zip archive
     my $handle = "some file".IO.open;
-    $obj.add($handle, :name<data2>);
+    $obj.add($handle, :name<data3>);
+
+    # Add a glob of files
+    use IO::Glob;
+    $zip.add(glob("*.c"));
+
+    # Add a list of files
+    $zip.add();
+
 
     $obj.close();
 
@@ -322,7 +358,7 @@ Unsurprizingly then, the default for this option is True.
 
 Example
 
-    my $zip = SimpleZip.new($archive, :!canonical-name); #
+    my $zip = SimpleZip.new($archive, :!canonical-name);
 
 =head4 Bool zip64 => True|False
 
@@ -333,8 +369,9 @@ this default.
 
 =head2 method add
 
-Used to add a file, string or blob to a Zip archive. The method expects one
+Used to add one or more a files, a string or a blob to a Zip archive. The method expects one
 mandatory parameter and zero or more optional parameters.
+Returns the number of files added.
 
 To add a file from the filesystem the first parameter must be of type
 IO::Path
@@ -350,6 +387,11 @@ To add a string/blob to the archive
     # Add a blob to the zip archive
     my Blob $data .= new;
     $zip.add($data, :name<data1>);
+
+To add a list of files
+
+    use IO::Glob;
+    $zip.add(glob("*.c"));
 
 =head3 Options
 
@@ -395,7 +437,7 @@ Controls how the I<name> field is written top the zip archive. See the
 =item Zip64
 =item Support for extra fields
 =item Standard extra fields for better time
-=item Adding directories & symbolic links
+=item Adding directories
 
 =AUTHOR Paul Marquess <pmqs@cpan.org>
 =end pod

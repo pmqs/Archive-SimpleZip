@@ -23,6 +23,14 @@ $obj.add("somefile.txt".IO);
 
 # Add a Blob/String
 $obj.add("payload data here", :name<data1>);
+$obj.add(Blob.new([2,4,6]), :name<data2>);
+
+# Drop a filehandle into the zip archive
+my $handle = "some file".IO.open;
+$obj.add($handle, :name<data3>);
+
+use IO::Glob;
+$zip.add(glob("*.c"));
 
 $obj.close();
 ```

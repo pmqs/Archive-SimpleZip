@@ -39,16 +39,27 @@ sub external-zip-works() returns Bool:D is export
         est.  Quintus cenum parat.
         EOM
 
-    write-file-with-zip($outfile, $content)
+    my $filename = write-file-with-zip($outfile, $content)
         or return False;
 
     my $got = pipe-in-from-unzip($outfile)
         or return False;
 
-    return True
-        if $content eq $got ;
+    if $got ne $content
+    {
+        diag "Uncompressed content is wrong, got[$got], expected[$content]";
+        return False ;
+    }
 
-    diag "Uncompressed content is wrong, got[$got], expected[$content]";
+    # Test zipinfo mode
+    $got = pipe-in-from-unzip($outfile, :options('-Z1'))
+        or return False;
+
+    return True
+        if '/' ~ $got.chomp eq $filename ;
+
+    diag "Uncompressed content is wrong, got[$got], expected[$filename]";
+
     return False ;
 }
 
@@ -74,7 +85,7 @@ sub write-file-with-zip($file, $content, $options='-v')
     my @comp = $ZIP, '-q', $options, $file, $infile ;
     my $proc = run |@comp, :out, :err;
 
-    return True
+    return $infile but True
         if $proc.exitcode == 0 ;
 
     explain-failure "write-file-with-zip", @comp, $proc ;
@@ -111,21 +122,32 @@ sub pipe-in-from-unzip($file, $name='', :$options='', Bool :$binary=False) is ex
 
 sub comment-from-unzip($filename) is export
 {
-    my $data = pipe-in-from-unzip($filename, '', :options('-z'))
+    my $data = pipe-in-from-unzip($filename, '', :options('-qz'))
         or return '';
 
-    $data.subst(/^Archive: \s+ $filename \n /, '');
-
-    return $data
+    return $data.chomp;
 }
 
 sub test-with-unzip($file) is export
 {
     my @comp = $UNZIP, '-t', $file;
-    say "Running [{ @comp }]";
+    # say "Running [{ @comp }]";
     my $proc = run |@comp, :out, :err ;
 
     return True
+        if $proc.exitcode == 0 ;
+
+    explain-failure "test-with-unzip", @comp, $proc ;
+    return False ;
+}
+
+sub get-filenames-in-zip($file) is export
+{
+    my @comp = $UNZIP, '-Z1', $file ;
+    # say "Running [{ @comp }]";
+    my $proc = run |@comp, :out, :err ;
+
+    return $proc.out.lines(:chomp)
         if $proc.exitcode == 0 ;
 
     explain-failure "test-with-unzip", @comp, $proc ;
