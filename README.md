@@ -1,9 +1,9 @@
 # Archive::SimpleZip
 
-Perl6 module to write Zip archives.
+Raku (Perl6) module to write Zip archives.
 
-[![Travis Build Status](https://travis-ci.org/pmqs/Archive-SimpleZip.svg?branch=master)](https://travis-ci.org/pmqs/Archive-SimpleZip) 
-[![Build status](https://ci.appveyor.com/api/projects/status/github/pmqs/Archive-SimpleZip?svg=true)](https://ci.appveyor.com/project/pmqs/Archive-SimpleZip/branch/master)
+![.github/workflows/test.yml](https://github.com/pmqs/Archive-SimpleZip/workflows/.github/workflows/test.yml/badge.svg)
+[![Build Status](https://travis-ci.com/pmqs/Archive-SimpleZip.svg?branch=master)](https://travis-ci.com/pmqs/Archive-SimpleZip)(https://ci.appveyor.com/project/pmqs/Archive-SimpleZip/branch/master)
  
 
 ## Synopsis
@@ -42,4 +42,4 @@ Suggestions/patches are welcomed via github at
 
 Please see the LICENCE file in the distribution
 
-(C) Paul Marquess 2016-2019
+(C) Paul Marquess 2016-2020
