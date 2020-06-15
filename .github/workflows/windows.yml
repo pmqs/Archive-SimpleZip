@@ -14,6 +14,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: Perl version
       run: perl -V
     - name: Install unzip 
@@ -27,8 +28,6 @@ jobs:
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
     - name: Raku version
       run: perl6 -v
-    - name: Zef version
-      run: zef --help
     - name: dir
       run: dir
     - name: Install Module dependencies
