@@ -28,10 +28,8 @@ jobs:
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
     - name: Raku version
       run: perl6 -v
-    - name: dir
-      run: dir
     - name: Install Module dependencies
-      run: zef --/tap-harness --/prove --debug install .
+      run: zef install --deps-only .
     - name: Test
       run: prove -v -e "perl6 -Ilib" t/
       
