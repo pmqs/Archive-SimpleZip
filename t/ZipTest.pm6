@@ -23,7 +23,7 @@ sub clean-filename(Str:D $filename) returns Str:D
     return $filename
             .chomp
             .subst(/^ <[A..Za..z]> ":" /, '') # remove drive
-            .subst(/ '\\' + /, '/') ; # "\" => "/"
+            .subst(/ '\\' + /, '/', :g) ; # "\" => "/"
 }
 
 sub external-zip-works() returns Bool:D is export
