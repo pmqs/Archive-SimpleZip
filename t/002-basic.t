@@ -6,7 +6,7 @@ use lib 't';
 
 use Test;
 
-plan 11;
+plan 10;
 
 use ZipTest;
 
