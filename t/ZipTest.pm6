@@ -18,6 +18,17 @@ sub t-file
 my $ZIP   = which('zip');
 my $UNZIP = which('unzip');
 
+sub clean-filename(Str:D $filename) returns Str:D
+{
+    return $filename.chomp
+        unless $*DISTRO.is-win ;
+
+    $filename.subst(/^ <[A..Za..z]> ":" /, '') ; # remove drive
+    $filename.subst(/ '\\' + /, '/') ; # "\" => "/"
+
+    return $filename.chomp ;
+}
+
 sub external-zip-works() returns Bool:D is export
 {
     if ! $ZIP
@@ -55,10 +66,12 @@ sub external-zip-works() returns Bool:D is export
     $got = pipe-in-from-unzip($outfile, :options('-Z1'))
         or return False;
 
-    return True
-        if '/' ~ $got.chomp eq $filename ;
+    $got = clean-filename($got);
 
-    diag "Uncompressed content is wrong, got[$got], expected[$filename]";
+    return True
+        if '/' ~ $got eq $filename ;
+
+    diag "Filenames are wrong, got[$got], expected[$filename]";
 
     return False ;
 }
