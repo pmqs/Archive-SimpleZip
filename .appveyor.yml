@@ -49,6 +49,9 @@ install:
   # https://chocolatey.org/packages/StrawberryPerl
   - if not exist "C:\Strawberry" cinst strawberryperl
   - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
+  # Install nfozip unzip & zip
+  - cinst unzip
+  - cinst zip  
   - ps: refreshenv
   - if not exist "C:\Rakudo" cinst rakudostar
   - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
