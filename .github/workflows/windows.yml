@@ -16,7 +16,7 @@ jobs:
     steps:
     - name: Install Strawberry Perl
       run: |
-        if not exist "C:\Strawberry" cinst strawberryperl
+        choco install strawberryperl
         echo "::add-path::C:\strawberry\c\bin"
         echo "::add-path::C:\strawberry\perl\site\bin"
         echo "::add-path::C:\strawberry\perl\bin"
@@ -28,7 +28,7 @@ jobs:
       run: choco install zip
     - name: Install Rakudostar
       run: |
-        if not exist "C:\Rakudo" cinst rakudostar
+        choco install rakudostar
         echo "::add-path::C:\rakudo\bin"
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
     - name: Raku version
