@@ -29,6 +29,8 @@ jobs:
       run: perl6 -v
     - name: Zef version
       run: zef --help
+    - name: dir
+      run: dir
     - name: Install Module dependencies
       run: zef --/tap-harness --/prove --debug install .
     - name: Test
