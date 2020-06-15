@@ -20,13 +20,10 @@ my $UNZIP = which('unzip');
 
 sub clean-filename(Str:D $filename) returns Str:D
 {
-    return $filename.chomp
-        unless $*DISTRO.is-win ;
-
-    $filename.subst(/^ <[A..Za..z]> ":" /, '') ; # remove drive
-    $filename.subst(/ '\\' + /, '/') ; # "\" => "/"
-
-    return $filename.chomp ;
+    return $filename
+            .chomp
+            .subst(/^ <[A..Za..z]> ":" /, '') # remove drive
+            .subst(/ '\\' + /, '/') ; # "\" => "/"
 }
 
 sub external-zip-works() returns Bool:D is export
