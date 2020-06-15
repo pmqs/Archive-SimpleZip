@@ -33,6 +33,8 @@ jobs:
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
     - name: Raku version
       run: perl6 -v
+    - name: Zef version
+      run: zef --help
     - name: Install Module dependencies
       run: zef --debug install .
     - name: Test
