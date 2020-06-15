@@ -14,12 +14,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-#     - name: Install Strawberry Perl
-#       run: |
-#         choco install strawberryperl
-#         echo "::add-path::C:\strawberry\c\bin"
-#         echo "::add-path::C:\strawberry\perl\site\bin"
-#         echo "::add-path::C:\strawberry\perl\bin"
     - name: Perl version
       run: perl -V
     - name: Install unzip 
@@ -36,7 +30,7 @@ jobs:
     - name: Zef version
       run: zef --help
     - name: Install Module dependencies
-      run: zef --debug install "."
+      run: zef --/tap-harness --/prove --debug install .
     - name: Test
       run: prove -v -e "perl6 -Ilib" t/
       
