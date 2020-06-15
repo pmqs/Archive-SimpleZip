@@ -66,10 +66,10 @@ sub external-zip-works() returns Bool:D is export
     $got = pipe-in-from-unzip($outfile, :options('-Z1'))
         or return False;
 
-    $got = clean-filename($got);
+    $filename = clean-filename($filename);
 
     return True
-        if '/' ~ $got eq $filename ;
+        if '/' ~ $got.chomp eq $filename ;
 
     diag "Filenames are wrong, got[$got], expected[$filename]";
 
