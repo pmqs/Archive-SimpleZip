@@ -1,0 +1,44 @@
+name: Windows build
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:       
+    - name Install Strawberry Perl
+      # Install Strawberry Perl with chocolately.
+      # Strawberry Perl comes with `prove`, which we use to run the tests.
+      # http://strawberryperl.com
+      # https://chocolatey.org/packages/StrawberryPerl    
+      run: |
+        if not exist "C:\Strawberry" cinst strawberryperl
+        echo "::add-path::C:\strawberry\c\bin"
+        echo "::add-path::C:\strawberry\perl\site\bin"
+        echo "::add-path::C:\strawberry\perl\bin"
+    - name: Perl version
+      run: perl -V
+    - name: Install unzip 
+      run: choco install unzip
+    - name: Install zip
+      run: choco install zip
+    - name: Install Rakudostar
+      run: |
+        if not exist "C:\Rakudo" cinst rakudostar
+        echo "::add-path::C:\rakudo\bin"
+        echo "::add-path::C:\rakudo\share\perl6\site\bin"
+    - Raku version
+      run: perl6 -v
+    - Install Module dependencies
+      run: zef --/tap-harness --/prove --debug install .
+    - name: Test
+      run: prove -v -e "perl6 -Ilib" t/
+      
