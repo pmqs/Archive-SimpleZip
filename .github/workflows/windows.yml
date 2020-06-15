@@ -34,7 +34,7 @@ jobs:
     - name: Raku version
       run: perl6 -v
     - name: Install Module dependencies
-      run: zef --/tap-harness --/prove --debug install .
+      run: zef --debug install .
     - name: Test
       run: prove -v -e "perl6 -Ilib" t/
       
