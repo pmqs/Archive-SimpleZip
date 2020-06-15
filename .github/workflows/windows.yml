@@ -15,10 +15,6 @@ jobs:
 
     steps:       
     - name Install Strawberry Perl
-      # Install Strawberry Perl with chocolately.
-      # Strawberry Perl comes with `prove`, which we use to run the tests.
-      # http://strawberryperl.com
-      # https://chocolatey.org/packages/StrawberryPerl    
       run: |
         if not exist "C:\Strawberry" cinst strawberryperl
         echo "::add-path::C:\strawberry\c\bin"
