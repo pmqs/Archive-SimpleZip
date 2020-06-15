@@ -13,8 +13,8 @@ jobs:
 
     runs-on: windows-latest
 
-    steps:       
-    - name Install Strawberry Perl
+    steps:
+    - name: Install Strawberry Perl
       run: |
         if not exist "C:\Strawberry" cinst strawberryperl
         echo "::add-path::C:\strawberry\c\bin"
@@ -31,9 +31,9 @@ jobs:
         if not exist "C:\Rakudo" cinst rakudostar
         echo "::add-path::C:\rakudo\bin"
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
-    - Raku version
+    - name: Raku version
       run: perl6 -v
-    - Install Module dependencies
+    - name: Install Module dependencies
       run: zef --/tap-harness --/prove --debug install .
     - name: Test
       run: prove -v -e "perl6 -Ilib" t/
