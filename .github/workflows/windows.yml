@@ -17,6 +17,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Perl version
       run: perl -V
+    - name: Windows Codepage
+      run: chcp
     - name: Install unzip 
       run: choco install unzip
     - name: Install zip
