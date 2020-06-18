@@ -26,6 +26,8 @@ my $wipe = False;
 my $base_dir_name = tempdir(:unlink($wipe));
 ok $base_dir_name.IO.d, "tempdir { $base_dir_name } created";
 
+my $HERE = $*CWD;
+
 ok chdir($base_dir_name), "chdir to { $base_dir_name } ok";
 
 my $dir1 = 'dir1';
@@ -122,8 +124,8 @@ subtest
 
     ok $zip.close(), "closed";
 
-    run("zipdetails", "-v", $zipfile);
-    run("unzip", "-Z", $zipfile);
+    # run("perl", "$HERE/zipdetails", "-v", $zipfile);
+    diag run("unzip", "-l", $zipfile, :out).out.slurp ;
 
     is get-filenames-in-zip($zipfile), string-to-binary("\c[GREEK SMALL LETTER ALPHA]"), "filename OK";
 
