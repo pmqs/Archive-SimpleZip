@@ -53,7 +53,9 @@ install:
   - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
   # Install nfozip unzip & zip
   - cinst unzip
-  - cinst zip  
+  - unzip -v
+  - cinst zip
+  - zip -v
   - ps: refreshenv
   - if not exist "C:\Rakudo" cinst rakudostar
   - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
