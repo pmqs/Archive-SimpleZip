@@ -86,7 +86,7 @@ sub write-file-with-zip($file, $content, $options='-v')
 {
     my $infile = t-file ;
 
-    spurt($infile, $content, :bin);
+    spurt($infile, $content);
 
     unlink $file ;
     # fz -- force zip64
