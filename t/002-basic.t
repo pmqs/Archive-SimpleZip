@@ -122,6 +122,8 @@ subtest
 
     ok $zip.close(), "closed";
 
+    diag run("zipdetails", "-v", $zipfile, :out).out.slurp;
+
     is get-filenames-in-zip($zipfile), string-to-binary("\c[GREEK SMALL LETTER ALPHA]"), "filename OK";
 
 }, "language encoding bit";
