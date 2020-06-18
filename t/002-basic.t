@@ -122,7 +122,7 @@ subtest
 
     ok $zip.close(), "closed";
 
-    is get-filenames-in-zip($zipfile), "\c[GREEK SMALL LETTER ALPHA]", "filename OK";
+    is get-filenames-in-zip($zipfile), string-to-binary("\c[GREEK SMALL LETTER ALPHA]"), "filename OK";
 
 }, "language encoding bit";
 
