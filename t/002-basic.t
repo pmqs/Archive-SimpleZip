@@ -125,7 +125,7 @@ subtest
     ok $zip.close(), "closed";
 
     # run("perl", "$HERE/zipdetails", "-v", $zipfile);
-    diag run("unzip", "-l", $zipfile, :out).out.slurp ;
+    run("unzip", "-l", $zipfile) ;
 
     is get-filenames-in-zip($zipfile), string-to-binary("\c[GREEK SMALL LETTER ALPHA]"), "filename OK";
 
