@@ -34,6 +34,10 @@ jobs:
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
     - name: Raku version
       run: perl6 -v
+    - name: Get zipdetails
+      run: |
+        choco install curl
+        curl -fsSL https://raw.githubusercontent.com/pmqs/IO-Compress/master/bin/zipdetails >zipdetails
     - name: Install Module dependencies
       run: zef install --deps-only .
     - name: Test
