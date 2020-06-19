@@ -5,6 +5,17 @@ use File::Which;
 use File::Temp;
 use Test ;
 
+my $HERE = $*CWD;
+my $UTIL = $HERE ~ '/t/util/' ;
+my $ZIPDETAILS = $UTIL ~ 'zipdetails';
+
+sub run-zipdetails(Str:D $zipfile) is export
+{
+    diag run('perl', $ZIPDETAILS, "-v", $zipfile, :out).out.slurp;
+    diag "\n";
+    diag run('unzip', '-l', $zipfile, :out).out.slurp ;
+}
+
 # Check external zip & unzip are available
 
 my $base_dir = tempdir(:unlink(True));
@@ -160,6 +171,10 @@ sub get-filenames-in-zip($file) is export
     # Means we can handle any badly-formed UTF8 encodngs, either from the zip file itself
     # or from running unzip.
     my $proc = run |@comp, :out, :err, :enc('latin1') ;
+
+        # at t\002-basic.t line 125
+    # expected: 'Î±'
+    #      got: 'Iñ'
 
     return $proc.out.lines(:chomp)
         if $proc.exitcode == 0 ;
