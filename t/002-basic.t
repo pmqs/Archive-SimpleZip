@@ -108,6 +108,28 @@ subtest
 
 subtest
 {
+    # Local Header for the  zip should look like this
+    #
+    # 0000 0004 50 4B 03 04 LOCAL HEADER #1       04034B50
+    # 0004 0001 14          Extract Zip Spec      14 '2.0'
+    # 0005 0001 00          Extract OS            00 'MS-DOS'
+    # 0006 0002 00 08       General Purpose Flag  0800
+    #                       [Bits 1-2]            0 'Normal Compression'
+    #                       [Bit 11]              1 'Language Encoding'
+    # 0008 0002 08 00       Compression Method    0008 'Deflated'
+    # 000A 0004 0E 9A D3 50 Last Mod Time         50D39A0E 'Fri Jun 19 19:16:28 2020'
+    # 000E 0004 DA 9C 56 2C CRC                   2C569CDA
+    # 0012 0004 11 00 00 00 Compressed Length     00000011
+    # 0016 0004 09 00 00 00 Uncompressed Length   00000009
+    # 001A 0002 02 00       Filename Length       0002
+    # 001C 0002 00 00       Extra Length          0000
+    # 001E 0002 CE B1       Filename              'α'
+    # 0020 0011 CA CD 2F 4A PAYLOAD               ../JUHI,I........
+    #           55 48 49 2C
+    #           49 04 00 00
+    #           00 FF FF 03
+    #           00
+
     unlink $zipfile;
     spurt $datafile, "some data" ;
     spurt $datafile1, "more data" ;
@@ -122,8 +144,25 @@ subtest
 
     ok $zip.close(), "closed";
 
-     is get-filenames-in-zip($zipfile), string-to-binary("\c[GREEK SMALL LETTER ALPHA]"), "filename OK"
-        or run-zipdetails($zipfile);
+    with open $zipfile, :enc('latin1')
+    {
+        # Get general putpose flags
+        .seek(0x07, SeekFromBeginning) ;
+        my $got = .read: 1;
+
+        ok $got +& 0x07 , "Language encoding bit set"
+            or diag "Got " ~ Int($got);
+
+        # filename
+        .seek(0x12, SeekFromBeginning) ;
+        $got = .read: 2;
+        # diag "GOT " ~ $got.^name ;
+        # diag "EXPECT " ~ string-to-binary("\c[GREEK SMALL LETTER ALPHA]").^name ;
+        cmp-ok $got, 'cmp', string-to-binary("\c[GREEK SMALL LETTER ALPHA]"), "filename is ok"
+            or run-zipdetails($zipfile);
+        .close;
+    }
+
 }, "language encoding bit";
 
 subtest # IO::Glob

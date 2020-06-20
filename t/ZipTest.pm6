@@ -162,31 +162,28 @@ sub test-with-unzip($file) is export
     return False ;
 }
 
-sub get-filenames-in-zip($file) is export
+sub get-filenames-in-zip($filename) is export
 {
-    my @comp = $UNZIP, '-Z1', $file ;
-    # say "Running [{ @comp }]";
+    my @comp = $UNZIP, '-Z1', $filename ;
 
-    # Get the filenames in Latin1 as a convenient way to get the filenames as a stream of 8-bit values
+    # Get the filenames in Latin1 as a convenient way to get the them as a stream of 8-bit values
     # Means we can handle any badly-formed UTF8 encodngs, either from the zip file itself
-    # or from running unzip.
+    # or from running unzip on .
     my $proc = run |@comp, :out, :err, :enc('latin1') ;
 
-        # at t\002-basic.t line 125
-    # expected: 'Î±'
-    #      got: 'Iñ'
+    if $proc.exitcode
+    {
+        explain-failure "test-with-unzip", @comp, $proc ;
+        return False ;
+    }
 
-    return $proc.out.lines(:chomp)
-        if $proc.exitcode == 0 ;
-
-    explain-failure "test-with-unzip", @comp, $proc ;
-    return False ;
+    return $proc.out.lines(:chomp) ;
 }
 
 sub string-to-binary(Str:D $string) is export
 {
     # Convert a string into a sequence of bytes
-    return $string.encode('utf8').decode('latin1');
+    return $string.encode('utf8');
 }
 
 sub unzipToTempDir($file)
