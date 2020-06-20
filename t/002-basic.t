@@ -146,7 +146,7 @@ subtest
 
     with open $zipfile, :enc('latin1')
     {
-        # Get general putpose flags
+        # Get general purpose flags
         .seek(0x07, SeekFromBeginning) ;
         my $got = .read: 1;
 
