@@ -17,4 +17,4 @@ jobs:
       uses: actions/checkout@v1
     - name: Runs tests
       id: tests
-      uses: JJ/raku-container-action@master
+      uses: pmqs/raku-container-action@master
