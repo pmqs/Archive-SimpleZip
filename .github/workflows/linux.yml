@@ -15,6 +15,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Check zip/unzip
+      run: |
+        zip -v
+        unzip -v
     - name: Runs tests
       id: tests
       uses: JJ/raku-container-action@master
