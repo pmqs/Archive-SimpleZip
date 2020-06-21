@@ -39,17 +39,17 @@ sub clean-filename(Str:D $filename) returns Str:D
 
 sub external-zip-works() returns Bool:D is export
 {
-    if ! $ZIP
-    {
-        diag "Cannot find zip";
-        return False;
-    }
+    # if ! $ZIP
+    # {
+    #     diag "Cannot find zip";
+    #     return False;
+    # }
 
-    if ! $UNZIP
-    {
-        diag "Cannot find unzip";
-        return False;
-    }
+    # if ! $UNZIP
+    # {
+    #     diag "Cannot find unzip";
+    #     return False;
+    # }
 
     my $outfile = t-file() ~ ".zip" ;
     my $content = q:to/EOM/;
