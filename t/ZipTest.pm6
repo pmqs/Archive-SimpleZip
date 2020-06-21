@@ -46,6 +46,10 @@ sub external-zip-works() returns Bool:D is export
         est.  Quintus cenum parat.
         EOM
 
+    my $p = run("zip", "z.zip", $content, :out, :err);
+
+    explain-failure "external-zip-works", "zip z.zip", $proc ;
+
     my $filename = write-file-with-zip($outfile, $content)
         or return False;
 

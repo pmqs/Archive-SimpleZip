@@ -222,7 +222,6 @@ subtest # Seq
 
     ok $zip.close(), "closed";
 
-    diag "RUN " ~ run("unzip", '-l', $zipfile, :out).out.slurp;
     is get-filenames-in-zip($zipfile), glob("gdata*").dir, "filename OK";
 
 }, "seq";
