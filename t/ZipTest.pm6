@@ -47,7 +47,7 @@ sub external-zip-works() returns Bool:D is export
         EOM
 
     spurt "xxx", $content;
-    my $p = run("zip", "z.zip", "xxx", :out, :err);
+    my $p = run("lx", "-al", :out, :err);
 
     explain-failure "external-zip-works", List("zip z.zip"), $p ;
 
