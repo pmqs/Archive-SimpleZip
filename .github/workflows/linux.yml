@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v1
     - name: Versions
       run: |
-          raku -v
+          perl6 -v
           zip -v
           unzip -v
     - name: Runs tests
