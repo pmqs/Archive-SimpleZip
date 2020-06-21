@@ -1,7 +1,6 @@
 unit module ZipTest ;
 
 
-use File::Which;
 use File::Temp;
 use Test ;
 
@@ -26,8 +25,9 @@ sub t-file
     return $filename ;
 }
 
-my $ZIP   = which('zip');
-my $UNZIP = which('unzip');
+my $exe = $*DISTRO.is-win ?? '.exe' !! '';
+my $ZIP   = 'zip' ~ $exe ;
+my $UNZIP = 'unzip' ~ $exe ;
 
 sub clean-filename(Str:D $filename) returns Str:D
 {
@@ -39,18 +39,6 @@ sub clean-filename(Str:D $filename) returns Str:D
 
 sub external-zip-works() returns Bool:D is export
 {
-    # if ! $ZIP
-    # {
-    #     diag "Cannot find zip";
-    #     return False;
-    # }
-
-    # if ! $UNZIP
-    # {
-    #     diag "Cannot find unzip";
-    #     return False;
-    # }
-
     my $outfile = t-file() ~ ".zip" ;
     my $content = q:to/EOM/;
         Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut tempus odio id
