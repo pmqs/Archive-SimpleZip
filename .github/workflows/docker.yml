@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: pmqs/raku-container-action@develop
+    container: jjmerelo/alpine-raku:latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
