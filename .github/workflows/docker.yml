@@ -17,10 +17,6 @@ jobs:
       uses: actions/checkout@v1
     - name: Raku version
       run: raku -v
-    - name: Install prove
-      run: |
-        apk add prove
-        prove -V
     - name: Install zip
       run: |
           apk add zip
@@ -32,4 +28,4 @@ jobs:
     - name: Install dependencies
       run: zef install --deps-only .
     - name: Run tests
-      run: prove -ve raku t
+      run: zef test --verbose .
