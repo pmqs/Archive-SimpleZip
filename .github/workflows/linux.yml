@@ -11,14 +11,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Tests this
+    container: jjmerelo/alpine-raku:latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Versions
+    - name: Raku version
+      run: raku -v
+    - name: Install zip
       run: |
+          apk add zip
           zip -v
-          unzip -v
-    - name: Runs tests
-      id: tests
-      uses: pmqs/raku-container-action@master
+    - name: Install unzip
+      run: |
+        apk add unzip
+        unzip -v
+    - name: Install dependencies
+      run: zef install --deps-only .
+    - name: Run tests
+      run: zef test --verbose .
