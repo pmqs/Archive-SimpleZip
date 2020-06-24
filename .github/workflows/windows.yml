@@ -1,12 +1,6 @@
 name: Windows build
 
-on:
-  push:
-    branches:
-      - '*'
-    tags-ignore:
-      - '*'
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   build:
@@ -19,7 +13,7 @@ jobs:
       run: perl -V
     - name: Windows Codepage
       run: chcp
-    - name: Install unzip 
+    - name: Install unzip
       run: |
         choco install unzip
         unzip -v
@@ -38,4 +32,3 @@ jobs:
       run: zef install --deps-only .
     - name: Test
       run: prove -v -e "perl6 -Ilib" t/
-      
