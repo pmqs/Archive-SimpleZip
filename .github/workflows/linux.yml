@@ -12,7 +12,7 @@ jobs:
       matrix:
         raku-version:
           - latest
-          - 2018.11
+          # - 2019.11
 
     container: jjmerelo/alpine-raku:${{ matrix.raku-version }}
 
