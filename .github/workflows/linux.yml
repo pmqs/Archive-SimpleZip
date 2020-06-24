@@ -5,7 +5,16 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: jjmerelo/alpine-raku:latest
+    name: "Raku version ${{ matrix.raku-version }}"
+
+    strategy:
+      matrix:
+        raku-version:
+          - latest
+          - 2018.12
+
+    container: jjmerelo/alpine-raku:${{ matrix.raku-version }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v1
