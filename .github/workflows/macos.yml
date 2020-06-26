@@ -10,19 +10,20 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install unzip
-      run: |
-        unzip -v
+    - name: unzip version
+      run: unzip -v
 
-    - name: Install zip
-      run: |
-        zip -v
+    - name: zip version
+      run: zip -v
 
     - name: Install Raku
       run: brew install rakudo
 
     - name: Raku version
       run: raku -v
+
+    - name: Install Zef
+      run: rakubrew build-zef
 
     - name: Install Module dependencies
       run: zef install --deps-only .
