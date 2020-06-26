@@ -9,26 +9,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Perl version
-      run: perl -V
+
     - name: Windows Codepage
       run: chcp
+
     - name: Install unzip
       run: |
         choco install unzip
         unzip -v
+
     - name: Install zip
       run: |
         choco install zip
         zip -v
+
     - name: Install Rakudostar
       run: |
         choco install rakudostar
         echo "::add-path::C:\rakudo\bin"
         echo "::add-path::C:\rakudo\share\perl6\site\bin"
+
     - name: Raku version
       run: perl6 -v
+
     - name: Install Module dependencies
       run: zef install --deps-only .
-    - name: Test
-      run: prove -v -e "perl6 -Ilib" t/
+
+    - name: Run tests
+      run: zef test --verbose .
