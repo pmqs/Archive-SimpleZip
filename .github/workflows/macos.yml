@@ -17,13 +17,10 @@ jobs:
       run: zip -v
 
     - name: Install Raku
-      run: brew install rakudo
+      run: brew install rakudo-star
 
     - name: Raku version
       run: raku -v
-
-    - name: Install Zef
-      run: rakubrew build-zef
 
     - name: Install Module dependencies
       run: zef install --deps-only .
