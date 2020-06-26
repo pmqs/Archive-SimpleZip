@@ -1,0 +1,31 @@
+name: MacOS build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install unzip
+      run: |
+        unzip -v
+
+    - name: Install zip
+      run: |
+        zip -v
+
+    - name: Install Raku
+      run: brew install rakudo
+
+    - name: Raku version
+      run: raku -v
+
+    - name: Install Module dependencies
+      run: zef install --deps-only .
+
+    - name: Run tests
+      run: zef test --verbose .
