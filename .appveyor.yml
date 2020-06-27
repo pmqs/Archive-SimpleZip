@@ -1,11 +1,4 @@
-# File sourced from https://github.com/briandfoy/perl6-PrettyDump/blob/master/.appveyor.yml
-
-# An experimental AppVeyor config to install Strawberry Perl and
-# Rakudo Star. Once installed, AppVeyor caches those for use next time.
-#
-# I specifically don't build Rakudo from GitHub because I want to use
-# the "normal people" release.
-
+# File mostly taken from https://github.com/briandfoy/perl6-PrettyDump/blob/master/.appveyor.yml
 
 # AppVeyor environment variables: https://www.appveyor.com/docs/environment-variables/
 
@@ -19,17 +12,7 @@ platform: x64
 # If the build is successful, AppVeyor caches these files and
 # directories for future builds
 cache:
-    - C:\Strawberry -> .appveyor_clear_cache.txt
     - C:\Rakudo -> .appveyor_clear_cache.txt
-
-branches:
-  only:
-    - master
-
-# set your own environment variables here.
-#
-# Perl 5's Test::Harness has several env variables (many appear as prove switches)
-#   https://metacpan.org/pod/Test::Harness
 
 environment:
     MY_VAR: true
@@ -44,31 +27,35 @@ environment:
 install:
   # Display Windows codepage
   - chcp
+
+  # Install bzip2 library
+
   - vcpkg install bzip2:x64-windows
-  # Install Strawberry Perl with chocolately.
-  # Strawberry Perl comes with `prove`, which we use to run the tests.
-  # http://strawberryperl.com
-  # https://chocolatey.org/packages/StrawberryPerl
-  - if not exist "C:\Strawberry" cinst strawberryperl
-  - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
-  # Install nfozip unzip & zip
-  - cinst unzip
+
+  # Install infozip unzip & zip
+  - choco install unzip
   - unzip -v
-  - cinst zip
+  - choco install zip
   - zip -v
+
   - ps: refreshenv
-  - if not exist "C:\Rakudo" cinst rakudostar
+
+  # Install Rakudostar
+  - if not exist "C:\Rakudo" choco install rakudostar
   - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
   - ps: refreshenv
+
+  # Display Raku version
   - perl6 -v
-  - zef --/tap-harness --/prove --debug install .
+
+  # Install module dependencies
+  # - zef --/tap-harness --/prove --debug install .
+  - zef install --deps-only .
 
 build: off
 
-# many of the settings in `environment` affect what happens in the test script
-#
-# I'd like to run Devel::Cover and submit to Coveralls too.
+
 test_script:
-  - prove -v -e "perl6 -Ilib" t/
+  - zef test --verbose .
 
 shallow_clone: true
