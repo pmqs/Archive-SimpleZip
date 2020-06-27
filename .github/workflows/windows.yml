@@ -19,7 +19,7 @@ jobs:
       choco install zip
       zip -v
 
-    # Install unzip for use in the test harness
+    # Install unzip for use in the test harness  
     - name: Install unzip
       run: |
         choco install unzip
