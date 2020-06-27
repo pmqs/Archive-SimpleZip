@@ -10,11 +10,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: unzip version
-      run: unzip -v
 
+    # zip is used in the test narness
     - name: zip version
       run: zip -v
+
+    # unzip is used in the test narness
+    - name: unzip version
+      run: unzip -v
 
     - name: Install Raku
       run: brew install rakudo-star

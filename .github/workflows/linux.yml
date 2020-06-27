@@ -13,7 +13,6 @@ jobs:
         raku-version:
           - latest
           - 2020.05
-          # - 2019.11
 
     container: jjmerelo/alpine-raku:${{ matrix.raku-version }}
 
@@ -24,11 +23,13 @@ jobs:
     - name: Raku version
       run: raku -v
 
+      # Install zip for use in the test harness
     - name: Install zip
       run: |
           apk add zip
           zip -v
 
+      # Install unzip for use in the test harness
     - name: Install unzip
       run: |
         apk add unzip
