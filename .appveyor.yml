@@ -32,10 +32,6 @@ install:
 
   - vcpkg install bzip2:x64-windows
 
-  # Install Strawberry Perl
-  - if not exist "C:\Strawberry" choco install strawberryperl
-  - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
-
   # Install infozip unzip & zip
   - choco install unzip
   - unzip -v
@@ -53,15 +49,12 @@ install:
   - perl6 -v
 
   # Install module dependencies
-  - zef --/tap-harness --/prove --debug install .
-  # - zef install --deps-only .
+  - zef install --deps-only .
 
 build: off
 
 
 test_script:
-  # - zef test --verbose .
-  - prove -v -e "perl6 -Ilib" t/
-
+  - zef test --verbose .
 
 shallow_clone: true
