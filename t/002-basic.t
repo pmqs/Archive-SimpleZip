@@ -6,7 +6,7 @@ use lib 't';
 
 use Test;
 
-plan 10;
+plan 11;
 
 use ZipTest;
 
@@ -288,6 +288,42 @@ subtest # List
     is get-filenames-in-zip($zipfile), $list, "filename OK";
 
 }, "list";
+
+subtest # List
+{
+    use IO::Glob;
+    unlink $zipfile;
+
+    my $dir2 = 'dir2';
+    ok mkdir $dir2, 0o777;
+
+    my $datafile = "$dir2/gdata123";
+    my $datafile1 = "gdata124";
+    my $datafile2 = "gdata125";
+
+    spurt $datafile, "some data" ;
+    spurt $datafile1, "more data" ;
+    spurt $datafile2, "even more data" ;
+
+    ok  $datafile.IO.e, "$datafile does exists";
+    nok $zipfile.IO.e, "$zipfile does not exists";
+
+    my $zip = SimpleZip.new($zipfile);
+    isa-ok $zip, SimpleZip;
+
+    my @got = glob("gdata*")>>.grep(/5/).$zip().subst(/"gdata"/, "fred");
+
+    ok $zip.close(), "closed";
+
+    is @got, 'fred125';
+    is get-filenames-in-zip($zipfile), $datafile2, "filename OK";
+
+    unlink $zipfile;
+
+    # @got = glob("gdata*").dir.$zip().subst(/"gdata"/, "fred");
+
+
+}, "CALL-ME";
 
 subtest
 {

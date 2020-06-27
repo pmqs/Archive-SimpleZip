@@ -1,5 +1,5 @@
 
-unit module Archive::SimpleZip:ver<0.3.0>:auth<Paul Marquess (pmqs@cpan.org)>;
+unit module Archive::SimpleZip:ver<0.4.0>:auth<Paul Marquess (pmqs@cpan.org)>;
 
 need Compress::Zlib;
 # need Compress::Bzip2; # disable for now
@@ -17,7 +17,7 @@ use CompUnit::Util :re-export;
 BEGIN re-export('Archive::SimpleZip::Headers');
 
 
-class SimpleZip is export
+class SimpleZip does Callable is export
 {
     has IO::Handle               $!zip-filehandle ;
     has IO::Path                 $.filename ;
@@ -52,6 +52,16 @@ class SimpleZip is export
     {
         $!any-zip64 = True
             if $!zip64 ;
+    }
+
+    method CALL-ME(IO() $path, |c --> IO)
+    {
+        return $path
+            unless $path ;
+
+        self.add($path, |c);
+
+        $path;
     }
 
     multi method add(Str:D $string, |c --> Int:D)
