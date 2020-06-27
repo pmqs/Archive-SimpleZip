@@ -10,7 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-
     # zip is used in the test narness
     - name: zip version
       run: zip -v
