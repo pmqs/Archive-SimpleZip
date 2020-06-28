@@ -10,21 +10,33 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # zip is used in the test narness
+    - name: Cache
+      id: my-cache
+      uses: actions/cache@v2
+      with:
+        path: /usr/local/Cellar/rakudo-star
+        key: macos.cache
+
+    # zip is used in the test harness
     - name: zip version
       run: zip -v
 
-    # unzip is used in the test narness
+    # unzip is used in the test harness
     - name: unzip version
       run: unzip -v
 
     - name: Install Raku
+      if: steps.my-cache.outputs.cache-hit != 'true'
       run: brew install rakudo-star
 
     - name: Raku version
       run: raku -v
 
+      - name: Raku full version
+      run: raku -V
+
     - name: Install Module dependencies
+      if: steps.my-cache.outputs.cache-hit != 'true'
       run: zef install --deps-only .
 
     - name: Run tests
