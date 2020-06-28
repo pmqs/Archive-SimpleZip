@@ -25,6 +25,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/${{ matrix.raku-version }}.cache
+        key: ${{ matrix.raku-version }}.cache
 
     - name: Raku version
       run: raku -v
