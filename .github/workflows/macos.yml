@@ -14,7 +14,7 @@ jobs:
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: /raku
+        path: $HOME/raku
         key: macos.cache
 
     # zip is used in the test harness
