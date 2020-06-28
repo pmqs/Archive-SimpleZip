@@ -20,13 +20,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Cache
-      id: my-cache
-      uses: actions/cache@v2
-      with:
-        path: /root/raku-install
-        key: ${{ matrix.raku-version }}.cache
-
     - name: Raku version
       run: raku -v
 
@@ -46,7 +39,6 @@ jobs:
         unzip -v
 
     - name: Install dependencies
-      if: steps.my-cache.outputs.cache-hit != 'true'
       run: zef install --deps-only .
 
     - name: Run tests
