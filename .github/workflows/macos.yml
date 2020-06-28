@@ -40,7 +40,8 @@ jobs:
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::/raku/rakudo-2020.06/bin"
+        echo "::add-path::$HOME/raku/rakudo-2020.06/bin"
+        ls -l $HOME/raku/rakudo-2020.06/bin
         echo $PATH
         
     - name: Raku version
