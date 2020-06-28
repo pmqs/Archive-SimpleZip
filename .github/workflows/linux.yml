@@ -24,7 +24,7 @@ jobs:
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: ~/${{ matrix.raku-version }}.cache
+        path: ~/.rakudobrew/**
         key: ${{ matrix.raku-version }}.cache
 
     - name: Raku version
@@ -32,14 +32,12 @@ jobs:
 
       # Install zip for use in the test harness
     - name: Install zip
-      if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
           apk add zip
           zip -v
 
       # Install unzip for use in the test harness
     - name: Install unzip
-      if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
         apk add unzip
         unzip -v
@@ -47,9 +45,6 @@ jobs:
     - name: Install dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: zef install --deps-only .
-
-    - name: Refresh Cache Flag
-      run: touch ~/${{ matrix.raku-version }}.cache
 
     - name: Run tests
       run: zef test --verbose .
