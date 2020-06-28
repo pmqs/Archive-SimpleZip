@@ -29,10 +29,14 @@ jobs:
       if: steps.my-cache.outputs.cache-hit != 'true'
 #       run: brew install rakudo-star
       run: |
-        mkdir /raku
-        wget https://rakudo.org/dl/rakudo/rakudo-moar-2020.06-01-macos-x86_64.tar.gz -O /raku/r.tar.gz
-        tar xvf /raku/r.tar.gz -C /raku
-        rm raku/r.tar.gz
+        pwd
+        echo Home is $HOME
+        echo GITHUB_WORKSPACE $GITHUB_WORKSPACE
+        mkdir $HOME/tmp
+        mkdir $HOME/raku        
+        wget https://rakudo.org/dl/rakudo/rakudo-moar-2020.06-01-macos-x86_64.tar.gz -O $HOME/tmp/r.tar.gz
+        tar xvf $HOME/tmp/r.tar.gz -C $HOME/raku
+        rm $HOME/tmp/r.tar.gz
 
     - name: Set Path for Raku
       run: |
