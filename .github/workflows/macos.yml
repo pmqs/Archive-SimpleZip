@@ -32,7 +32,7 @@ jobs:
     - name: Raku version
       run: raku -v
 
-      - name: Raku full version
+    - name: Raku full version
       run: raku -V
 
     - name: Install Module dependencies
