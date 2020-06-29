@@ -8,8 +8,8 @@ jobs:
     runs-on: macos-latest
 
     env:
-      RAKUDOLIB: ~/raku-lib
-      PERL6LIB: ~/raku-lib
+      RAKUDOLIB: $HOME/raku-lib
+      PERL6LIB: $HOME/raku-lib
 
     steps:
     - uses: actions/checkout@v2
@@ -41,7 +41,6 @@ jobs:
         echo RAKUDOLIB $RAKUDOLIB
         mkdir -p ~/tmp
         mkdir -p ~/raku
-        mkdir -p ~/raku-lib                        
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-2020.06-01-macos-x86_64.tar.gz -O ~/tmp/r.tar.gz
         tar xf ~/tmp/r.tar.gz -C ~/raku
         rm ~/tmp/r.tar.gz
@@ -70,7 +69,9 @@ jobs:
 
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
-      run: ~/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only --install-to=~/raku-lib .
+      run: |
+        mkdir -p $RAKUDOLIB                      
+        ~/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only --install-to=$RAKUDOLIB .
 
     - name: Run tests
       run: ~/raku/rakudo-2020.06/share/perl6/site/bin/zef test --verbose .
