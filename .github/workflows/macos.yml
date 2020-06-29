@@ -16,8 +16,8 @@ jobs:
       RAKU_INSTALL_PATH: $HOME/raku
       RAKULIB_PATH: $HOME/raku-lib
 
-      RAKUDOLIB: inst#$RAKULIB_PATH
-      PERL6LIB: inst#$RAKULIB_PATH
+      RAKUDOLIB: inst#${{ env.RAKULIB_PATH }}
+      PERL6LIB: inst#${{ env.RAKULIB_PATH }}
 
     steps:
     - uses: actions/checkout@v2
