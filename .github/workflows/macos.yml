@@ -40,8 +40,8 @@ jobs:
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::~/raku/rakudo-2020.06/bin"
-        echo "::add-path::~/raku/rakudo-2020.06/share/perl6/site/bin"
+        echo ::add-path::~/raku/rakudo-2020.06/bin
+        echo ::add-path::~/raku/rakudo-2020.06/share/perl6/site/bin
         echo -----------------
         ls -l ~
         echo ------------------
