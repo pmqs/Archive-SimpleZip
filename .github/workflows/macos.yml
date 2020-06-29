@@ -16,7 +16,7 @@ jobs:
       RAKUDOLIB: inst#$RAKULIB_PATH
       PERL6LIB: inst#$RAKULIB_PATH
  
-      RAKU_RELEASE: "2020.06-01"
+      RAKU_RELEASE: "2020.06"
       RAKU_DOT_RELEASE: "-01"
 
     steps:
