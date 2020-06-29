@@ -14,7 +14,9 @@ jobs:
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: ~/raku/**
+        path: |
+          ~/raku
+          ~/raku/**
         key: macos.cache
 
     # zip is used in the test harness
@@ -40,8 +42,8 @@ jobs:
 
     - name: Set Path for Raku
       run: |
-        echo ::add-path::~/raku/rakudo-2020.06/bin
-        echo ::add-path::~/raku/rakudo-2020.06/share/perl6/site/bin
+        echo "::add-path::$HOME/raku/rakudo-2020.06/bin"
+        echo "::add-path::$HOME/raku/rakudo-2020.06/share/perl6/site/bin"
         echo -----------------
         ls -l ~
         echo ------------------
