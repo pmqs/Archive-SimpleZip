@@ -29,7 +29,7 @@ jobs:
         path: |
           ${{ env.RAKULIB_PATH }}
           ${{ env.RAKULIB_PATH }}/**
-        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.ca
+        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.c
 
     # zip is used in the test harness
     - name: zip version
