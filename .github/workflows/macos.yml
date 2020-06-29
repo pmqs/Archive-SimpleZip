@@ -8,8 +8,7 @@ jobs:
     runs-on: macos-latest
 
     env:
-      RAKUDOLIB: $HOME/raku-lib
-      PERL6LIB: $HOME/raku-lib 
+      RAKULIB_PATH: $HOME/raku-lib
       RAKU_RELEASE: 2020.06-01
 
     steps:
@@ -20,8 +19,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          ~/raku-lib
-          ~/raku-lib/**
+          $RAKULIB_PATH
         key: macos.cache
 
     # zip is used in the test harness
@@ -58,9 +56,11 @@ jobs:
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir -p $RAKUDOLIB                       
-        zef install --deps-only --debug --verbose --install-to=$RAKUDOLIB .
-        find $RAKUDOLIB
+        mkdir -p $RAKULIB_PATH                       
+        zef install --deps-only --install-to=$RAKULIB_PATH .
         
     - name: Run tests
       run: zef test --debug --verbose .
+      env:
+        RAKUDOLIB: inst#$RAKULIB_PATH
+        PERL6LIB: inst#$RAKULIB_PATH 
