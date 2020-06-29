@@ -62,8 +62,9 @@ jobs:
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
         mkdir -p ${{ env.RAKULIB_PATH }}                       
-        zef install --deps-only --install-to=${{ env.RAKUDOLIB }} .
+        zef install --deps-only --install-to=inst#${{ env.RAKULIB_PATH }} .
         
     - name: Run tests
-      run: zef test --verbose .
+      run: RAKUDOLIB=inst#${{ env.RAKULIB_PATH }} zef test --verbose .
+        
 
