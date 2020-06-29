@@ -24,9 +24,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-          ${{ env.RAKULIB_PATH }}
-          ${{ env.RAKULIB_PATH }}/**
-        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.c
+          ${{ env.RAKU_INSTALL_PATH }}
+          ${{ env.RAKU_INSTALL_PATH }}/**
+        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.l
 
     # zip is used in the test harness
     - name: zip version
@@ -37,6 +37,7 @@ jobs:
       run: unzip -v
 
     - name: Install Raku
+      if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
@@ -59,16 +60,10 @@ jobs:
 
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
-      run: |
-        mkdir -p ${{ env.RAKULIB_PATH }}                       
-        zef install --deps-only --install-to=inst#${{ env.RAKULIB_PATH }} .
-        echo ------
-        find ${{ env.RAKULIB_PATH }}                       
-        
-        
+      run:  zef install --deps-only  .
+              
+              
     - name: Run tests
-      run: |
-        export PERL6LIB=inst#/Users/runner/raku-lib
-        PERL6LIB=inst#/Users/runner/raku-lib strace -f zef test --verbose .
+      run:  zef test --verbose .
         
 
