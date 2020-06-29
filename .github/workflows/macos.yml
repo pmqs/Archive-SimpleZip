@@ -41,9 +41,14 @@ jobs:
     - name: Set Path for Raku
       run: |
         echo "::add-path::$HOME/raku/rakudo-2020.06/bin"
+        echo "::add-path::$HOME/raku/rakudo-2020.06/share/perl6/site/bin"
         ls -l $HOME/raku/rakudo-2020.06/bin
-        echo $PATH
-        
+        echo -------------
+        ls -l $HOME/raku/rakudo-2020.06/share/perl6/site/bin
+      
+    - name: PATH
+      run: echo $PATH
+            
     - name: Raku version
       run: $HOME/raku/rakudo-2020.06/bin/raku -v
 
@@ -52,7 +57,7 @@ jobs:
 
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
-      run: $HOME/raku/rakudo-2020.06/bin/zef install --deps-only .
+      run: $HOME/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only .
 
     - name: Run tests
-      run: $HOME/raku/rakudo-2020.06/bin/zef test --verbose .
+      run: $HOME/raku/rakudo-2020.06/share/perl6/site/bin/zef test --verbose .
