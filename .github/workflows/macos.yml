@@ -65,6 +65,8 @@ jobs:
         zef install --deps-only --install-to=inst#${{ env.RAKULIB_PATH }} .
         
     - name: Run tests
-      run: RAKUDOLIB=inst#${{ env.RAKULIB_PATH }} zef test --verbose .
+      run: |
+        export RAKUDOLIB=inst#${{ env.RAKULIB_PATH }} 
+        zef test --verbose .
         
 
