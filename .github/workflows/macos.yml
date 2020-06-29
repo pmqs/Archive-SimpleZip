@@ -16,9 +16,6 @@ jobs:
       RAKU_INSTALL_PATH: $HOME/raku
       RAKULIB_PATH: $HOME/raku-lib
 
-      RAKUDOLIB: inst#$RAKULIB_PATH
-      PERL6LIB: inst#$RAKULIB_PATH
-
     steps:
     - uses: actions/checkout@v2
 
@@ -71,9 +68,7 @@ jobs:
         
     - name: Run tests
       run: |
-        export RAKULIB=inst#/Users/runner/raku-lib
-        echo RAKULIB $RAKULIB
-        find $RAKULIB
-        RAKULIB=inst#/Users/runner/raku-lib zef test --verbose .
+        export PERL6LIB=inst#/Users/runner/raku-lib
+        PERL6LIB=inst#/Users/runner/raku-lib zef test --verbose .
         
 
