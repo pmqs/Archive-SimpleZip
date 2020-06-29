@@ -73,8 +73,11 @@ jobs:
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir -p $RAKUDOLIB                      
-        zef install --deps-only --debug --verbose --install-to=~/raku-lib .
+        mkdir -p ~/raku-lib                       
+        zef install --deps-only --debug --verbose  .
+
+        # zef install --deps-only --debug --verbose --install-to=~/raku-lib .
+        
 
     - name: Run tests
       run: ~/raku/rakudo-2020.06/share/perl6/site/bin/zef test --verbose .
