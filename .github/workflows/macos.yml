@@ -69,6 +69,6 @@ jobs:
     - name: Run tests
       run: |
         export PERL6LIB=inst#/Users/runner/raku-lib
-        PERL6LIB=inst#/Users/runner/raku-lib zef test --verbose .
+        PERL6LIB=inst#/Users/runner/raku-lib strece -f zef test --verbose .
         
 
