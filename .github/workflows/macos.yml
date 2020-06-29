@@ -65,6 +65,9 @@ jobs:
       run: |
         mkdir -p ${{ env.RAKULIB_PATH }}                       
         zef install --deps-only --install-to=inst#${{ env.RAKULIB_PATH }} .
+        echo ------
+        find ${{ env.RAKULIB_PATH }}                       
+        
         
     - name: Run tests
       run: |
