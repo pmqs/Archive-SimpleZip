@@ -27,7 +27,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: $RAKULIB_PATH
-        key: macos.cache
+        key: ${PLATFORM}-${RAKU_RELEASE}${RAKU_DOT_RELEASE}.cache
 
     # zip is used in the test harness
     - name: zip version
@@ -40,14 +40,14 @@ jobs:
     - name: Install Raku
       run: |
         mkdir -p $RAKU_INSTALL_PATH                       
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-$(RAKU_RELEASE)$(RAKU_DOT_RELEASE)-$(PLATFORM)-x86_64.tar.gz -O $HOME/r.tar.gz
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${RAKU_RELEASE}${RAKU_DOT_RELEASE}-${PLATFORM}-x86_64.tar.gz -O $HOME/r.tar.gz
         tar xf $HOME/r.tar.gz -C $RAKU_INSTALL_PATH
         rm $HOME/r.tar.gz
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::$RAKU_INSTALL_PATH/rakudo-$(RAKU_RELEASE)/bin"
-        echo "::add-path::$RAKU_INSTALL_PATH/rakudo-$(RAKU_RELEASE)/share/perl6/site/bin"
+        echo "::add-path::$RAKU_INSTALL_PATH/rakudo-${RAKU_RELEASE}/bin"
+        echo "::add-path::$RAKU_INSTALL_PATH/rakudo-${RAKU_RELEASE}/share/perl6/site/bin"
       
     - name: PATH
       run: echo $PATH
