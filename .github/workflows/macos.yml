@@ -71,9 +71,9 @@ jobs:
         
     - name: Run tests
       run: |
-        export RAKULIB=inst#${{ env.RAKULIB_PATH }} 
-        echo RAKULIB $RAKUDOLIB
-        find ${{ env.RAKULIB_PATH }}
-        RAKULIB=$HOME/raku-lib zef test --verbose .
+        export RAKULIB=/Users/runner/raku-lib
+        echo RAKULIB $RAKULIB
+        find $RAKULIB
+        RAKULIB=/Users/runner/raku-lib zef test --verbose .
         
 
