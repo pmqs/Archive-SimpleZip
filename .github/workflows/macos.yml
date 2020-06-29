@@ -8,8 +8,9 @@ jobs:
     runs-on: macos-latest
 
     env:
-      RAKUDOLIB: $HOME/raku-lib
-      PERL6LIB: $HOME/raku-lib 
+      a: b  
+#       RAKUDOLIB: $HOME/raku-lib
+#       PERL6LIB: $HOME/raku-lib 
 
     steps:
     - uses: actions/checkout@v2
@@ -64,11 +65,10 @@ jobs:
       run: echo $PATH
             
     - name: Raku short version
-#       run: ~/raku/rakudo-2020.06/bin/raku -v
       run: raku -v
 
     - name: Raku full version
-      run: ~/raku/rakudo-2020.06/bin/raku -V
+      run: raku -V
 
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
