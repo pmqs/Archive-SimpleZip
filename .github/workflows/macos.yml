@@ -71,9 +71,9 @@ jobs:
         
     - name: Run tests
       run: |
-        export RAKULIB=/Users/runner/raku-lib
+        export RAKULIB=inst#/Users/runner/raku-lib
         echo RAKULIB $RAKULIB
         find $RAKULIB
-        RAKULIB=/Users/runner/raku-lib zef test --verbose .
+        RAKULIB=inst#/Users/runner/raku-lib zef test --verbose .
         
 
