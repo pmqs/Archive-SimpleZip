@@ -9,7 +9,7 @@ jobs:
 
     env:
       RAKUDOLIB: $HOME/raku-lib
-      PERL6LIB: $HOME/raku-lib
+      PERL6LIB: $HOME/raku-lib 
 
     steps:
     - uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
         echo "::add-path::$HOME/raku/rakudo-2020.06/share/perl6/site/bin"
         echo -----------------
         ls -l ~
-        echo ------------------
+        echo -----------------
         ls -l ~/raku
         echo ----------------
         ls -l ~/raku/rakudo-2020.06/bin
