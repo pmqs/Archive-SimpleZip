@@ -14,7 +14,7 @@ jobs:
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: $HOME/rakus/**
+        path: ~/raku/**
         key: macos.cache
 
     # zip is used in the test harness
@@ -30,39 +30,39 @@ jobs:
 #       run: brew install rakudo-star
       run: |
         pwd
-        echo Home is $HOME
+        echo Home is ~
         echo GITHUB_WORKSPACE $GITHUB_WORKSPACE
-        mkdir -p $HOME/tmp
-        mkdir -p $HOME/raku        
-        wget https://rakudo.org/dl/rakudo/rakudo-moar-2020.06-01-macos-x86_64.tar.gz -O $HOME/tmp/r.tar.gz
-        tar xvf $HOME/tmp/r.tar.gz -C $HOME/raku
-        rm $HOME/tmp/r.tar.gz
+        mkdir -p ~/tmp
+        mkdir -p ~/raku        
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-2020.06-01-macos-x86_64.tar.gz -O ~/tmp/r.tar.gz
+        tar xvf ~/tmp/r.tar.gz -C ~/raku
+        rm ~/tmp/r.tar.gz
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::$HOME/raku/rakudo-2020.06/bin"
-        echo "::add-path::$HOME/raku/rakudo-2020.06/share/perl6/site/bin"
+        echo "::add-path::~/raku/rakudo-2020.06/bin"
+        echo "::add-path::~/raku/rakudo-2020.06/share/perl6/site/bin"
         echo -----------------
-        ls -l $HOME
+        ls -l ~
         echo ------------------
-        ls -l $HOME/raku
+        ls -l ~/raku
         echo ----------------
-        ls -l $HOME/raku/rakudo-2020.06/bin
+        ls -l ~/raku/rakudo-2020.06/bin
         echo -------------
-        ls -l $HOME/raku/rakudo-2020.06/share/perl6/site/bin
+        ls -l ~/raku/rakudo-2020.06/share/perl6/site/bin
       
     - name: PATH
       run: echo $PATH
             
     - name: Raku short version
-      run: $HOME/raku/rakudo-2020.06/bin/raku -v
+      run: ~/raku/rakudo-2020.06/bin/raku -v
 
     - name: Raku full version
-      run: $HOME/raku/rakudo-2020.06/bin/raku -V
+      run: ~/raku/rakudo-2020.06/bin/raku -V
 
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
-      run: $HOME/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only .
+      run: ~/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only .
 
     - name: Run tests
-      run: $HOME/raku/rakudo-2020.06/share/perl6/site/bin/zef test --verbose .
+      run: ~/raku/rakudo-2020.06/share/perl6/site/bin/zef test --verbose .
