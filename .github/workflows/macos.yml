@@ -10,14 +10,14 @@ jobs:
     env:
       PLATFORM: macos
 
+      RAKU_RELEASE: "2020.06"
+      RAKU_DOT_RELEASE: "-01"
+
       RAKU_INSTALL_PATH: $HOME/raku
       RAKULIB_PATH: $HOME/raku-lib
 
       RAKUDOLIB: inst#$RAKULIB_PATH
       PERL6LIB: inst#$RAKULIB_PATH
- 
-      RAKU_RELEASE: "2020.06"
-      RAKU_DOT_RELEASE: "-01"
 
     steps:
     - uses: actions/checkout@v2
@@ -26,7 +26,7 @@ jobs:
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: $RAKULIB_PATH
+        path: ${{ env.RAKULIB_PATH }}
         key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.cache
 
     # zip is used in the test harness
@@ -39,18 +39,18 @@ jobs:
 
     - name: Install Raku
       run: |
-        mkdir -p $RAKU_INSTALL_PATH                       
+        mkdir -p ${{ env.RAKU_INSTALL_PATH }}
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
-        tar xf $HOME/r.tar.gz -C $RAKU_INSTALL_PATH
-        rm $HOME/r.tar.gz
+        tar xf ${{ env.HOME }}/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+        rm ${{ env.HOME }}/r.tar.gz
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::$RAKU_INSTALL_PATH/rakudo-${{ env.RAKU_RELEASE }}/bin"
-        echo "::add-path::$RAKU_INSTALL_PATH/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
+        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/bin"
+        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
       
     - name: PATH
-      run: echo $PATH
+      run: echo ${{ env.PATH }}
             
     - name: Raku short version
       run: raku -v
@@ -61,8 +61,8 @@ jobs:
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir -p $RAKULIB_PATH                       
-        zef install --deps-only --install-to=$RAKUDOLIB .
+        mkdir -p ${{ env.RAKULIB_PATH }}                       
+        zef install --deps-only --install-to=${{ env.RAKUDOLIB }} .
         
     - name: Run tests
       run: zef test --verbose .
