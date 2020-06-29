@@ -41,8 +41,8 @@ jobs:
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
-        tar xf ${{ env.HOME }}/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
-        rm ${{ env.HOME }}/r.tar.gz
+        tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+        rm $HOME/r.tar.gz
 
     - name: Set Path for Raku
       run: |
@@ -50,7 +50,7 @@ jobs:
         echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
       
     - name: PATH
-      run: echo ${{ env.PATH }}
+      run: echo $PATH
             
     - name: Raku short version
       run: raku -v
