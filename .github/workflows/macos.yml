@@ -73,7 +73,7 @@ jobs:
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
         mkdir -p $RAKUDOLIB                      
-        ~/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only --install-to=$RAKUDOLIB .
+        ~/raku/rakudo-2020.06/share/perl6/site/bin/zef install --deps-only --debug --install-to=$RAKUDOLIB .
 
     - name: Run tests
       run: ~/raku/rakudo-2020.06/share/perl6/site/bin/zef test --verbose .
