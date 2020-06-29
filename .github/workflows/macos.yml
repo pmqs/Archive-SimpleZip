@@ -67,6 +67,7 @@ jobs:
     - name: Run tests
       run: |
         export RAKUDOLIB=inst#${{ env.RAKULIB_PATH }} 
+        find $RAKUDOLIB
         zef test --verbose .
         
 
