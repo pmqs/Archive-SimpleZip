@@ -62,4 +62,7 @@ jobs:
         zef install --deps-only --debug --verbose --install-to=$RAKUDOLIB .
         
     - name: Run tests
-      run: zef test --verbose .
+      run: |
+        export RAKUDOLIB=$HOME/raku-lib
+        export PERL6LIB=$HOME/raku-lib        
+        zef test --verbose .
