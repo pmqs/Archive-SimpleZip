@@ -7,24 +7,28 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        raku-release:
+          - '2020.06'
+  
     env:
-      PLATFORM: linux
-
-      RAKU_RELEASE: "2020.06"
-      RAKU_DOT_RELEASE: "-01"
-
-      RAKU_INSTALL_PATH: $HOME/raku
-
+      RAKU_INSTALL_PATH: $HOME/raku-${{ matrix.raku-release }}
+    
     steps:
     - uses: actions/checkout@v2
 
+    # zip is used in the test harness
+    - name: env
+      run: env
+      
     - name: Check Cache
       id: my-cache
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.caaabc
-
+        key: ${{ matrix.raku-release }}.caaabc
+     
     # zip is used in the test harness
     - name: zip version
       run: zip -v
