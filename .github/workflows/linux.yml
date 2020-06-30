@@ -5,12 +5,12 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: ubuntu.latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
         raku-release:
-          - '2020.06'
+          - 2020.06
                 
     steps:
          
