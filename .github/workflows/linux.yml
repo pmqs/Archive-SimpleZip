@@ -51,9 +51,9 @@ jobs:
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::${{ matrix.raku-release }}/bin"
-        echo "::add-path::${{ matrix.raku-release }}/share/perl6/site/bin"
-
+        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ matrix.raku-release }}/bin"
+        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ matrix.raku-release }}/share/perl6/site/bin"
+        
     - name: Raku short version
       run: raku -v
 
