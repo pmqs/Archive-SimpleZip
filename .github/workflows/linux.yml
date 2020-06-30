@@ -15,21 +15,20 @@ jobs:
 #           - 'windows-latest'
         raku-release:
           - '2020.06'
-
                 
     steps:
          
     - uses: actions/checkout@v2
       
-    - name: Set Windows Path
-      if: startsWith(matrix.os, 'windows')
-      run: |
-        echo "::set-env name=INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
-        
-#     - name: Set Linux/MacOS Path
-#       if: ${{ ! startsWith(matrix.os, 'windows') }}
+#     - name: Set Windows Path
+#       if: startsWith(matrix.os, 'windows')
 #       run: |
-#         echo "::set-env name=INSTALL_PATH::$HOME/${{ matrix.os }}.${{ matrix.raku-release }}"        
+#         echo "::set-env name=INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
+        
+    - name: Set Linux/MacOS Path
+      if: ${{ ! startsWith(matrix.os, 'windows') }}
+      run: |
+        echo "::set-env name=INSTALL_PATH::$HOME/${{ matrix.os }}.${{ matrix.raku-release }}"        
         
     - name: Show
       run: |
