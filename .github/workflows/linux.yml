@@ -5,14 +5,10 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu.latest
 
     strategy:
       matrix:
-        os: 
-          - 'ubuntu-latest'
-#           - 'macos-latest'
-#           - 'windows-latest'
         raku-release:
           - '2020.06'
                 
@@ -25,10 +21,9 @@ jobs:
 #       run: |
 #         echo "::set-env name=RAKR_INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
         
-    - name: Set Linux/MacOS Path
-      if: ${{ ! startsWith(matrix.os, 'windows') }}
+    - name: Set Path
       run: |
-        echo "::set-env name=RAKU_INSTALL_PATH::$HOME/${{ matrix.os }}.${{ matrix.raku-release }}"        
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"        
         
     - name: Show
       run: |
@@ -47,12 +42,12 @@ jobs:
       run: echo $PATH
 
     - name: Install Raku
-      if: steps.my-cache.outputs.cache-hit != 'true'
+      if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
-        mkdir ${{ env.RAKU_INSTALL_PATH }}
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.PLATFORM }}-x86_64.tar.gz -O r.tar.gz
-        tar xf r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
-        rm r.tar.gz
+        mkdir -p ${{ env.RAKU_INSTALL_PATH }}
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz -O $HOME/r.tar.gz
+        tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+        rm $HOME/r.tar.gz
 
     - name: Set Path for Raku
       run: |
