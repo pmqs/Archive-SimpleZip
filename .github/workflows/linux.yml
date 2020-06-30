@@ -13,7 +13,7 @@ jobs:
           - '2020.06'
   
     env:
-      RAKU_INSTALL_PATH: ~/raku-${{ matrix.raku-release }}
+      RAKU_INSTALL_PATH: ${{ env.HOME }}/raku-${{ matrix.raku-release }}
     
     steps:
     - uses: actions/checkout@v2
@@ -41,14 +41,14 @@ jobs:
       if: steps.my-cache.outputs.cache-hit != 'true'
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
         rm $HOME/r.tar.gz
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/bin"
-        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
+        echo "::add-path::${{ matrix.raku-release }}/bin"
+        echo "::add-path::${{ matrix.raku-release }}/share/perl6/site/bin"
         echo find
         find $HOME -name manifest.txt
         echo found
