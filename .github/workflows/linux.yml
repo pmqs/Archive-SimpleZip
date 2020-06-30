@@ -24,9 +24,11 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
+          /home/runner/raku
+          /home/runner/raku/**
           ${{ env.RAKU_INSTALL_PATH }}
           ${{ env.RAKU_INSTALL_PATH }}/**
-        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.cache
+        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.c
 
     # zip is used in the test harness
     - name: zip version
@@ -49,6 +51,8 @@ jobs:
         echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/bin"
         echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
         ls -l $HOME
+        ls -l $HOME/work
+        ls -l $HOME/work/_temp
         ls -l $HOME/raku
       
     - name: PATH
