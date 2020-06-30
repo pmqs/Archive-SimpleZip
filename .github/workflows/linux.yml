@@ -50,10 +50,14 @@ jobs:
       run: |
         echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/bin"
         echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
+        echo find
+        find $HOME -name manifest.txt
+        echo found
         ls -l $HOME
         ls -l $HOME/work
         ls -l $HOME/work/_temp
         ls -l $HOME/raku
+        
       
     - name: PATH
       run: echo $PATH
