@@ -13,7 +13,7 @@ jobs:
           - '2020.06'
   
     env:
-      RAKU_INSTALL_PATH: ${{ env.HOME }}/raku-${{ matrix.raku-release }}
+      RAKU_INSTALL_PATH: $HOME/raku-${{ matrix.raku-release }}
     
     steps:
     - uses: actions/checkout@v2
