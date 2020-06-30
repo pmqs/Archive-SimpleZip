@@ -23,29 +23,42 @@ jobs:
 #     - name: Set Windows Path
 #       if: startsWith(matrix.os, 'windows')
 #       run: |
-#         echo "::set-env name=INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
+#         echo "::set-env name=RAKR_INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
         
     - name: Set Linux/MacOS Path
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
-        echo "::set-env name=INSTALL_PATH::$HOME/${{ matrix.os }}.${{ matrix.raku-release }}"        
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME/${{ matrix.os }}.${{ matrix.raku-release }}"        
         
     - name: Show
       run: |
-        echo INSTALL_PATH $INSTALL_PATH
+        echo INSTALL_PATH $RAKU_INSTALL_PATH
         echo RELEASE ${{ matrix.raku-release }}
-        echo INSTALL_PATH ${{ env.INSTALL_PATH }}
+        echo INSTALL_PATH ${{ env.RAKU_INSTALL_PATH }}
       
     - name: Check Cache
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: ${{ env.INSTALL_PATH }}
+        path: ${{ env.RAKU_INSTALL_PATH }}
         key: ${{ matrix.raku-release }}
      
     - name: PATH
       run: echo $PATH
-            
+
+    - name: Install Raku
+      if: steps.my-cache.outputs.cache-hit != 'true'
+      run: |
+        mkdir ${{ env.RAKU_INSTALL_PATH }}
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.PLATFORM }}-x86_64.tar.gz -O r.tar.gz
+        tar xf r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+        rm r.tar.gz
+
+    - name: Set Path for Raku
+      run: |
+        echo "::add-path::${{ matrix.raku-release }}/bin"
+        echo "::add-path::${{ matrix.raku-release }}/share/perl6/site/bin"
+
     - name: Raku short version
       run: raku -v
 
