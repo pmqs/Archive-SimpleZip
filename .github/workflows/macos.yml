@@ -30,16 +30,13 @@ jobs:
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"               
-        echo "::set-env name=RAKU_IPLATFORM::$HOME/raku-${{ matrix.raku-release }}"               
-        
-       
       
     - name: Check Cache
       id: my-cache
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ matrix.raku-release }}
+        key: ${{ matrix.raku-release }}-x
      
     - name: PATH
       run: echo $PATH
