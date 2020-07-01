@@ -21,12 +21,12 @@ jobs:
          
     - uses: actions/checkout@v2
       
-#     - name: Set Windows Path
+#     - name: Set Raku install Path (Windoes)
 #       if: startsWith(matrix.os, 'windows')
 #       run: |
-#         echo "::set-env name=RAKR_INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
+#         echo "::set-env name=RAKU_INSTALL_PATH::$HOME\${{ matrix.raku-release }}"
         
-    - name: Set Path (Linux/MacOS)
+    - name: Set Raku install Path (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"               
@@ -48,9 +48,19 @@ jobs:
         else
             RAKU_OS=macos
         fi
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O $HOME/r.tar.gz
-        tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
-        rm $HOME/r.tar.gz
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O - | tar xf - -C ${{ env.RAKU_INSTALL_PATH }}
+        
+        #wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O $HOME/r.tar.gz
+        #tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+        #rm $HOME/r.tar.gz
+        
+#     - name: Install Raku (Windows)
+#       if: ${{ startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
+#       run: |
+#         mkdir ${{ env.RAKU_INSTALL_PATH }}
+#         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-win-x86_64.tar.gz -O $HOME\r.tar.gz
+#         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+#         rm $HOME/r.tar.gz        
 
     - name: Get Path for Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
@@ -63,7 +73,14 @@ jobs:
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |        
         echo "::add-path::$RAKU_BASE_PATH/bin"
-        echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"        
+        echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"     
+        
+    - name: Set Path for Raku (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |        
+        echo "::add-path::$RAKU_BASE_PATH\bin"
+        echo "::add-path::$RAKU_BASE_PATH\share/perl6/site/bin"        
+                
         
     - name: Raku short version
       run: raku -v
