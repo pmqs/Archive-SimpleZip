@@ -53,11 +53,14 @@ jobs:
         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
         rm $HOME/r.tar.gz
 
-    - name: Set Path for Raku
+    - name: Get Path for Raku
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
         BASE_RELEASE=$( ls )       
-        RAKU_BASE_PATH=$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE         
+        RAKU_BASE_PATH=$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE 
+        
+    - name: Set Path for Raku
+      run: |                
         echo "::add-path::${{ env.RAKU_BASE_PATH }}/bin"
         echo "::add-path::${{ env.RAKU_BASE_PATH }}/share/perl6/site/bin"
         
