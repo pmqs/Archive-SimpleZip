@@ -7,50 +7,58 @@ jobs:
 
     runs-on: macos-latest
 
-    env:
-      PLATFORM: macos
-
-      RAKU_RELEASE: "2020.06"
-      RAKU_DOT_RELEASE: "-01"
-
-      RAKU_INSTALL_PATH: $HOME/raku
-      RAKULIB_PATH: $HOME/raku-lib
-
+    strategy:
+      matrix:
+        raku-release:
+          - 2020.06-01
+          - 2020.05.1-01
+                
     steps:
+         
     - uses: actions/checkout@v2
-
+      
+#     - name: Set Windows Path
+#       if: startsWith(matrix.os, 'windows')
+#       run: |
+#         echo "::set-env name=RAKR_INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
+        
+    - name: Set Path
+      run: |
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"                
+        BASE_RELEASE=`echo ${{ matrix.raku-release }} | sed -e 's/-.*$//' `        
+        echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"                          
+        
+    - name: Show
+      run: |
+        echo INSTALL_PATH $RAKU_INSTALL_PATH
+        echo RELEASE ${{ matrix.raku-release }}
+        echo INSTALL_PATH ${{ env.RAKU_INSTALL_PATH }}
+        echo RAKU_BASE_PATH ${{ env.RAKU_BASE_PATH }}
+        
+      
     - name: Check Cache
       id: my-cache
       uses: actions/cache@v2
       with:
-        path: |
-          ${{ env.RAKULIB_PATH }}
-          ${{ env.RAKULIB_PATH }}/**
-        key: ${{ env.PLATFORM }}-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}.c
-
-    # zip is used in the test harness
-    - name: zip version
-      run: zip -v
-
-    # unzip is used in the test harness
-    - name: unzip version
-      run: unzip -v
+        path: ${{ env.RAKU_INSTALL_PATH }}
+        key: ${{ matrix.raku-release }}
+     
+    - name: PATH
+      run: echo $PATH
 
     - name: Install Raku
+      if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_RELEASE }}${{ env.RAKU_DOT_RELEASE }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-01-linux-x86_64.tar.gz -O $HOME/r.tar.gz
         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
         rm $HOME/r.tar.gz
 
     - name: Set Path for Raku
       run: |
-        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/bin"
-        echo "::add-path::${{ env.RAKU_INSTALL_PATH }}/rakudo-${{ env.RAKU_RELEASE }}/share/perl6/site/bin"
-      
-    - name: PATH
-      run: echo $PATH
-            
+        echo "::add-path::${{ env.RAKU_BASE_PATH }}/bin"
+        echo "::add-path::${{ env.RAKU_BASE_PATH }}/share/perl6/site/bin"
+        
     - name: Raku short version
       run: raku -v
 
@@ -59,16 +67,111 @@ jobs:
 
     - name: Install Module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
-      run: |
-        mkdir -p ${{ env.RAKULIB_PATH }}                       
-        zef install --deps-only --install-to=inst#${{ env.RAKULIB_PATH }} .
-        echo ------
-        find ${{ env.RAKULIB_PATH }}                       
-        
-        
+      run:  zef install --deps-only  .          
+              
     - name: Run tests
-      run: |
-        export PERL6LIB=inst#/Users/runner/raku-lib
-        PERL6LIB=inst#/Users/runner/raku-lib zef test --verbose .
+      run:  zef test --verbose .
+
+
+# #     - name: Install 
+# #       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
+# #       run: |
+# #         mkdir $INSTALL_PATH
+# #         echo abc >$INSTALL_PATH/token
+
+#     - name: Install 
+#       if:  steps.my-cache.outputs.cache-hit != 'true' 
+#       run: |
+#         mkdir ${{ env.INSTALL_PATH }}
+#         cd ${{ env.INSTALL_PATH }}
+#         echo abc >token
         
+#     - name: Work
+#       run: |
+#         cd ${{ env.INSTALL_PATH }}
+#         cat token
+#         echo this is ${{ matrix.os }} ${{ matrix.release }}
+
+    
+    
+
+
+# name: Linux build
+
+# on: [push, pull_request]
+
+# jobs:
+#   build:
+
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#       matrix:
+#         raku-release:
+#           - '2020.06'
+  
+#     env:
+#       RAKU_INSTALL_PATH: $HOME/raku-${{ matrix.raku-release }}
+    
+#     steps:
+#     - uses: actions/checkout@v2
+
+#     # zip is used in the test harness
+#     - name: env
+#       run: env
+      
+#     - name: Check Cache
+#       id: my-cache
+#       uses: actions/cache@v2
+#       with:
+#         path: ${{ env.RAKU_INSTALL_PATH }}
+#         key: ${{ matrix.raku-release }}.caaabc
+     
+#     # zip is used in the test harness
+#     - name: zip version
+#       run: zip -v
+
+#     # unzip is used in the test harness
+#     - name: unzip version
+#       run: unzip -v
+
+#     - name: Install Raku
+#       if: steps.my-cache.outputs.cache-hit != 'true'
+#       run: |
+#         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
+#         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
+#         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
+#         rm $HOME/r.tar.gz
+
+#     - name: Set Path for Raku
+#       run: |
+#         echo "::add-path::${{ matrix.raku-release }}/bin"
+#         echo "::add-path::${{ matrix.raku-release }}/share/perl6/site/bin"
+#         echo find
+#         find $HOME -name manifest.txt
+#         echo found
+#         ls -l $HOME
+#         ls -l $HOME/work
+#         ls -l $HOME/work/_temp
+#         ls -l $HOME/raku
+        
+      
+#     - name: PATH
+#       run: echo $PATH
+            
+#     - name: Raku short version
+#       run: raku -v
+
+#     - name: Raku full version
+#       run: raku -V
+
+#     - name: Install Module dependencies
+#       if: steps.my-cache.outputs.cache-hit != 'true'
+#       run:  zef install --deps-only  .
+              
+              
+#     - name: Run tests
+#       run:  zef test --verbose .
+        
+
 
