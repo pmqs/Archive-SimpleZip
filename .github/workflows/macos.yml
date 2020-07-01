@@ -5,13 +5,13 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         os: 
           - macos-latest
-#           - ubuntu-latest
+          - ubuntu-latest
 #           - windows-latest
         raku-release:
           - 2020.06-01
@@ -38,9 +38,6 @@ jobs:
         path: ${{ env.RAKU_INSTALL_PATH }}
         key: ${{ matrix.raku-release }}-x
      
-    - name: PATH
-      run: echo $PATH
-
     - name: Install Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
