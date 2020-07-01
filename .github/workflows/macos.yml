@@ -65,7 +65,7 @@ jobs:
     - name: Set Path for Raku
       run: |        
         echo RAKU_BASE_PATH $RAKU_BASE_PATH
-        echo RAKU_BASE_PATH ${{ BASE_PATH }}
+        echo RAKU_BASE_PATH ${{ env.BASE_PATH }}
         echo "::add-path::$RAKU_BASE_PATH/bin"
         echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"
         
