@@ -59,7 +59,6 @@ jobs:
         BASE_RELEASE=$( ls )       
         echo BASE_PATH = $BASE_PATH
         RAKU_BASE_PATH=$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE 
-        echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"               
         
         
     - name: Set Path for Raku
