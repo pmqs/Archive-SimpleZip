@@ -36,7 +36,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ matrix.raku-release }}-x
+        key: ${{ matrix.raku-release }}-x1
      
     - name: Install Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
