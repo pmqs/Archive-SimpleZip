@@ -55,9 +55,22 @@ jobs:
       if: ${{ startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir ${{ env.RAKU_INSTALL_PATH }}
+        choco install wget
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-win-x86_64.tar.gz - | tar xzf - -C ${{ env.RAKU_INSTALL_PATH }}
    
-
+    # Install zip for use in the test harness
+    - name: Install zip (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |
+        choco install zip
+        zip -v
+    # Install unzip for use in the test harness  
+    - name: Install unzip (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}      
+      run: |
+        choco install unzip
+        unzip -v
+        
     - name: Get Path for Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
