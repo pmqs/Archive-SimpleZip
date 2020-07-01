@@ -9,6 +9,10 @@ jobs:
 
     strategy:
       matrix:
+        os: 
+          - macos-latest
+          - ubuntu-latest
+#           - windows-latest
         raku-release:
           - 2020.06-01
           - 2020.05.1-01
@@ -22,18 +26,13 @@ jobs:
 #       run: |
 #         echo "::set-env name=RAKR_INSTALL_PATH::$HOME\${{ matrix.os }}.${{ matrix.raku-release }}"
         
-    - name: Set Path
+    - name: Set Path (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"               
+        echo "::set-env name=RAKU_IPLATFORM::$HOME/raku-${{ matrix.raku-release }}"               
         
-    - name: Show
-      run: |
-        echo INSTALL_PATH $RAKU_INSTALL_PATH
-        echo RELEASE ${{ matrix.raku-release }}
-        echo INSTALL_PATH ${{ env.RAKU_INSTALL_PATH }}
-        echo RAKU_BASE_PATH ${{ env.RAKU_BASE_PATH }}
-        
+       
       
     - name: Check Cache
       id: my-cache
@@ -45,32 +44,32 @@ jobs:
     - name: PATH
       run: echo $PATH
 
-    - name: Install Raku
+    - name: Install Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-macos-x86_64.tar.gz -O $HOME/r.tar.gz
+        if [[ "${{ matrix.os }}" = ubuntu* ]]
+        then
+            RAKU_OS=linux
+        else
+            RAKU_OS=macos
+        fi
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O $HOME/r.tar.gz
         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
         rm $HOME/r.tar.gz
 
-    - name: Get Path for Raku
+    - name: Get Path for Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
         BASE_RELEASE=$( ls )       
-        #echo BASE_PATH = $BASE_PATH
-        # RAKU_BASE_PATH=$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE 
         echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"               
-        
-        
-    - name: Set Path for Raku
+              
+    - name: Set Path for Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |        
-        #echo RAKU_BASE_PATH $RAKU_BASE_PATH
-        #echo RAKU_BASE_PATH ${{ env.RAKU_BASE_PATH }}
         echo "::add-path::$RAKU_BASE_PATH/bin"
-        echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"
-        
+        echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"        
         
     - name: Raku short version
       run: raku -v
@@ -78,113 +77,13 @@ jobs:
     - name: Raku full version
       run: raku -V
 
-    - name: Install Module dependencies
+    - name: Install module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
       run:  zef install --deps-only  .          
               
-    - name: Run tests
+    - name: Run module tests
       run:  zef test --verbose .
 
-
-# #     - name: Install 
-# #       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
-# #       run: |
-# #         mkdir $INSTALL_PATH
-# #         echo abc >$INSTALL_PATH/token
-
-#     - name: Install 
-#       if:  steps.my-cache.outputs.cache-hit != 'true' 
-#       run: |
-#         mkdir ${{ env.INSTALL_PATH }}
-#         cd ${{ env.INSTALL_PATH }}
-#         echo abc >token
-        
-#     - name: Work
-#       run: |
-#         cd ${{ env.INSTALL_PATH }}
-#         cat token
-#         echo this is ${{ matrix.os }} ${{ matrix.release }}
-
-    
-    
-
-
-# name: Linux build
-
-# on: [push, pull_request]
-
-# jobs:
-#   build:
-
-#     runs-on: ubuntu-latest
-
-#     strategy:
-#       matrix:
-#         raku-release:
-#           - '2020.06'
-  
-#     env:
-#       RAKU_INSTALL_PATH: $HOME/raku-${{ matrix.raku-release }}
-    
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     # zip is used in the test harness
-#     - name: env
-#       run: env
-      
-#     - name: Check Cache
-#       id: my-cache
-#       uses: actions/cache@v2
-#       with:
-#         path: ${{ env.RAKU_INSTALL_PATH }}
-#         key: ${{ matrix.raku-release }}.caaabc
-     
-#     # zip is used in the test harness
-#     - name: zip version
-#       run: zip -v
-
-#     # unzip is used in the test harness
-#     - name: unzip version
-#       run: unzip -v
-
-#     - name: Install Raku
-#       if: steps.my-cache.outputs.cache-hit != 'true'
-#       run: |
-#         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
-#         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.PLATFORM }}-x86_64.tar.gz -O $HOME/r.tar.gz
-#         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
-#         rm $HOME/r.tar.gz
-
-#     - name: Set Path for Raku
-#       run: |
-#         echo "::add-path::${{ matrix.raku-release }}/bin"
-#         echo "::add-path::${{ matrix.raku-release }}/share/perl6/site/bin"
-#         echo find
-#         find $HOME -name manifest.txt
-#         echo found
-#         ls -l $HOME
-#         ls -l $HOME/work
-#         ls -l $HOME/work/_temp
-#         ls -l $HOME/raku
-        
-      
-#     - name: PATH
-#       run: echo $PATH
-            
-#     - name: Raku short version
-#       run: raku -v
-
-#     - name: Raku full version
-#       run: raku -V
-
-#     - name: Install Module dependencies
-#       if: steps.my-cache.outputs.cache-hit != 'true'
-#       run:  zef install --deps-only  .
-              
-              
-#     - name: Run tests
-#       run:  zef test --verbose .
         
 
 
