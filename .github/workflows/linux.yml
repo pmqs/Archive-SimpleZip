@@ -45,7 +45,7 @@ jobs:
       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-01-linux-x86_64.tar.gz -O $HOME/r.tar.gz
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz -O $HOME/r.tar.gz
         tar xf $HOME/r.tar.gz -C ${{ env.RAKU_INSTALL_PATH }}
         rm $HOME/r.tar.gz
 
