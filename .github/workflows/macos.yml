@@ -58,9 +58,13 @@ jobs:
         cd ${{ env.RAKU_INSTALL_PATH }}
         BASE_RELEASE=$( ls )       
         RAKU_BASE_PATH=$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE 
+        
+    - name: Set Path for Raku
+      run: |        
         echo "::set-env name=RAKU_BASE_PATH::$RAKU_BASE_PATH"                           
         echo "::add-path::${{ env.RAKU_BASE_PATH }}/bin"
         echo "::add-path::${{ env.RAKU_BASE_PATH }}/share/perl6/site/bin"
+        
         
     - name: Raku short version
       run: raku -v
