@@ -88,12 +88,13 @@ jobs:
       if: ${{ startsWith(matrix.os, 'windows') }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
-        $BASE_RELEASE = ls -Name 
+        $BASE_RELEASE = $( ls -Name )
         echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$BASE_RELEASE"               
               
     - name: Set Path for Raku (Windows)
       if: ${{ startsWith(matrix.os, 'windows') }}
-      run: |        
+      run: | 
+        echo "RAKU_BASE_PATH ${{ env.RAKU_BASE_PATH }}"       
         echo "::add-path::$RAKU_BASE_PATH\bin"
         echo "::add-path::$RAKU_BASE_PATH\share\perl6\site\bin"         
                 
