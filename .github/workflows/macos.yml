@@ -101,7 +101,8 @@ jobs:
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
         BASE_RELEASE=$( ls )
-        echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$BASE_RELEASE"
+        echo $BASE_RELEASE
+        echo "::set-env name=RAKU_BASE_PATH::$HOME\\raku-${{ matrix.raku-release }}\\$BASE_RELEASE"
       shell: bash
               
     - name: Set Path for Raku (Windows)
