@@ -51,7 +51,7 @@ jobs:
             RAKU_OS=win
             # Convert windows path to Unix-style
             #InstallPath=$( echo ${{ env.RAKU_INSTALL_PATH }} | sed -e's#\\#/#g' -e's#^\(.\):#\L\1#')        
-            echo $InstallPath
+            #echo $InstallPath
         elif  [[ ${{ matrix.os }}" = ubuntu* ]]
         then
             RAKU_OS=linux   
@@ -61,6 +61,7 @@ jobs:
             #InstallPath=${{ env.RAKU_INSTALL_PATH }}            
         fi
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O - | tar xzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+        ls ${{ env.RAKU_INSTALL_PATH_UX }}
       shell: bash
                 
       
