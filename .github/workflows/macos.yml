@@ -101,12 +101,12 @@ jobs:
 #         choco install unzip
 #         unzip -v
         
-    - name: Get Path for Raku (Linux/MacOS)
-      run: |
-        cd ${{ env.RAKU_INSTALL_PATH }}
-        BASE_RELEASE=$( ls )     
-        echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"
-      shell: bash
+#     - name: Get Path for Raku (Linux/MacOS)
+#       run: |
+#         cd ${{ env.RAKU_INSTALL_PATH }}
+#         BASE_RELEASE=$( ls )     
+#         echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"
+#       shell: bash
 
               
     - name: Set Path for Raku (Linux/MacOS)
