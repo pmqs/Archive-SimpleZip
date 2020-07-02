@@ -55,27 +55,34 @@ jobs:
             
     - name: Install Raku (Linux/MacOS)
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
-
 #       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
-        mkdir -p ${{ env.RAKU_INSTALL_PATH }}
+        mkdir -p ${{ env.RAKU_INSTALL_PATH_UX }}        
+        cd ${{ env.RAKU_INSTALL_PATH_UX }}
+        
         if [[ "${{ matrix.os }}" = windows* ]]
         then
             RAKU_OS=win
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-win-x86_64.zip >tmp.zip
+            unzip tmp.zip
+            rm tmp.zip
         elif  [[ "${{ matrix.os }}" = ubuntu* ]]
         then
             RAKU_OS=linux   
-            #InstallPath=${{ env.RAKU_INSTALL_PATH }}
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         else
             RAKU_OS=macos
-            #InstallPath=${{ env.RAKU_INSTALL_PATH }}            
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-macos-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}            
         fi
         echo RAKU_OS=$RAKU_OS 
         pwd
-        curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz >keep
-        file keep
-        curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+        #curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz >keep
+        #file keep
+        #curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         ls ${{ env.RAKU_INSTALL_PATH_UX }}
+        PTH=$( ls )
+        echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH_UX }}/$PTH"
+        
       shell: bash
                 
       
