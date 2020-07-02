@@ -39,7 +39,11 @@ jobs:
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
         key: ${{ matrix.raku-release }}-x1
-     
+    
+            # Convert windows path to Unix-style
+            #InstallPath=$( echo ${{ env.RAKU_INSTALL_PATH }} | sed -e's#\\#/#g' -e's#^\(.\):#\L\1#')        
+            #echo $InstallPath
+            
     - name: Install Raku (Linux/MacOS)
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
 
@@ -49,9 +53,6 @@ jobs:
         if [[ "${{ matrix.os }}" = windows* ]]
         then
             RAKU_OS=win
-            # Convert windows path to Unix-style
-            #InstallPath=$( echo ${{ env.RAKU_INSTALL_PATH }} | sed -e's#\\#/#g' -e's#^\(.\):#\L\1#')        
-            #echo $InstallPath
         elif  [[ ${{ matrix.os }}" = ubuntu* ]]
         then
             RAKU_OS=linux   
@@ -60,6 +61,7 @@ jobs:
             RAKU_OS=macos
             #InstallPath=${{ env.RAKU_INSTALL_PATH }}            
         fi
+        echo RAKU_OS=$RAKU_OS 
         wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O - | tar xzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         ls ${{ env.RAKU_INSTALL_PATH_UX }}
       shell: bash
