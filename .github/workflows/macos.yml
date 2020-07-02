@@ -47,7 +47,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ matrix.raku-release }}-x1
+        key: ${{ matrix.raku-release }}-x12
     
             # Convert windows path to Unix-style
             #InstallPath=$( echo ${{ env.RAKU_INSTALL_PATH }} | sed -e's#\\#/#g' -e's#^\(.\):#\L\1#')        
@@ -105,7 +105,12 @@ jobs:
       run: |
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         BASE_RELEASE=$( ls )     
-        echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"
+        if [[ "${{ matrix.os }}" = windows* ]]
+        then        
+          echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}\$BASE_RELEASE" 
+        else
+          echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE"         
+        fi
       shell: bash
 
               
@@ -113,7 +118,7 @@ jobs:
       run: |        
         echo "::add-path::$RAKU_BASE_PATH/bin"
         echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"     
-      shell: bash      
+#       shell: bash      
                 
         
     - name: Raku  version
@@ -122,13 +127,13 @@ jobs:
 
     - name: Install module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
-      run:  zef install --deps-only  .          
-      shell: bash
+      run:  zef install --deps-only .          
+#       shell: bash
 
               
     - name: Run module tests
       run:  zef test --verbose .
-      shell: bash
+#       shell: bash
 
         
 
