@@ -113,7 +113,7 @@ jobs:
                 
         
     - name: Raku short version
-      run: raku -v
+      run: raku -v 
 
     - name: Raku full version
       run: raku -V
