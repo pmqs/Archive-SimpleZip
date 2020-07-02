@@ -10,9 +10,9 @@ jobs:
     strategy:
       matrix:
         os: 
-#           - macos-latest
-#           - ubuntu-latest
-          - windows-latest
+          - macos-latest
+          - ubuntu-latest
+#           - windows-latest
         raku-release:
           - 2020.06-01
           - 2020.05.1-01
@@ -80,9 +80,9 @@ jobs:
         #file keep
         #curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         ls ${{ env.RAKU_INSTALL_PATH_UX }}
-        PTH=$( ls )
-        echo $PTH
-        echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH_UX }}/${PTH}"
+        BASE_RELEASE=$( ls )
+        echo $BASE_RELEASE
+        echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH_UX }}/${BASE_RELEASE}"
         
       shell: bash
                 
