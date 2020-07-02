@@ -99,7 +99,8 @@ jobs:
     - name: Get Path for Raku (Windows)
       if: ${{ startsWith(matrix.os, 'windows') }}
       run: |
-        cd ${{ env.RAKU_INSTALL_PATH }}
+        #cd ${{ env.RAKU_INSTALL_PATH }}
+        cd ${{ raku-${{ matrix.raku-release }}
         BASE_RELEASE=$( ls )
         echo $BASE_RELEASE
         echo "::set-env name=RAKU_BASE_PATH::$HOME\\raku-${{ matrix.raku-release }}\\$BASE_RELEASE"
