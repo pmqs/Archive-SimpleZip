@@ -62,7 +62,7 @@ jobs:
             #InstallPath=${{ env.RAKU_INSTALL_PATH }}            
         fi
         echo RAKU_OS=$RAKU_OS 
-        curl https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz | tar xzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+        curl https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         ls ${{ env.RAKU_INSTALL_PATH_UX }}
       shell: bash
                 
