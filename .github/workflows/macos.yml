@@ -116,15 +116,9 @@ jobs:
       shell: bash      
                 
         
-    - name: Raku short version
+    - name: Raku  version
       run: raku -v
       shell: bash
- 
-
-    - name: Raku full version
-      run: raku -V
-      shell: bash
-
 
     - name: Install module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
