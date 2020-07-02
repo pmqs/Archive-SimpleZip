@@ -53,7 +53,7 @@ jobs:
         if [[ "${{ matrix.os }}" = windows* ]]
         then
             RAKU_OS=win
-        elif  [[ ${{ matrix.os }}" = ubuntu* ]]
+        elif  [[ "${{ matrix.os }}" = ubuntu* ]]
         then
             RAKU_OS=linux   
             #InstallPath=${{ env.RAKU_INSTALL_PATH }}
