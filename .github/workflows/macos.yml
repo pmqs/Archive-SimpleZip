@@ -81,7 +81,8 @@ jobs:
         #curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         ls ${{ env.RAKU_INSTALL_PATH_UX }}
         PTH=$( ls )
-        echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH_UX }}/$PTH"
+        echo $PTH
+        echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH_UX }}/${PTH}"
         
       shell: bash
                 
