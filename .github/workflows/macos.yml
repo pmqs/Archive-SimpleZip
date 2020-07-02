@@ -87,19 +87,19 @@ jobs:
       shell: bash
                 
       
-#     # Install zip for use in the test harness
-#     - name: Install zip (Windows)
-#       if: ${{ startsWith(matrix.os, 'windows') }}
-#       run: |
-#         choco install zip
-#         zip -v
+    # Install zip for use in the test harness
+    - name: Install zip (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |
+        choco install zip
+        zip -v
         
-#     # Install unzip for use in the test harness  
-#     - name: Install unzip (Windows)
-#       if: ${{ startsWith(matrix.os, 'windows') }}      
-#       run: |
-#         choco install unzip
-#         unzip -v
+    # Install unzip for use in the test harness  
+    - name: Install unzip (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}      
+      run: |
+        choco install unzip
+        unzip -v
         
     - name: Get Path for Raku 
       run: |
