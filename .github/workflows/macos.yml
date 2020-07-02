@@ -116,9 +116,15 @@ jobs:
               
     - name: Set Path for Raku (Linux/MacOS)
       run: |        
-        echo "::add-path::$RAKU_BASE_PATH/bin"
-        echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"     
-#       shell: bash      
+        if [[ "${{ matrix.os }}" = windows* ]]
+        then           
+          echo "::add-path::$RAKU_BASE_PATH\\bin"
+          echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
+        else
+          echo "::add-path::$RAKU_BASE_PATH/bin"
+          echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"           
+        fi
+      shell: bash      
                 
         
     - name: Raku  version
