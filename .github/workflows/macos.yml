@@ -72,11 +72,11 @@ jobs:
         unzip -v
         
     - name: Get Path for Raku (Linux/MacOS)
-      if: ${{ ! startsWith(matrix.os, 'windows') }}
+#       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
         BASE_RELEASE=$( ls )     
-        echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"               
+        echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"
               
     - name: Set Path for Raku (Linux/MacOS)
       if: ${{ ! startsWith(matrix.os, 'windows') }}
@@ -84,17 +84,25 @@ jobs:
         echo "::add-path::$RAKU_BASE_PATH/bin"
         echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"     
         
+#     - name: Get Path for Raku (Windows)
+#       if: ${{ startsWith(matrix.os, 'windows') }}
+#       run: |
+#         cd ${{ env.RAKU_INSTALL_PATH }}
+#         $BASE_RELEASE = Get-ChildItem -Name
+#         echo "BASE_RELEASE = $BASE_RELEASE"
+#         ls -Name
+#         echo ---
+#         #echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$BASE_RELEASE"
+#         echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$( ls -Name)"   
+#       shell: bash
+
     - name: Get Path for Raku (Windows)
       if: ${{ startsWith(matrix.os, 'windows') }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
-        $BASE_RELEASE = Get-ChildItem -Name
-        echo "BASE_RELEASE = $BASE_RELEASE"
-        ls -Name
-        echo ---
-        #echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$BASE_RELEASE"
-        echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$( ls -Name)"               
-                       
+        BASE_RELEASE=$( ls )     
+        echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$BASE_RELEASE"
+      shell: bash
               
     - name: Set Path for Raku (Windows)
       if: ${{ startsWith(matrix.os, 'windows') }}
