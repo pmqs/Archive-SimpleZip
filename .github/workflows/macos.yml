@@ -75,7 +75,7 @@ jobs:
       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
-        $BASE_RELEASE= Get-ChildItem -Name       
+        BASE_RELEASE= $( ls )     
         echo "::set-env name=RAKU_BASE_PATH::$HOME/raku-${{ matrix.raku-release }}/$BASE_RELEASE"               
               
     - name: Set Path for Raku (Linux/MacOS)
@@ -88,7 +88,7 @@ jobs:
       if: ${{ startsWith(matrix.os, 'windows') }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH }}
-        $BASE_RELEASE = $( ls -Name )
+        $BASE_RELEASE = Get-ChildItem -Name
         echo "::set-env name=RAKU_BASE_PATH::$HOME\raku-${{ matrix.raku-release }}\$BASE_RELEASE"               
               
     - name: Set Path for Raku (Windows)
