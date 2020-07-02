@@ -26,7 +26,13 @@ jobs:
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}" 
       shell: bash
-           
+
+    - name: Set Raku install Path (Linux/MacOS)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
+        
+      
     - name: Check Cache
       id: my-cache
       uses: actions/cache@v2
@@ -38,16 +44,21 @@ jobs:
       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH }}
-        if [[ "${{ matrix.os }}" = windoes* ]]
+        if [[ "${{ matrix.os }}" = windows* ]]
         then
             RAKU_OS=win
+            # Concert windows path to Unix-style
+            InstallPath=$( echo ${{ env.RAKU_INSTALL_PATH }} | sed -e's#\\#/#g' -e's#^\(.\):#\L\1#')        
+            echo $InstallPath
         elif  [[ ${{ matrix.os }}" = ubuntu* ]]
         then
-            RAKU_OS=linux            
+            RAKU_OS=linux   
+            InstallPath=${{ env.RAKU_INSTALL_PATH }}
         else
             RAKU_OS=macos
+            InstallPath=${{ env.RAKU_INSTALL_PATH }}            
         fi
-        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O - | tar xzf - -C ${{ env.RAKU_INSTALL_PATH }}
+        wget -q https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${RAKU_OS}-x86_64.tar.gz -O - | tar xzf - -C $InstallPath
       shell: bash
                 
       
