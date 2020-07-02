@@ -107,7 +107,7 @@ jobs:
         BASE_RELEASE=$( ls )     
         if [[ "${{ matrix.os }}" = windows* ]]
         then        
-          echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}\$BASE_RELEASE" 
+          echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}\\$BASE_RELEASE" 
         else
           echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE"         
         fi
@@ -123,7 +123,7 @@ jobs:
         
     - name: Raku  version
       run: raku -v
-      shell: bash
+#       shell: bash
 
     - name: Install module dependencies
       if: steps.my-cache.outputs.cache-hit != 'true'
