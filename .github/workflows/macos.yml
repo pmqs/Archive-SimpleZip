@@ -126,7 +126,11 @@ jobs:
         fi
       shell: bash      
                 
-        
+
+    - name: Raku shell version
+      run: raku -e 'say %*ENV<SHELL>'
+#       shell: bash
+
     - name: Raku  version
       run: raku -v
 #       shell: bash
