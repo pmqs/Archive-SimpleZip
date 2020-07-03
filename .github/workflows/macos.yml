@@ -105,31 +105,31 @@ jobs:
       run: |
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         BASE_RELEASE=$( ls )     
-        if [[ "${{ matrix.os }}" = windows* ]]
-        then        
-          echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}\\$BASE_RELEASE" 
-        else
+        #if [[ "${{ matrix.os }}" = windows* ]]
+        #then        
+          #echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}\\$BASE_RELEASE" 
+        #else
           echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE"         
-        fi
+        #fi
       shell: bash
 
               
     - name: Set Path for Raku (Linux/MacOS)
       run: |        
-        if [[ "${{ matrix.os }}" = windows* ]]
-        then           
-          echo "::add-path::$RAKU_BASE_PATH\\bin"
-          echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
-        else
+        #if [[ "${{ matrix.os }}" = windows* ]]
+        #then           
+          #echo "::add-path::$RAKU_BASE_PATH\\bin"
+          #echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
+        #else
           echo "::add-path::$RAKU_BASE_PATH/bin"
           echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"           
-        fi
+        #fi
       shell: bash      
                 
 
     - name: Raku shell version
-      run: raku -e 'say %*ENV'
-#       shell: bash
+      run: raku -e 'run q[pwd]'
+      shell: bash
 
     - name: Raku  version
       run: raku -v
