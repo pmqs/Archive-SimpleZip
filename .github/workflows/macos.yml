@@ -128,7 +128,7 @@ jobs:
                 
 
     - name: Raku shell version
-      run: raku -e 'say %*ENV<SHELL>'
+      run: raku -e 'say %*ENV'
 #       shell: bash
 
     - name: Raku  version
