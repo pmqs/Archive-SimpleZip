@@ -27,62 +27,44 @@ jobs:
         echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ matrix.raku-release }}"     
       shell: bash
 
-#     - name: Set Raku install Path (Windows)
-#       if: ${{ startsWith(matrix.os, 'windows') }}
-#       run: |
-#         echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
+    - name: Set Raku install Path (Windows only)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
               
-    - name: Check Cache
+    - name: Check Cache for Raku Install
       id: my-cache
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
         key: ${{ matrix.raku-release }}-x12
-    
-            # Convert windows path to Unix-style
-            #InstallPath=$( echo ${{ env.RAKU_INSTALL_PATH }} | sed -e's#\\#/#g' -e's#^\(.\):#\L\1#')        
-            #echo $InstallPath
-            
-    - name: Install Raku (Linux/MacOS)
+               
+    - name: Install Raku if not cached
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
-#       if: ${{ ! startsWith(matrix.os, 'windows') && steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH_UX }}        
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         
         if [[ "${{ matrix.os }}" = windows* ]]
         then
-            RAKU_OS=win
             curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-win-x86_64.zip >tmp.zip
             unzip tmp.zip
             rm tmp.zip
         elif  [[ "${{ matrix.os }}" = ubuntu* ]]
         then
-            RAKU_OS=linux   
             curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         else
-            RAKU_OS=macos
             curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-macos-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}            
-        fi
-        echo RAKU_OS=$RAKU_OS 
-        pwd
-        #curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz >keep
-        #file keep
-        #curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-${{ env.RAKU_OS }}-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
-        #ls ${{ env.RAKU_INSTALL_PATH_UX }}
-        #BASE_RELEASE=$( ls )
-        #echo $BASE_RELEASE
-        #echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH_UX }}/${BASE_RELEASE}"
-        
+        fi        
       shell: bash
                 
       
-#     # Install zip for use in the test harness
-#     - name: Install zip (Windows)
-#       if: ${{ startsWith(matrix.os, 'windows') }}
-#       run: |
-#         choco install zip
-#         zip -v
+    # Install zip for use in the test harness
+    - name: Install zip (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |
+        choco install zip
+        zip -v
         
 #     # Install unzip for use in the test harness  
 #     - name: Install unzip (Windows)
@@ -116,11 +98,6 @@ jobs:
         fi
       shell: bash      
                 
-
-    - name: Raku shell version
-      run: raku -e 'run q[pwd]'
-#       shell: bash
-
     - name: Raku  version
       run: raku -v
 #       shell: bash
