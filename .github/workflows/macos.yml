@@ -22,25 +22,15 @@ jobs:
     - uses: actions/checkout@v2
              
     - name: Set Raku install Path Unix format
-#       if: ${{ ! startsWith(matrix.os, 'windows') }}
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"
-        echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ matrix.raku-release }}" 
-        if [[ "${{ matrix.os }}" = windows* ]]
-        then
-          echo "::set-env name=RAKU_OS::win"
-        elif  [[ "${{ matrix.os }}" = ubuntu* ]]
-        then
-          echo "::set-env name=RAKU_OS::linux"
-        else
-          echo "::set-env name=RAKU_OS::macos"
-        fi        
+        echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ matrix.raku-release }}"     
       shell: bash
 
-    - name: Set Raku install Path (Windows)
-      if: ${{ startsWith(matrix.os, 'windows') }}
-      run: |
-        echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
+#     - name: Set Raku install Path (Windows)
+#       if: ${{ startsWith(matrix.os, 'windows') }}
+#       run: |
+#         echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
               
     - name: Check Cache
       id: my-cache
