@@ -129,7 +129,7 @@ jobs:
 
     - name: Raku shell version
       run: raku -e 'run q[pwd]'
-      shell: bash
+#       shell: bash
 
     - name: Raku  version
       run: raku -v
