@@ -8,6 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      
       matrix:
         os: 
           - macos-latest
@@ -21,13 +22,13 @@ jobs:
          
     - uses: actions/checkout@v2
              
-    - name: Set Raku install Path Unix format
+    - name: Set Raku install Path in Unix format
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"
         echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ matrix.raku-release }}"     
       shell: bash
 
-    - name: Set Raku install Path (Windows only)
+    - name: Set Raku install Path Windows format
       if: ${{ startsWith(matrix.os, 'windows') }}
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
@@ -37,7 +38,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ matrix.raku-release }}-x12
+        key: ${{ matrix.raku-release }}-x123
                
     - name: Install Raku if not cached
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
@@ -88,14 +89,14 @@ jobs:
               
     - name: Set Path for Raku (Linux/MacOS)
       run: |        
-        if [[ "${{ matrix.os }}" = windows* ]]
-        then           
-          echo "::add-path::$RAKU_BASE_PATH\\bin"
-          echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
-        else
+        #if [[ "${{ matrix.os }}" = windows* ]]
+        #then           
+         # echo "::add-path::$RAKU_BASE_PATH\\bin"
+         # echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
+        #else
           echo "::add-path::$RAKU_BASE_PATH/bin"
           echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"           
-        fi
+        #fi
       shell: bash      
                 
     - name: Raku  version
