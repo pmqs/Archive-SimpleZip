@@ -87,12 +87,12 @@ jobs:
       shell: bash
                 
       
-    # Install zip for use in the test harness
-    - name: Install zip (Windows)
-      if: ${{ startsWith(matrix.os, 'windows') }}
-      run: |
-        choco install zip
-        zip -v
+#     # Install zip for use in the test harness
+#     - name: Install zip (Windows)
+#       if: ${{ startsWith(matrix.os, 'windows') }}
+#       run: |
+#         choco install zip
+#         zip -v
         
 #     # Install unzip for use in the test harness  
 #     - name: Install unzip (Windows)
@@ -116,14 +116,14 @@ jobs:
               
     - name: Set Path for Raku (Linux/MacOS)
       run: |        
-        #if [[ "${{ matrix.os }}" = windows* ]]
-        #then           
-          #echo "::add-path::$RAKU_BASE_PATH\\bin"
-          #echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
-        #else
+        if [[ "${{ matrix.os }}" = windows* ]]
+        then           
+          echo "::add-path::$RAKU_BASE_PATH\\bin"
+          echo "::add-path::$RAKU_BASE_PATH\\share\\perl6\\site\\bin"   
+        else
           echo "::add-path::$RAKU_BASE_PATH/bin"
           echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"           
-        #fi
+        fi
       shell: bash      
                 
 
