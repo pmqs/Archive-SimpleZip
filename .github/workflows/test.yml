@@ -138,11 +138,11 @@ jobs:
 
 
     # Install zip for use in the test harness
-    - name: Install zip (Windows)
-      if: ${{ startsWith(matrix.os, 'windows') }}
-      run: |
-        choco install zip
-        zip -v
+    # - name: Install zip (Windows)
+    #   if: ${{ startsWith(matrix.os, 'windows') }}
+    #   run: |
+    #     choco install zip
+    #     zip -v
 
     # Install zlib on windows
     - name: Install zlib (Windows)

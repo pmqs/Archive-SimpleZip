@@ -39,7 +39,8 @@ sub clean-filename(Str:D $filename) returns Str:D
 
 sub external-zip-works() returns Bool:D is export
 {
-    my $outfile = t-file() ~ ".zip" ;
+    # my $outfile = t-file() ~ ".zip" ;
+    my $outfile = $HERE ~ '/t/test.zip';
     my $content = q:to/EOM/;
         Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut tempus odio id
         dolor. Camelus perlus.  Larrius in lumen numen.  Dolor en quiquum filia
