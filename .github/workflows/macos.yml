@@ -130,9 +130,9 @@ jobs:
             rm tmp.zip
         elif  [[ "${{ matrix.os }}" = ubuntu* ]]
         then
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         else
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-macos-x86_64.tar.gz | tar xvzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}            
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-macos-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}            
         fi        
       shell: bash
                 
