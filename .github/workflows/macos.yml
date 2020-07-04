@@ -11,13 +11,13 @@ jobs:
       
       matrix:
         os: 
-          - macos-latest
-          - ubuntu-latest
+#           - macos-latest
+#           - ubuntu-latest
           - windows-latest
       
         raku-release:
           - latest
-          - 2019
+#           - 2019
                 
     steps:
          
@@ -143,6 +143,12 @@ jobs:
       run: |
         choco install zip
         zip -v
+
+    # Install zlib on windows
+    - name: Install zlib (Windows)
+      if: ${{ startsWith(matrix.os, 'windows') }}
+      run: |
+        vcpkg install zlib
         
 #     # Install unzip for use in the test harness  
 #     - name: Install unzip (Windows)
@@ -195,7 +201,10 @@ jobs:
 
               
     - name: Run module tests
-      run:  zef test --verbose .
+      run:  |
+        echo --verbose >.proverc
+        echo --verbose >_proverc        
+        zef test --verbose .
 #       shell: bash
 
     - name: Install module 
