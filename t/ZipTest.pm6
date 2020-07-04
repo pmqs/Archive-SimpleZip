@@ -67,7 +67,7 @@ sub external-zip-works() returns Bool:D is export
     $filename = clean-filename($filename);
 
     return True
-        if '/' ~ $got.chomp eq $filename ;
+        if $got.chomp eq $filename ;
 
     diag "Filenames are wrong, got[$got], expected[$filename]";
 
