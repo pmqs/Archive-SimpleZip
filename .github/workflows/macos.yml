@@ -26,7 +26,7 @@ jobs:
 
     - name: Check Raku version
       run: |
-        RakuVersion=$( perl - ${{ matrix.os }} ${{ matrix.release }} <<'EOM'
+        RakuVersion=$( perl - ${{ matrix.os }} ${{ matrix.raku-release }} <<'EOM'
 
             use strict;
             use warnings;
@@ -94,7 +94,7 @@ jobs:
             
         EOM
         )
-        echo MATCH $RakuVersion
+        echo Matched with $RakuVersion
         echo "::set-env name=RAKU_VERSION::$RakuVersion"         
       shell: bash
       
@@ -110,12 +110,12 @@ jobs:
       run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ env.RAKU_VERSION }}" 
               
-    - name: Check for cached install for Raku ${{ env.RAKU_VERSION }}
+    - name: Check for cached install of Raku ${{ env.RAKU_VERSION }}
       id: my-cache
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ env.RAKU_VERSION }}-x12345
+        key: ${{ env.RAKU_VERSION }}-x123456
                
     - name: Install Raku ${{ env.RAKU_VERSION }} if not cached
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
@@ -151,7 +151,7 @@ jobs:
 #         choco install unzip
 #         unzip -v
         
-    - name: Get Path for Raku ${{ env.RAKU_VERSION }}
+    - name: Get path data for Raku ${{ env.RAKU_VERSION }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         BASE_RELEASE=$( ls )     
@@ -176,8 +176,12 @@ jobs:
         #fi
       shell: bash      
                 
-    - name: Raku ${{ env.RAKU_VERSION }} version
+    - name: Raku ${{ env.RAKU_VERSION }} short version
       run: raku -v
+#       shell: bash
+
+    - name: Raku ${{ env.RAKU_VERSION }} verbose version
+      run: raku -V
 #       shell: bash
 
     - name: Zef version
@@ -194,6 +198,8 @@ jobs:
       run:  zef test --verbose .
 #       shell: bash
 
-        
+    - name: Install module 
+      run:  zef install --/test --verbose .
+#       shell: bash        
 
 
