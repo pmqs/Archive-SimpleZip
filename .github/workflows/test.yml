@@ -165,7 +165,7 @@ jobs:
         echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE"
 
 
-    - name: Set Path for Raku ${{ env.RAKU_VERSION }} (Linux/MacOS)
+    - name: Set Path for Raku ${{ env.RAKU_VERSION }} 
       shell: bash
       run: |
         echo "::add-path::$RAKU_BASE_PATH/bin"
