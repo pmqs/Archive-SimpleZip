@@ -100,8 +100,8 @@ jobs:
 
 
     - name: Set Raku install Path in Unix format
-      run: |
       shell: bash
+      run: |
         echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ env.RAKU_VERSION }}"
         echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ env.RAKU_VERSION }}"
 
