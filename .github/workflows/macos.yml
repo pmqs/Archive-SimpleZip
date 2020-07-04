@@ -14,33 +14,110 @@ jobs:
           - macos-latest
           - ubuntu-latest
           - windows-latest
+      
         raku-release:
-          - 2020.06-01
-          - 2020.05.1-01
+          - latest
+          - 2019
                 
     steps:
          
     - uses: actions/checkout@v2
-             
+
+
+    - name: Check Raku version
+      run: |
+        RakuVersion=$( perl - ${{ matrix.os }} ${{ matrix.release }} <<'EOM'
+
+            use strict;
+            use warnings;
+
+            my %os_mapping = ( macos   => 'macos',
+                               ubuntu  => 'linux',
+                               windows => 'win'
+                             ) ;
+
+            my $os = shift ;
+            my $version = shift ;
+
+            $os =~ s/-.+$//;
+
+            die "Unknown OS $os\n"
+                if ! $os_mapping{$os} ;
+
+            my %available;
+            my @available;
+            my @data = `curl -s --connect-timeout 5 https://rakudo.org/downloads/rakudo 2>/dev/null` ;
+
+            die "Cannot fetch versions: $@\n"
+                if $@;
+
+            # get available versions for requested OS
+            for my $line (@data)
+            {
+                next
+                    unless $line =~ m#<a href=./dl/rakudo/rakudo-moar-([\d\.-]+?)-$os_mapping{$os}-x86_64#;
+
+                push @available, $1;
+            }
+
+            my $max = 0;
+
+            map { $max = $max < $_ ? $_ : $max }
+            map { scalar split /\D+/, $_ }
+            @available ;
+
+            for my $v (@available)
+            {
+                my @bits = split /\D+/, $v ;
+                push @bits, 0 for @bits .. $max ;
+                my $numeric = join '', map { sprintf "%04d", $_ } @bits ;
+
+                $available{$numeric} = $v;
+            }
+
+            if (lc $version eq 'latest')
+            {
+                print $available{ (sort keys %available)[-1] } . "\n";
+            }
+            else
+            {
+                my @got = grep { ! index $_, $version }
+                          map  { $available{ $_ }     }
+                          sort { $b <=> $a            }
+                          keys %available ;
+
+                die "Cannot find Raku version $version for $os\n"
+                    if ! @got;
+
+                print "$got[0]\n" ;
+            }
+            
+        EOM
+        )
+        echo MATCH $RakuVersion
+        echo "::set-env name=RAKU_VERSION::$RakuVersion"         
+      shell: bash
+      
+
     - name: Set Raku install Path in Unix format
       run: |
-        echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ matrix.raku-release }}"
-        echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ matrix.raku-release }}"     
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME/raku-${{ env.RAKU_VERSION }}"
+        echo "::set-env name=RAKU_INSTALL_PATH_UX::$HOME/raku-${{ env.RAKU_VERSION }}"     
       shell: bash
 
-    - name: Set Raku install Path Windows format
+    - name: Set Raku install Path in Windows format
       if: ${{ startsWith(matrix.os, 'windows') }}
       run: |
-        echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ matrix.raku-release }}" 
+        echo "::set-env name=RAKU_INSTALL_PATH::$HOME\raku-${{ env.RAKU_VERSION }}" 
               
-    - name: Check Cache for Raku Install
+    - name: Check for cached install for Raku ${{ env.RAKU_VERSION }}
       id: my-cache
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ matrix.raku-release }}-x123
+        key: ${{ matrix.raku-release }}-x12345
                
-    - name: Install Raku if not cached
+    - name: Install Raku ${{ env.RAKU_VERSION }} if not cached
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
       run: |
         mkdir -p ${{ env.RAKU_INSTALL_PATH_UX }}        
@@ -74,7 +151,7 @@ jobs:
 #         choco install unzip
 #         unzip -v
         
-    - name: Get Path for Raku 
+    - name: Get Path for Raku ${{ env.RAKU_VERSION }}
       run: |
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         BASE_RELEASE=$( ls )     
@@ -87,7 +164,7 @@ jobs:
       shell: bash
 
               
-    - name: Set Path for Raku (Linux/MacOS)
+    - name: Set Path for Raku ${{ env.RAKU_VERSION }} (Linux/MacOS)
       run: |        
         #if [[ "${{ matrix.os }}" = windows* ]]
         #then           
@@ -99,11 +176,11 @@ jobs:
         #fi
       shell: bash      
                 
-    - name: Raku  version
+    - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
 #       shell: bash
 
-    - name: Zef  version
+    - name: Zef version
       run: zef --version
 #       shell: bash
 
