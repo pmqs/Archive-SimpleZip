@@ -47,8 +47,9 @@ sub external-zip-works() returns Bool:D is export
         est.  Quintus cenum parat.
         EOM
 
-    my $filename = write-file-with-zip($outfile, $content)
-        or return False;
+    # my $filename = write-file-with-zip($outfile, $content)
+    #     or return False;
+    my $filename = 'test.txt';
 
     my $got = pipe-in-from-unzip($outfile)
         or return False;
