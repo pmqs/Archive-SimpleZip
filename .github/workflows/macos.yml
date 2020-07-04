@@ -115,7 +115,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ env.RAKU_INSTALL_PATH }}
-        key: ${{ matrix.raku-release }}-x12345
+        key: ${{ env.RAKU_VERSION }}-x12345
                
     - name: Install Raku ${{ env.RAKU_VERSION }} if not cached
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
@@ -125,14 +125,14 @@ jobs:
         
         if [[ "${{ matrix.os }}" = windows* ]]
         then
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-win-x86_64.zip >tmp.zip
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION }}-win-x86_64.zip >tmp.zip
             unzip tmp.zip
             rm tmp.zip
         elif  [[ "${{ matrix.os }}" = ubuntu* ]]
         then
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-linux-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION}}-linux-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         else
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ matrix.raku-release }}-macos-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}            
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION }}-macos-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}            
         fi        
       shell: bash
                 
