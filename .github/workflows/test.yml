@@ -117,7 +117,7 @@ jobs:
         path: ${{ env.RAKU_INSTALL_PATH }}
         key: raku-${{ env.RAKU_VERSION }}
 
-    - name: Install Raku ${{ env.RAKU_VERSION }} if not cached
+    - name: Install Raku if not cached
       if: ${{ steps.my-cache.outputs.cache-hit != 'true' }}
       shell: bash
       run: |
