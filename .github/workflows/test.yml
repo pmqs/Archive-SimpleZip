@@ -136,26 +136,11 @@ jobs:
             curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION }}-macos-x86_64.tar.gz | tar xzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         fi
 
-
-    # Install zip for use in the test harness
-    # - name: Install zip (Windows)
+    # # Install zlib on windows
+    # - name: Install zlib (Windows)
     #   if: ${{ startsWith(matrix.os, 'windows') }}
     #   run: |
-    #     choco install zip
-    #     zip -v
-
-    # Install zlib on windows
-    - name: Install zlib (Windows)
-      if: ${{ startsWith(matrix.os, 'windows') }}
-      run: |
-        vcpkg install zlib
-
-#     # Install unzip for use in the test harness
-#     - name: Install unzip (Windows)
-#       if: ${{ startsWith(matrix.os, 'windows') }}
-#       run: |
-#         choco install unzip
-#         unzip -v
+    #     vcpkg install zlib
 
     - name: Get path data for Raku ${{ env.RAKU_VERSION }}
       shell: bash
@@ -164,26 +149,23 @@ jobs:
         BASE_RELEASE=$( ls )
         echo "::set-env name=RAKU_BASE_PATH::${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE"
 
-
-    - name: Set Path for Raku ${{ env.RAKU_VERSION }} 
+    - name: Set Path for Raku ${{ env.RAKU_VERSION }}
       shell: bash
       run: |
         echo "::add-path::$RAKU_BASE_PATH/bin"
         echo "::add-path::$RAKU_BASE_PATH/share/perl6/site/bin"
 
-    - name: Raku ${{ env.RAKU_VERSION }} short version
+    - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
 
-    - name: Install module dependencies
+    - name: Install module dependencies if not cached
+      shell: bash
       if: steps.my-cache.outputs.cache-hit != 'true'
       run:  zef install --deps-only .
 
-
     - name: Run module tests
+      shell: bash
       run:  |
         echo --verbose >.proverc
         echo --verbose >_proverc
         zef test --verbose .
-
-    - name: Install module
-      run:  zef install --/test --verbose .
