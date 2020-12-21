@@ -23,7 +23,6 @@ jobs:
 
     - uses: actions/checkout@v2
 
-
     - name: Check Raku version
       shell: bash
       run: |
