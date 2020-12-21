@@ -125,11 +125,12 @@ jobs:
         
 
 
-#     - name: Set Raku install Path in Unix format
-#       shell: bash
-#       run: |
-#         echo "RAKU_INSTALL_PATH=$HOME/raku-${{ env.RAKU_VERSION }}" >> $GITHUB_ENV
-#         echo "RAKU_INSTALL_PATH_UX=$HOME/raku-${{ env.RAKU_VERSION }}" >> $GITHUB_ENV
+    - name: ENV
+      shell: bash
+      run: |
+        echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
+        echo "RAKU_INSTALL_PATH=$HOME/raku-${{ env.RAKU_VERSION }}" 
+        echo "RAKU_INSTALL_PATH_UX=$HOME/raku-${{ env.RAKU_VERSION }}" 
 
 #     - name: Set Raku install Path in Windows format
 #       if: ${{ startsWith(matrix.os, 'windows') }}
