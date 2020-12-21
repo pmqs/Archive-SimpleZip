@@ -41,8 +41,8 @@ jobs:
 
             $os =~ s/-.+$//;
             
-            print "G_ENV $ENV{'GITHUB' . '_ENV'} \n";
-            print "G_PATH $ENV{'GITHUB' . '_PATH'} \n";
+            warn "G_ENV $ENV{'GITHUB' . '_ENV'} \n";
+            warn "G_PATH $ENV{'GITHUB' . '_PATH'} \n";
 
             die "Unknown OS $os\n"
                 if ! $os_mapping{$os} ;
