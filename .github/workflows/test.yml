@@ -126,7 +126,8 @@ jobs:
                 close F ;
               }
 
-        EOM ) >>$GITHUB_ENV
+        EOM 
+        ) >>$GITHUB_ENV
         
 
 
