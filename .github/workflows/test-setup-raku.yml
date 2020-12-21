@@ -43,9 +43,7 @@ jobs:
         zef install --install-to=inst#$GITHUB_WORKSPACE/.raku --deps-only .
 
     - name: Run module tests
-      env:
-        RAKULIB: inst#$GITHUB_WORKSPACE/.raku
       run:  |
         # echo --verbose >.proverc
         # echo --verbose >_proverc
-        $GITHUB_WORKSPACE/.raku/bin/prove6 -l -v t
+        RAKULIB=inst#$GITHUB_WORKSPACE/.raku $GITHUB_WORKSPACE/.raku/bin/prove6 -l -v t
