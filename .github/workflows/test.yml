@@ -99,6 +99,9 @@ jobs:
             
             warn "Matched with $RakuVersion\n" ;
             
+            append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
+                                 "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
+                                             
             if ($os eq 'windows')
             {
               append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion") ;
@@ -108,21 +111,18 @@ jobs:
               append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion") ;
             }
             
-            append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
-                                 "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
-      
             
             sub append
             {
-              my $name = shift ;
-              my $line = shift;
-              
-              my $filename = $ENV{$name};
-              
-              open F, '>>', $filename
-                or die "Cannot open $filename: $!\n" ;
-              print F  $_ . "\n" for @_ ;
-              close F ;
+                my $name = shift ;
+                my $line = shift;
+
+                my $filename = $ENV{$name};
+
+                open F, '>>', $filename
+                  or die "Cannot open $filename: $!\n" ;
+                print F  $_ . "\n" for @_ ;
+                close F ;
               }
 
         EOM
