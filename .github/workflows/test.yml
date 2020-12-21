@@ -97,6 +97,8 @@ jobs:
                 $RakuVersion = $got[0] ;
             }
             
+            warn "Matched with $RakuVersion\n" ;
+            
             if ($os eq 'windows')
             {
               system "echo RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion >> $ENV{GITHUB_ENV}" ;
@@ -111,8 +113,6 @@ jobs:
 
         EOM
         
-        #echo Matched with $RakuVersion
-        #echo "RAKU_VERSION=$RakuVersion" >> $GITHUB_ENV
 
 
 #     - name: Set Raku install Path in Unix format
