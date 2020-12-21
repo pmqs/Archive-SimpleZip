@@ -106,7 +106,7 @@ jobs:
             if ($os eq 'windows')
             {
             warn "xxx";
-              print("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion"\r\n) ;
+              print("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion\r\n") ;
             }
             else
             {
