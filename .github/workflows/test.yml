@@ -128,6 +128,7 @@ jobs:
     - name: ENV
       shell: bash
       run: |
+        echo RAKU_VERSION=$RAKU_VERSION
         echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
         echo "RAKU_INSTALL_PATH=$HOME/raku-${{ env.RAKU_VERSION }}" 
         echo "RAKU_INSTALL_PATH_UX=$HOME/raku-${{ env.RAKU_VERSION }}" 
