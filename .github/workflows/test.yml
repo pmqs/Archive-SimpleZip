@@ -100,17 +100,17 @@ jobs:
             
             warn "Matched with $RakuVersion\n" ;
             
-            say "RAKU_VERSION=$RakuVersion" ;
-            say "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion" ;
+            print "RAKU_VERSION=$RakuVersion\r\n" ;
+            print "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion\r\n" ;
                                              
             if ($os eq 'windows')
             {
             warn "xxx";
-              say("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion") ;
+              print("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion"\r\n) ;
             }
             else
             {
-              say("RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion") ;
+              print("RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion\r\n") ;
             }
             
             
