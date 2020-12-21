@@ -48,8 +48,8 @@ jobs:
             die "Unknown OS $os\n"
                 if ! $os_mapping{$os} ;
             
-            my $WINDOWS = $oe eq 'windows';
-            my $EOL =  $os eq 'windows' ? "\r\n" : "\n";
+            my $WINDOWS = $os eq 'windows';
+            my $EOL =  $WINDOWS ? "\r\n" : "\n";
 
 
             my %available;
