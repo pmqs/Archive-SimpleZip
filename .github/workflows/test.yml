@@ -11,8 +11,8 @@ jobs:
 
       matrix:
         os:
-#           - macos-latest
-#           - ubuntu-latest
+          - macos-latest
+          - ubuntu-latest
           - windows-latest
 
         raku-release:
@@ -109,9 +109,8 @@ jobs:
                                              
             if ($os eq 'windows')
             {
-            warn "xxx";
               append2env("RAKU_INSTALL_PATH",  
-                        map { s#/#\\#g; $_ } 
+                        #map { s#/#\\#g; $_ } 
                         map { s#^/(.)#$1:#; $_ } 
                         "$ENV{HOME}\\raku-$RakuVersion") ;
             }
@@ -133,18 +132,16 @@ jobs:
               }
 
         EOM
-        
-        #echo $VERS >> $GITHUB_ENV
-        
+              
 
 
-    - name: ENV
-      shell: bash
-      run: |
-        echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
-        echo "RAKU_INSTALL_PATH=${{ env.RAKU_INSTALL_PATH }}" 
-        echo "RAKU_INSTALL_PATH_UX=${{ env.RAKU_INSTALL_PATH_UX }}" 
-        cat $GITHUB_ENV
+#     - name: ENV
+#       shell: bash
+#       run: |
+#         echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
+#         echo "RAKU_INSTALL_PATH=${{ env.RAKU_INSTALL_PATH }}" 
+#         echo "RAKU_INSTALL_PATH_UX=${{ env.RAKU_INSTALL_PATH_UX }}" 
+#         cat $GITHUB_ENV
 
 #     - name: Set Raku install Path in Windows format
 #       if: ${{ startsWith(matrix.os, 'windows') }}
@@ -193,15 +190,15 @@ jobs:
         echo "$RAKU_BASE_PATH/bin" >> $GITHUB_PATH
         echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH        
         
-    - name: ENV
-      shell: bash
-      run: |
-        echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
-        echo "RAKU_INSTALL_PATH=${{ env.RAKU_INSTALL_PATH }}" 
-        echo "RAKU_INSTALL_PATH_UX=${{ env.RAKU_INSTALL_PATH_UX }}" 
-        echo "RAKU_BASE_PATH=${{ env.RAKU_BASE_PATH }}" 
+#     - name: ENV
+#       shell: bash
+#       run: |
+#         echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
+#         echo "RAKU_INSTALL_PATH=${{ env.RAKU_INSTALL_PATH }}" 
+#         echo "RAKU_INSTALL_PATH_UX=${{ env.RAKU_INSTALL_PATH_UX }}" 
+#         echo "RAKU_BASE_PATH=${{ env.RAKU_BASE_PATH }}" 
         
-        cat $GITHUB_ENV    
+#         cat $GITHUB_ENV    
 
 #     - name: Set Path for Raku ${{ env.RAKU_VERSION }}
 #       shell: bash
