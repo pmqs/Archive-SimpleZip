@@ -110,11 +110,15 @@ jobs:
             
             append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
                                  "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
+           open FF, ',', 
             
             sub append
             {
-              my $filename = shift ;
+              my $name = shift ;
               my $line = shift;
+              
+              my $filename = $ENV{$name};
+              
               open F, '>>', $filename
                 or die "Cannot open $filename: $!\n" ;
               print F  $_ . "\n" for @_ ;
