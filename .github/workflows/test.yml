@@ -122,10 +122,8 @@ jobs:
                 my $name = shift ;
                 my $value = shift;
 
-                my $filename = $ENV{$name};
-
-                open F, '>>', $filename
-                  or die "Cannot open $filename: $!\n" ;
+                open F, '>>', $ENV{GITHUB_ENV}
+                  or die "Cannot open $ENV{GITHUB_ENV}: $!\n" ;
                 print F  $name . '=' . $value . $EOL;
                 close F ;
               }
