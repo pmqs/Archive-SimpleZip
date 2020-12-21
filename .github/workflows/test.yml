@@ -40,6 +40,9 @@ jobs:
             my $version = shift ;
 
             $os =~ s/-.+$//;
+            
+            print "GITHUB_ENV $ENV{GITHUB_ENV} \n";
+            print "GITHUB_PATH $ENV{GITHUB_PATH} \n";
 
             die "Unknown OS $os\n"
                 if ! $os_mapping{$os} ;
