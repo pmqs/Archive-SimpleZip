@@ -99,7 +99,7 @@ jobs:
             
             if ($os eq 'windows')
             {
-              system "echo RAKU_INSTALL_PATH=$ENV{HOME}\raku-$RakuVersion >> $ENV{GITHUB_ENV}" ;
+              system "echo RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion >> $ENV{GITHUB_ENV}" ;
             }
             else
             {
