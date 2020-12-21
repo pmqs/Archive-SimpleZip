@@ -141,7 +141,6 @@ jobs:
     - name: ENV
       shell: bash
       run: |
-        echo RAKU_VERSION=$RAKU_VERSION
         echo "RAKU_VERSION=${{ env.RAKU_VERSION }}"         
         echo "RAKU_INSTALL_PATH=${{ env.RAKU_INSTALL_PATH }}" 
         echo "RAKU_INSTALL_PATH_UX=${{ env.RAKU_INSTALL_PATH_UX }}" 
@@ -190,6 +189,11 @@ jobs:
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         BASE_RELEASE=$( ls )
         echo "RAKU_BASE_PATH=${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" >> $GITHUB_ENV
+        
+    - name: ENV
+      shell: bash
+      run: |
+        cat $GITHUB_ENV        
 
     - name: Set Path for Raku ${{ env.RAKU_VERSION }}
       shell: bash
