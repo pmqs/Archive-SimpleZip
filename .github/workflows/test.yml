@@ -99,8 +99,8 @@ jobs:
             
             warn "Matched with $RakuVersion\n" ;
             
-            append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
-                                 "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
+            #append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" );
+            #append('GITHUB_ENV', "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
                                              
             if ($os eq 'windows')
             {
