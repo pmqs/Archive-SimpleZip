@@ -28,7 +28,6 @@ jobs:
       run: |
         perl - ${{ matrix.os }} ${{ matrix.raku-release }} <<'EOM'
 
-
             use strict;
             use warnings;
             use feature 'say';
@@ -154,7 +153,7 @@ jobs:
         RAKU_BASE_PATH="${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE"
 
         echo "$RAKU_BASE_PATH/bin" >> $GITHUB_PATH
-        echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH 
+        echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH
 
     - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
