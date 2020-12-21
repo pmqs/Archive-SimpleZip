@@ -101,15 +101,25 @@ jobs:
             
             if ($os eq 'windows')
             {
-              system "echo RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion >> $ENV{GITHUB_ENV}" ;
+              append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion" ;
             }
             else
             {
-              system "echo RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion >> $ENV{GITHUB_ENV}" ;
+              append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion" ;
             }
             
-            system "echo RAKU_VERSION=$RakuVersion >> $ENV{GITHUB_ENV}" ;
-            system "echo RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion >> $ENV{GITHUB_ENV}" ;
+            append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
+                                 "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
+            
+            sub append
+            {
+              my $filename = shift ;
+              my $line = shift;
+              open F, '>>', $filename
+                or die "Cannot open $filename: $!\n" ;
+              print F  $_ . "\n" for @_
+              close F
+              }
 
         EOM
         
