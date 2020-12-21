@@ -26,7 +26,7 @@ jobs:
     - name: Check Raku version
       shell: bash
       run: |
-        echo $( perl - ${{ matrix.os }} ${{ matrix.raku-release }} <<'EOM'
+        VERS=$( perl - ${{ matrix.os }} ${{ matrix.raku-release }} <<'EOM'
 
             use strict;
             use warnings;
@@ -126,8 +126,9 @@ jobs:
                 close F ;
               }
 
-        EOM 
-        ) >>$GITHUB_ENV
+        EOM
+        )
+        echo $VERS >> $GITHUB_ENV
         
 
 
