@@ -30,6 +30,7 @@ jobs:
 
             use strict;
             use warnings;
+            use feature 'say';
 
             my %os_mapping = ( macos   => 'macos',
                                ubuntu  => 'linux',
@@ -99,17 +100,17 @@ jobs:
             
             warn "Matched with $RakuVersion\n" ;
             
-            print "RAKU_VERSION=$RakuVersion\n" ;
-            print "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion\n" ;
+            say "RAKU_VERSION=$RakuVersion" ;
+            say "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion" ;
                                              
             if ($os eq 'windows')
             {
             warn "xxx";
-              print("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion\n") ;
+              say("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion") ;
             }
             else
             {
-              print("RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion\n") ;
+              say("RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion") ;
             }
             
             
