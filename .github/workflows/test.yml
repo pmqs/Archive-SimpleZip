@@ -47,6 +47,9 @@ jobs:
 
             die "Unknown OS $os\n"
                 if ! $os_mapping{$os} ;
+                
+            my $EOL =  $os eq 'windows' ? "\r\n" : "\n";
+
 
             my %available;
             my @available;
@@ -100,36 +103,36 @@ jobs:
             
             warn "Matched with $RakuVersion\n" ;
             
-            print "RAKU_VERSION=$RakuVersion\r\n" ;
-            print "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion\r\n" ;
+            append2env("RAKU_VERSION", $RakuVersion) ;
+            append2env("RAKU_INSTALL_PATH_UX", "$ENV{HOME}/raku-$RakuVersion") ;
                                              
             if ($os eq 'windows')
             {
             warn "xxx";
-              print("RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion\r\n") ;
+              append2env("RAKU_INSTALL_PATH", "$ENV{HOME}\\raku-$RakuVersion") ;
             }
             else
             {
-              print("RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion\r\n") ;
+              append2env("RAKU_INSTALL_PATH", "$ENV{HOME}/raku-$RakuVersion") ;
             }
             
             
-            sub append
+            sub append2env
             {
                 my $name = shift ;
-                my $line = shift;
+                my $value = shift;
 
                 my $filename = $ENV{$name};
 
                 open F, '>>', $filename
                   or die "Cannot open $filename: $!\n" ;
-                print F  $_ . "\n" for @_ ;
+                print F  $name . '=' . $value . $EOL;
                 close F ;
               }
 
         EOM
         )
-        echo $VERS >> $GITHUB_ENV
+        #echo $VERS >> $GITHUB_ENV
         
 
 
