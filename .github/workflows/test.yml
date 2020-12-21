@@ -110,7 +110,7 @@ jobs:
             
             append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
                                  "RAKU_INSTALL_PATH_UX=$ENV{HOME}/raku-$RakuVersion") ;
-           open FF, ',', 
+      
             
             sub append
             {
