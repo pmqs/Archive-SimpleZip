@@ -183,13 +183,17 @@ jobs:
     #   run: |
     #     vcpkg install zlib
 
-    - name: Get path data for Raku ${{ env.RAKU_VERSION }}
+    - name: Set path for Raku ${{ env.RAKU_VERSION }}
       shell: bash
       run: |
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
         ls
         BASE_RELEASE=$( ls )
-        echo "RAKU_BASE_PATH=${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" >> $GITHUB_ENV
+        #echo "RAKU_BASE_PATH=${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" >> $GITHUB_ENV
+        RAKU_BASE_PATH=${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" 
+        
+        echo "$RAKU_BASE_PATH/bin" >> $GITHUB_PATH
+        echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH        
         
     - name: ENV
       shell: bash
@@ -201,11 +205,11 @@ jobs:
         
         cat $GITHUB_ENV    
 
-    - name: Set Path for Raku ${{ env.RAKU_VERSION }}
-      shell: bash
-      run: |
-        echo "$RAKU_BASE_PATH/bin" >> $GITHUB_PATH
-        echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH
+#     - name: Set Path for Raku ${{ env.RAKU_VERSION }}
+#       shell: bash
+#       run: |
+#         echo "$RAKU_BASE_PATH/bin" >> $GITHUB_PATH
+#         echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH
 
     - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
