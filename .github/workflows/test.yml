@@ -65,7 +65,7 @@ jobs:
                 next
                     unless $line =~ m#<a href=./dl/rakudo/rakudo-moar-([\d\.-]+?)-$os_mapping{$os}-x86_64#;
 
-                push @available, $1;
+                push @available, $1; 
             }
 
             my $max = 0;
