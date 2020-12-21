@@ -11,9 +11,9 @@ jobs:
 
       matrix:
         os:
-          - macos-latest
-          - ubuntu-latest
-          # - windows-latest
+#           - macos-latest
+#           - ubuntu-latest
+          - windows-latest
 
         raku-release:
           - latest
