@@ -130,9 +130,9 @@ jobs:
             rm tmp.zip
         elif  [[ "${{ matrix.os }}" = ubuntu* ]]
         then
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION}}-linux-x86_64.tar.gz | tar xzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION}}-linux-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         else
-            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION }}-macos-x86_64.tar.gz | tar xzf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
+            curl -s https://rakudo.org/dl/rakudo/rakudo-moar-${{ env.RAKU_VERSION }}-macos-x86_64.tar.gz | tar xf - -C ${{ env.RAKU_INSTALL_PATH_UX }}
         fi
 
     # # Install zlib on windows
