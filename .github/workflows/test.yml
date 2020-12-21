@@ -187,10 +187,8 @@ jobs:
       shell: bash
       run: |
         cd ${{ env.RAKU_INSTALL_PATH_UX }}
-        ls
         BASE_RELEASE=$( ls )
-        #echo "RAKU_BASE_PATH=${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" >> $GITHUB_ENV
-        RAKU_BASE_PATH=${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" 
+        RAKU_BASE_PATH="${{ env.RAKU_INSTALL_PATH }}/$BASE_RELEASE" 
         
         echo "$RAKU_BASE_PATH/bin" >> $GITHUB_PATH
         echo "$RAKU_BASE_PATH/share/perl6/site/bin" >> $GITHUB_PATH        
