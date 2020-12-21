@@ -101,11 +101,11 @@ jobs:
             
             if ($os eq 'windows')
             {
-              append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion" ;
+              append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}\\raku-$RakuVersion") ;
             }
             else
             {
-              append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion" ;
+              append('GITHUB_ENV',  "RAKU_INSTALL_PATH=$ENV{HOME}/raku-$RakuVersion") ;
             }
             
             append('GITHUB_ENV', "RAKU_VERSION=$RakuVersion" ,
