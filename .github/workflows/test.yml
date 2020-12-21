@@ -117,8 +117,8 @@ jobs:
               my $line = shift;
               open F, '>>', $filename
                 or die "Cannot open $filename: $!\n" ;
-              print F  $_ . "\n" for @_
-              close F
+              print F  $_ . "\n" for @_ ;
+              close F ;
               }
 
         EOM
