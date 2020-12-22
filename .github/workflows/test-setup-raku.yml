@@ -31,7 +31,7 @@ jobs:
       id: rakuCache
       with:
         path: .raku
-        key: ${{ runner.os }}-${{ matrix.raku-version }}-${{ hashFiles('./dev/META6.json') }}
+        key: ${{ runner.os }}-${{ matrix.raku-version }}
 
     - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
@@ -39,11 +39,16 @@ jobs:
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
       run:  |
-        mkdir -p $GITHUB_WORKSPACE/.raku
+        cd $GITHUB_WORKSPACE
+        mkdir -p .raku
         zef install --install-to=inst#$GITHUB_WORKSPACE/.raku --deps-only .
 
     - name: Run module tests
+      env:
+        RAKULIB: inst#$GITHUB_WORKSPACE/.raku
+        PERL6LIB: inst#$GITHUB_WORKSPACE/.raku
       run:  |
         # echo --verbose >.proverc
         # echo --verbose >_proverc
-        RAKULIB=inst#$GITHUB_WORKSPACE/.raku $GITHUB_WORKSPACE/.raku/bin/prove6 -l -v t
+        # RAKULIB=inst#$GITHUB_WORKSPACE/.raku $GITHUB_WORKSPACE/.raku/bin/prove6 -l -v t
+        RAKULIB=inst#$GITHUB_WORKSPACE/.raku zef test --verbose .
