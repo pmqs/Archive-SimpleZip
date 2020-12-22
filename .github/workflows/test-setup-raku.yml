@@ -5,8 +5,6 @@ on: [push, pull_request]
 jobs:
   build:
 
-
-
     strategy:
 
       matrix:
@@ -29,11 +27,6 @@ jobs:
       with:
         raku-version: ${{ matrix.raku-version }}
 
-    # - name: Set env
-    #   run:  |
-    #     echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local >> $GITHUB_ENV
-    #     echo MODCACHE=${{ env.GITHUB_WORKSPACE }}/raku-local >> $GITHUB_ENV
-
     - name: Setup Raku cache
       uses: actions/cache@v2
       id: rakuCache
@@ -44,24 +37,17 @@ jobs:
     - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
 
+    - name: Set RAKULIB
+      run:  |
+        echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
+
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
       run:  |
         mkdir raku-local
         zef install --debug --install-to=$RAKULIB --deps-only .
 
-    - name: Set RAKULIB
-      run:  |
-        echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
-
-    # - name: Set FFED
-    #   env:
-    #     FRED: ${{ env.RAKULIB }}
-    #   run: echo FRED $FRED
-
     - name: Run module tests
-      # env:
-      #   RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
       run:  |
         echo RAKULIB $RAKULIB
         # echo --verbose >.proverc
