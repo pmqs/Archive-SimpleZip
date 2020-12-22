@@ -9,9 +9,9 @@ jobs:
 
       matrix:
         os:
-          - macos-latest
+          # - macos-latest
           - ubuntu-latest
-          - windows-latest
+          # - windows-latest
 
         raku-version:
           - latest
@@ -40,7 +40,7 @@ jobs:
       if: steps.rakuCache.outputs.cache-hit != 'true'
       run:  |
         cd $GITHUB_WORKSPACE
-        mkdir -p .raku
+        mkdir .raku
         zef install --install-to=inst#$GITHUB_WORKSPACE/.raku --deps-only .
 
     - name: Run module tests
