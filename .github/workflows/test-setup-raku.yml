@@ -46,9 +46,8 @@ jobs:
     - name: Run module tests
       env:
         RAKULIB: inst#$GITHUB_WORKSPACE/raku-local
-        PERL6LIB: inst#$GITHUB_WORKSPACE/raku-local
       run:  |
         echo --verbose >.proverc
         echo --verbose >_proverc
         # RAKULIB=inst#$GITHUB_WORKSPACE/.raku $GITHUB_WORKSPACE/.raku/bin/prove6 -l -v t
-        RAKULIB=inst#$GITHUB_WORKSPACE/raku-local zef test --verbose .
+        zef test --verbose .
