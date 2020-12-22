@@ -41,6 +41,7 @@ jobs:
       run:  |
         mkdir $GITHUB_WORKSPACE/raku-local
         echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
+        echo PERL6LIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
         zef install --install-to=inst#$GITHUB_WORKSPACE/raku-local --deps-only .
 
     - name: Run module tests
