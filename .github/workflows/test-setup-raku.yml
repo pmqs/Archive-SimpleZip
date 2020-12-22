@@ -38,9 +38,8 @@ jobs:
 
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
-      shell: bash
       run:  |
-        mkdir -p $GITHUB_WORKSPACE/raku-local
+        mkdir $GITHUB_WORKSPACE/raku-local
         echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
         zef install --install-to=inst#$GITHUB_WORKSPACE/raku-local --deps-only .
 
