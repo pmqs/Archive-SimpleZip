@@ -31,8 +31,8 @@ jobs:
 
     - name: Set env
       run:  |
-        echo "RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local" >> $GITHUB_ENV
-        echo "MODCACHE={{ env.GITHUB_WORKSPACE }}/raku-local" >> $GITHUB_ENV
+        echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local >> $GITHUB_ENV
+        echo MODCACHE=${{ env.GITHUB_WORKSPACE }}/raku-local >> $GITHUB_ENV
 
     - name: Setup Raku cache
       uses: actions/cache@v2
