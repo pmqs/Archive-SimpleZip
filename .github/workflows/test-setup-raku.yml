@@ -2,12 +2,11 @@ name: Test with Raku/setup-raku
 
 on: [push, pull_request]
 
-
-env:
-  RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
-
 jobs:
   build:
+
+    env:
+      RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
 
     strategy:
 
