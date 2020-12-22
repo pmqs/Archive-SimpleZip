@@ -45,17 +45,18 @@ jobs:
     - name: Set RAKULIB
       run:  |
         echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
-        echo PERL6LIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
+        # echo PERL6LIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
 
     - name: Set FFED
       env:
-        FRED: $RAKULIB
+        FRED: ${{ env.RAKULIB }}
       run: echo FRED $FRED
 
     - name: Run module tests
-      shell: bash
+      env:
+        RAKULIB: ${{ env.RAKULIB }}
       run:  |
         echo RAKULIB $RAKULIB
-        echo --verbose >.proverc
-        echo --verbose >_proverc
-        zef test --verbose .
+        # echo --verbose >.proverc
+        # echo --verbose >_proverc
+        zef test --debug .
