@@ -2,6 +2,10 @@ name: Test with Raku/setup-raku
 
 on: [push, pull_request]
 
+
+env:
+  RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
+
 jobs:
   build:
 
@@ -19,8 +23,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    env:
-      RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
 
     steps:
 
