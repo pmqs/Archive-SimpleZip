@@ -29,8 +29,8 @@ jobs:
       with:
         raku-version: ${{ matrix.raku-version }}
 
-    -name: Set env
-     run: |
+    - name: Set env
+      run:  |
         echo "RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local" >> $GITHUB_ENV
         echo "MODCACHE={{ env.GITHUB_WORKSPACE }}/raku-local" >> $GITHUB_ENV
 
