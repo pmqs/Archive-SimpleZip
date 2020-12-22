@@ -50,10 +50,9 @@ jobs:
         mkdir raku-local
         zef install --debug --install-to=$RAKULIB --deps-only .
 
-    # - name: Set RAKULIB
-    #   run:  |
-    #     echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
-    #     # echo PERL6LIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
+    - name: Set RAKULIB
+      run:  |
+        echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
 
     # - name: Set FFED
     #   env:
@@ -61,8 +60,8 @@ jobs:
     #   run: echo FRED $FRED
 
     - name: Run module tests
-      env:
-        RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
+      # env:
+      #   RAKULIB: ${{ env.GITHUB_WORKSPACE }}/raku-local
       run:  |
         echo RAKULIB $RAKULIB
         # echo --verbose >.proverc
