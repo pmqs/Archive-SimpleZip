@@ -40,15 +40,22 @@ jobs:
       if: steps.rakuCache.outputs.cache-hit != 'true'
       run:  |
         mkdir $GITHUB_WORKSPACE/raku-local
-        zef install --install-to=inst#$GITHUB_WORKSPACE/raku-local --deps-only .
+        zef install --debug --install-to=inst#$GITHUB_WORKSPACE/raku-local --deps-only .
 
     - name: Set RAKULIB
       run:  |
         echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
         echo PERL6LIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
 
+    - name: Set FFED
+      env:
+        FRED: $RAKULIB
+      run: echo FRED $FRED
+
     - name: Run module tests
+      shell: bash
       run:  |
+        echo RAKULIB $RAKULIB
         echo --verbose >.proverc
         echo --verbose >_proverc
         zef test --verbose .
