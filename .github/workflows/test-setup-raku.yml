@@ -45,7 +45,7 @@ jobs:
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
       env:
-        RAKULIB: inst#${{ env.GITHUB_WORKSPACE }}/raku-local
+        RAKULIB: inst#$GITHUB_WORKSPACE/raku-local
       run:  |
         echo RAKULIB ${{ env.RAKULIB }}
         echo RAKULIB $RAKULIB
@@ -55,9 +55,10 @@ jobs:
 
     - name: Run module tests
       env:
-        RAKULIB: inst#${{ env.GITHUB_WORKSPACE }}/raku-local
+        RAKULIB: inst#$GITHUB_WORKSPACE/raku-local
       run:  |
         echo RAKULIB ${{ env.RAKULIB }}
+        echo RAKULIB $RAKULIB
         # echo --verbose >.proverc
         # echo --verbose >_proverc
         zef test --verbose .
