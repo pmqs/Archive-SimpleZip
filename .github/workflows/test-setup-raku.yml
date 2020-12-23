@@ -11,7 +11,7 @@ jobs:
         os:
           - macos-latest
           - ubuntu-latest
-          # - windows-latest
+          - windows-latest
 
         raku-version:
           - latest
@@ -47,6 +47,7 @@ jobs:
       shell: cmd
       run:  |
         echo RAKULIB=inst#%GITHUB_WORKSPACE%\raku-local >> %GITHUB_ENV%
+
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
       run:  |
