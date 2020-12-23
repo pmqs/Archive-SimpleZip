@@ -49,6 +49,7 @@ jobs:
         zef install --debug --install-to=$RAKULIB --deps-only .
 
     - name: Run module tests
+      shell: bash
       run:  |
         echo RAKULIB $RAKULIB
         # echo --verbose >.proverc
