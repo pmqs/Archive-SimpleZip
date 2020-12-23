@@ -34,7 +34,7 @@ jobs:
         path: raku-local
         key: ${{ runner.os }}-${{ matrix.raku-version }}
 
-    - name: Raku ${{ env.RAKU_VERSION }} version
+    - name: Raku version
       run: raku -v
 
     - name: Set RAKULIB
@@ -45,6 +45,7 @@ jobs:
       if: steps.rakuCache.outputs.cache-hit != 'true'
       shell: bash
       run:  |
+        echo RAKULIB $RAKULIB
         mkdir raku-local
         zef install --debug --install-to=$RAKULIB --deps-only .
 
