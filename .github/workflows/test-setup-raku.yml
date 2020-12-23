@@ -43,6 +43,7 @@ jobs:
 
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
+      shell: bash
       run:  |
         mkdir raku-local
         zef install --debug --install-to=$RAKULIB --deps-only .
