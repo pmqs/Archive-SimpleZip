@@ -40,14 +40,15 @@ jobs:
     - name: Set RAKULIB
       run:  |
         echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
+        echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local 
 
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
       shell: bash
       run:  |
-        echo RAKULIB $RAKULIB
+        echo RAKULIB ${{ env.RAKULIB }}
         mkdir raku-local
-        zef install --debug --install-to=$RAKULIB --deps-only .
+        zef install --debug --install-to=${{ env.RAKULIB }} --deps-only .
 
     - name: Run module tests
       shell: bash
