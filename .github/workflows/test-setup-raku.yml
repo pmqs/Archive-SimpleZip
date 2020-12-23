@@ -38,12 +38,12 @@ jobs:
       run: raku -v
 
     - name: Set RAKULIB for Linus/MacOS
-      if: !contains(matrix.os, 'windows')
+      if: ${{ !contains(matrix.os, 'windows') }}
       run:  |
         echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
 
     - name: Set RAKULIB for Windows
-      if: contains(matrix.os, 'windows')
+      if: ${{ contains(matrix.os, 'windows') }}
       shell: cmd
       run:  |
         echo RAKULIB=inst#%GITHUB_WORKSPACE%\raku-local >> %GITHUB_ENV%
