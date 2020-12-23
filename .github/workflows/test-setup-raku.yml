@@ -32,15 +32,21 @@ jobs:
       id: rakuCache
       with:
         path: raku-local
-        key: ${{ runner.os }}-${{ matrix.raku-version }}
+        key: ${{ matrix.os }}-${{ matrix.raku-version }}
 
-    - name: Raku version
+    - name: Raku ${{ env.RAKU_VERSION }} version
       run: raku -v
 
-    - name: Set RAKULIB
+    - name: Set RAKULIB for Linus/MacOS
+      if: !contains(matrix.os, 'windows')
       run:  |
-        echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local >> ${{ env.GITHUB_ENV }}
+        echo RAKULIB=inst#$GITHUB_WORKSPACE/raku-local >> $GITHUB_ENV
 
+    - name: Set RAKULIB for Windows
+      if: contains(matrix.os, 'windows')
+      shell: cmd
+      run:  |
+        echo RAKULIB=inst#%GITHUB_WORKSPACE%\raku-local >> %GITHUB_ENV%
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
       run:  |
