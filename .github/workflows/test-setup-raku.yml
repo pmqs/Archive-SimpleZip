@@ -34,7 +34,7 @@ jobs:
         path: raku-local
         key: ${{ matrix.os }}-${{ matrix.raku-version }}
 
-    - name: Raku ${{ env.RAKU_VERSION }} version
+    - name: Raku version
       run: raku -v
 
     - name: Set RAKULIB [Windows]
