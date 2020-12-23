@@ -37,21 +37,25 @@ jobs:
     - name: Raku version
       run: raku -v
 
-    - name: Set RAKULIB
-      run:  |
-        echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local >> ${{ env.GITHUB_ENV }}
-        echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local
+    # - name: Set RAKULIB
+    #   run:  |
+    #     echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local >> ${{ env.GITHUB_ENV }}
+    #     echo RAKULIB=inst#${{ env.GITHUB_WORKSPACE }}/raku-local
 
     - name: Install module dependencies
       if: steps.rakuCache.outputs.cache-hit != 'true'
-      shell: bash
+      env:
+        RAKULIB: inst#${{ env.GITHUB_WORKSPACE }}/raku-local
       run:  |
         echo RAKULIB ${{ env.RAKULIB }}
+        echo RAKULIB $RAKULIB
+
         mkdir raku-local
         zef install --debug --install-to=${{ env.RAKULIB }} --deps-only .
 
     - name: Run module tests
-      shell: bash
+      env:
+        RAKULIB: inst#${{ env.GITHUB_WORKSPACE }}/raku-local
       run:  |
         echo RAKULIB ${{ env.RAKULIB }}
         # echo --verbose >.proverc
