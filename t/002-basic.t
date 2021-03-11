@@ -311,7 +311,7 @@ subtest # List
     my $zip = SimpleZip.new($zipfile);
     isa-ok $zip, SimpleZip;
 
-    my @got = glob("gdata*")>>.grep(/5/).$zip().subst(/"gdata"/, "fred");
+    my @got = glob("gdata*").grep(/5/).$zip().subst(/"gdata"/, "fred");
 
     ok $zip.close(), "closed";
 
