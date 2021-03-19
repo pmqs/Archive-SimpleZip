@@ -50,4 +50,4 @@ Suggestions/patches are welcomed at [Archive-SimpleZip](https://github.com/pmqs/
 
 Please see the LICENCE file in the distribution
 
-(C) Paul Marquess 2016-2020
+(C) Paul Marquess 2016-2021

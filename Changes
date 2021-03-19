@@ -1,9 +1,14 @@
 
+0.5.0 19 March 2021
+
+    * Don't use >>.grep if .grep is enough
+      https://github.com/pmqs/Archive-SimpleZip/pull/4
+
 0.4.0 27 Juune 2020
 
     * Add support for adding lists and sequences of files in one go.
 
-    * first atsab at a CALL-ME
+    * first stab at a CALL-ME
 
 
 0.2.0 10 March 2019

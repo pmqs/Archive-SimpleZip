@@ -1,5 +1,5 @@
 
-unit module Archive::SimpleZip:ver<0.4.0>:auth<Paul Marquess (pmqs@cpan.org)>;
+unit module Archive::SimpleZip:ver<0.5.0>:auth<Paul Marquess (pmqs@cpan.org)>;
 
 need Compress::Zlib;
 # need Compress::Bzip2; # disable for now
