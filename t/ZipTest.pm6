@@ -34,7 +34,7 @@ sub clean-filename(Str:D $filename) returns Str:D
     return $filename
             .chomp
             .subst(/^ <[A..Za..z]> ":" /, '') # remove drive
-            .subst(/ '\\' + /, '/', :g) ; # "\" => "/"
+            .subst(/ '\\' + /, '/', :g) ;     # "\" => "/"
 }
 
 sub external-zip-works() returns Bool:D is export
@@ -173,7 +173,7 @@ sub get-filenames-in-zip($filename) is export
 sub string-to-binary(Str:D $string) is export
 {
     # Convert a string into a sequence of bytes
-    return $string.encode('utf8');
+    return Buf[uint8]($string.encode('utf8'));
 }
 
 sub unzipToTempDir($file)
