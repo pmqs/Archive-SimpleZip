@@ -20,6 +20,7 @@
         "Compress::Zlib::Raw",
         "Compress::Zlib",
         "CompUnit::Util",
+        "File::Temp",
         "IO::Blob",
         "IO::Glob"
     ],
