@@ -5,7 +5,7 @@
   ],
   "depends": [
     "Compress::Zlib::Raw",
-    "Compress::BZip2",
+    "Compress::Bzip2",
     "Compress::Zlib",
     "CompUnit::Util",
     "File::Temp",
