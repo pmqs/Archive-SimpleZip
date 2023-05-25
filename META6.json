@@ -15,9 +15,9 @@
   "name": "Archive::SimpleZip",
   "perl": "6.*",
   "provides": {
-    "Archive::SimpleZip": "lib/Archive/SimpleZip.pm6",
-    "Archive::SimpleZip::Headers": "lib/Archive/SimpleZip/Headers.pm6",
-    "Archive::SimpleZip::Utils": "lib/Archive/SimpleZip/Utils.pm6"
+    "Archive::SimpleZip": "lib/Archive/SimpleZip.rakumod",
+    "Archive::SimpleZip::Headers": "lib/Archive/SimpleZip/Headers.rakumod",
+    "Archive::SimpleZip::Utils": "lib/Archive/SimpleZip/Utils.rakumod"
   },
   "resources": [
   ],
