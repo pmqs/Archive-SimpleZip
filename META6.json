@@ -8,7 +8,6 @@
     "Compress::Zlib",
     "CompUnit::Util",
     "File::Temp",
-    "IO::Blob",
     "IO::Glob"
   ],
   "description": "Write Zip Files.",
