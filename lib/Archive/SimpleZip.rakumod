@@ -2,7 +2,7 @@
 unit module Archive::SimpleZip:ver<0.6.0>:auth<zef:pmqs>;
 
 need Compress::Zlib;
-# need Compress::Bzip2; # disable for now
+need Compress::Bzip2;
 
 use IO::Glob;
 
@@ -236,12 +236,12 @@ class SimpleZip does Callable is export
                 $flush-action     = ->     { $zlib.finish()     } ;
             }
 
-            # when Zip-CM-Bzip2
-            # {
-            #     my $bzip2 = Compress::Bzip2::Stream.new(:deflate);
-            #     $compress-action  = -> $in { $bzip2.compress($in) } ;
-            #     $flush-action     = ->     { $bzip2.finish()      } ;
-            # }
+            when Zip-CM-Bzip2
+            {
+                my $bzip2 = Compress::Bzip2::Stream.new(:deflate);
+                $compress-action  = -> $in { $bzip2.compress($in) } ;
+                $flush-action     = ->     { $bzip2.finish()      } ;
+            }
 
             when Zip-CM-Store
             {
