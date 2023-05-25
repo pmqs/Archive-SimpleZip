@@ -6,7 +6,7 @@ use lib 't';
 
 use Test;
 
-plan 11;
+plan 13;
 
 use ZipTest;
 
@@ -32,11 +32,12 @@ my $dir1 = 'dir1';
 ok mkdir($dir1, 0o777), "created $dir1";
 
 my $zipfile = "test.zip" ;
+my $zipfile2 = 'test2.zip';
 my $datafile = "$dir1/data123";
 my $datafile1 = "data124";
 my $datafile2 = "data125".IO;
 
-subtest
+subtest # add
 {
     unlink $zipfile;
     spurt $datafile, "some data" ;
@@ -51,11 +52,11 @@ subtest
     my $zip = SimpleZip.new($zipfile, :stream, comment => 'file comment');
     isa-ok $zip, SimpleZip;
 
-    ok $zip.add($datafile1.IO), "add file";
-    ok $zip.add($datafile.IO, :name<new>), "add file but override name";
-    ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
-    ok $zip.add("def", :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string, STORE";
-    ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :stream), "add string, Stream";
+    ok $zip.add($datafile1.IO), "add file.IO";
+    ok $zip.add($datafile.IO, :name<new>), "add file.IO but override name";
+    ok $zip.add($datafile, :name<fred>, comment => 'member comment'), "add string filename ok";
+    ok $zip.add($datafile2, :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string filename, STORE";
+    # ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :stream), "add string, Stream";
     ok $zip.add($datafile2.open, :name<handle>), "Add filehandle";
     ok $zip.close(), "closed";
 
@@ -66,13 +67,93 @@ subtest
     is comment-from-unzip($zipfile), "file comment", "File comment ok";
     is pipe-in-from-unzip($zipfile, 'new'), "some data", "member new ok";
     is pipe-in-from-unzip($zipfile, $datafile1), "more data", "member $datafile1 ok";
-    is pipe-in-from-unzip($zipfile, "fred"), "abcde", "member fred ok";
-    is pipe-in-from-unzip($zipfile, "/joe//bad"), "def", "member /joe//bad ok";
-    is pipe-in-from-unzip($zipfile, "jim", :binary).decode, "\x2\x4\x6", "member jim ok";
+    is pipe-in-from-unzip($zipfile, "fred"), "some data", "member fred ok";
+    is pipe-in-from-unzip($zipfile, "/joe//bad"), $text, "member /joe//bad ok";
+    # is pipe-in-from-unzip($zipfile, "jim", :binary).decode, "\x2\x4\x6", "member jim ok";
     # is pipe-in-from-unzip($zipfile, "bz", :binary).decode, "str", "member bz ok";
     is pipe-in-from-unzip($zipfile, "handle"), $text, "member handle ok";
 
 }, 'add' ;
+
+
+subtest # create
+{
+    unlink $zipfile;
+    unlink $datafile2 ;
+
+    my $text = "line 1\nline 2\nline 3";
+
+    spurt $datafile2, $text ;
+
+    ok  $datafile1.IO.e, "$datafile1 does exists";
+    nok $zipfile.IO.e, "$zipfile does not exists";
+
+    my $zip = SimpleZip.new($zipfile, :stream, comment => 'file comment');
+    isa-ok $zip, SimpleZip;
+
+    ok $zip.create('file1', $text);
+
+    my Buf $b .= new([2,4,6]) ;
+
+    ok $zip.create('file2', $b);
+    ok $zip.create('file3', $datafile2.open);
+    ok $zip.create('file4', $datafile2) ;
+
+
+    ok $zip.close(), "closed";
+
+    ok $zipfile.IO.e, "$zipfile exists";
+
+    ok test-with-unzip($zipfile), "unzip likes the zip file";
+
+    is pipe-in-from-unzip($zipfile, "file1"), $text, "member file1 ok";
+    is pipe-in-from-unzip($zipfile, "file2"),  $b.decode('latin1'), "member file2 ok";
+    is pipe-in-from-unzip($zipfile, "file3"), $text, "member file3 ok";
+    is pipe-in-from-unzip($zipfile, "file4"), $text, "member file4 ok";
+
+
+}, 'create' ;
+
+
+subtest # associative
+{
+    unlink $zipfile;
+    unlink $datafile ;
+
+    ok ! $zipfile.IO.e, "$zipfile exists";
+
+    my $text = "line 1\nline 2\nline 3";
+
+    spurt $datafile2, $text ;
+
+    ok  $datafile2.IO.e, "$datafile does exists";
+    ok ! $zipfile.IO.e, "$zipfile does not exists";
+
+    my $zip = SimpleZip.new($zipfile, :stream, comment => 'file comment');
+    isa-ok $zip, SimpleZip;
+
+    ok $zip{'file1'} = $text;
+
+    my Buf $b .= new([2,4,6]) ;
+
+    ok $zip<file2> = $b;
+    ok $zip<file3> = $datafile2.open;
+    ok $zip<file4> = $datafile2;
+
+
+    ok $zip.close(), "closed";
+
+    ok $zipfile.IO.e, "$zipfile exists";
+
+    ok test-with-unzip($zipfile), "unzip likes the zip file";
+
+    is pipe-in-from-unzip($zipfile, "file1"), $text, "member file1 ok";
+    is pipe-in-from-unzip($zipfile, "file2"),  $b.decode('latin1'), "member file2 ok";
+    is pipe-in-from-unzip($zipfile, "file3"), $text, "member file3 ok";
+    is pipe-in-from-unzip($zipfile, "file4"), $text, "member file4 ok";
+
+
+}, 'associative' ;
 
 # subtest # add to blob
 # {
@@ -91,7 +172,7 @@ subtest
 #     my Blob $data .= new();
 #     my $zip2 = SimpleZip.new($data);
 #     isa-ok $zip2, SimpleZip;
-#     ok $zip2.add("abcde", :name<fred>), "add";
+#     ok $zip2.create('fred', "abcde", :name<fred>), "add";
 #     ok $zip2.close(), "closed";
 
 #     my $file2 = "file2.zip".IO;
@@ -106,7 +187,7 @@ subtest
 #     is pipe-in-from-unzip($file2, 'fred'), "abcde", "member fred ok";
 # }, 'add to blob' ;
 
-subtest
+subtest # language encoding bit
 {
     # Local Header for the  zip should look like this
     #
@@ -289,7 +370,7 @@ subtest # List
 
 }, "list";
 
-subtest # List
+subtest # CALL-ME
 {
     use IO::Glob;
     unlink $zipfile;
@@ -307,25 +388,39 @@ subtest # List
 
     ok  $datafile.IO.e, "$datafile does exists";
     nok $zipfile.IO.e, "$zipfile does not exists";
+    nok $zipfile2.IO.e, "$zipfile does not exists";
 
-    my $zip = SimpleZip.new($zipfile);
-    isa-ok $zip, SimpleZip;
+    my $zip1 = SimpleZip.new($zipfile);
+    isa-ok $zip1, SimpleZip;
 
-    my @got = glob("gdata*").grep(/5/).$zip().subst(/"gdata"/, "fred");
+    $zip1($datafile);
 
-    ok $zip.close(), "closed";
+    my @got1 = glob("gdata*").grep(/5/).$zip1.subst(/"gdata"/, "fred");
 
-    is @got, 'fred125';
-    is get-filenames-in-zip($zipfile), $datafile2, "filename OK";
+    ok $zip1.close(), "closed";
+
+    is @got1, 'fred125';
+    is get-filenames-in-zip($zipfile),  [$datafile, $datafile2], "filename OK";
+
+
+    my $zip2 = SimpleZip.new($zipfile2);
+    isa-ok $zip2, SimpleZip;
+
+    my @got2 = glob("gdata*").$zip2.grep(/5/);
+
+    ok $zip2.close(), "closed";
+
+    is @got2, 'gdata125';
+
+    is get-filenames-in-zip($zipfile2), [ $datafile1, $datafile2 ], "filename OK";
 
     unlink $zipfile;
-
-    # @got = glob("gdata*").dir.$zip().subst(/"gdata"/, "fred");
+    unlink $zipfile2;
 
 
 }, "CALL-ME";
 
-subtest
+subtest # file does not exist
 {
     # Add file that doesn't exist
     unlink $zipfile;

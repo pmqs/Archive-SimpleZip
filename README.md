@@ -12,27 +12,30 @@ Raku (Perl6) module to write Zip archives.
 
 
 ```
-
 use Archive::SimpleZip;
 
 # Create a zip file in filesystem
-my $obj = SimpleZip.new("mine.zip");
+my $z = SimpleZip.new("mine.zip");
 
 # Add a file to the zip archive
-$obj.add("somefile.txt".IO);
+$z.add("somefile.txt");
 
 # Add a Blob/String
-$obj.add("payload data here", :name<data1>);
-$obj.add(Blob.new([2,4,6]), :name<data2>);
+$z.add("payload data here", :name<data1>);
+$z.add(Blob.new([2,4,6]), :name<data2>);
 
 # Drop a filehandle into the zip archive
 my $handle = "some file".IO.open;
-$obj.add($handle, :name<data3>);
+$z.add($handle, :name<data3>);
+
+# Add multiple files in one step
+
+$z.add(@list_of_files);
 
 use IO::Glob;
-$zip.add(glob("*.c"));
+$z.add(glob("*.c"));
 
-$obj.close();
+$z.close();
 ```
 
 
@@ -50,4 +53,4 @@ Suggestions/patches are welcomed at [Archive-SimpleZip](https://github.com/pmqs/
 
 Please see the LICENCE file in the distribution
 
-(C) Paul Marquess 2016-2021
+(C) Paul Marquess 2016-2023

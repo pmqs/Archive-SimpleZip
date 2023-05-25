@@ -1,10 +1,9 @@
 
-unit module Archive::SimpleZip:ver<0.5.0>:auth<Paul Marquess (pmqs@cpan.org)>;
+unit module Archive::SimpleZip:ver<0.6.0>:auth<zef:pmqs>;
 
 need Compress::Zlib;
 # need Compress::Bzip2; # disable for now
 
-use IO::Blob;
 use IO::Glob;
 
 use Archive::SimpleZip::Utils ;
@@ -54,7 +53,7 @@ class SimpleZip does Callable is export
             if $!zip64 ;
     }
 
-    method CALL-ME(IO() $path, |c --> IO)
+    multi method CALL-ME(IO() $path, |c --> IO)
     {
         return $path
             unless $path ;
@@ -64,23 +63,48 @@ class SimpleZip does Callable is export
         $path;
     }
 
-    multi method add(Str:D $string, |c --> Int:D)
+    multi method CALL-ME(IO::Glob:D $glob, |c --> IO::Glob:D)
     {
-        # say "ADDING String [{$string.^name}][$string]";
+        $glob.map: { self.add($^a, |c) } ;
 
-        my IO::Blob $fh .= new($string);
-        samewith($fh, |c);
+        $glob
     }
 
-    multi method add(Blob:D $blob, |c --> Int:D)
-    {
-        my IO::Blob $fh .= new($blob);
-        samewith($fh, |c);
+    multi method AT-KEY (::?CLASS:D: $key) is rw {
+
+        my $self = self;
+
+        Proxy.new(
+            FETCH => method () { $key },
+
+            STORE => method ($value) {
+                $self.create($key, $value);
+            }
+        );
     }
 
-    multi method add(IO::Path:D $path, |c --> Int:D)
+    # method EXISTS-KEY ($key)       {  }
+    # method DELETE-KEY ($key)       { }
+
+    # multi method add(Str:D $string, |c --> Int:D)
+    # {
+    #     # say "ADDING String [{$string.^name}][$string]";
+
+    #     my IO::Blob $fh .= new($string);
+    #     samewith($fh, |c);
+    # }
+
+    # multi method add(Blob:D $blob, |c --> Int:D)
+    # {
+    #     my IO::Blob $fh .= new($blob);
+    #     samewith($fh, |c);
+    # }
+
+
+
+    multi method add(IO:D() $path, |c --> Int:D)
     {
-        # If file doesn't exist or isn't readable fail immediately
+        # Fail immediately if file doesn't exist or isn't readable
         my $fh = open($path, :r, :bin)
             or fail $fh ;
 
@@ -111,21 +135,67 @@ class SimpleZip does Callable is export
         return $l.elems;
     }
 
-    multi method add(IO::Handle:D  $handle,
-                     Str:D        :$name    = '',
-                     Str:D        :$comment = '',
-                     Instant:D    :$time    = $!now,
-                     Bool:D       :$stream  = $!default-stream,
-                     Bool:D       :$canonical-name = $!default-canonical,
-                     Zip-CM:D     :$method  = $!default-method
-                     --> Int:D)
+    multi method add(IO::Handle:D  $handle, |c --> Int:D)
+    {
+        my $p  = -> $compress-chunk {
+                        while $handle.read(1024 * 4) -> $chunk
+                        {
+                            $compress-chunk($chunk);
+                        }
+                    } ;
+        self!create-zip-entry($p, |c);
+    }
+
+    multi method create(Str:D() $name, IO::Handle:D  $handle, |c --> Int:D)
+    {
+        my $p  = -> $compress-chunk {
+                        while $handle.read(1024 * 4) -> $chunk
+                        {
+                            $compress-chunk($chunk);
+                        }
+                    } ;
+
+        self!create-zip-entry($p, :name($name), |c);
+    }
+
+    multi method create(Str:D() $name, IO:D() $path, |c --> Int:D)
+    {
+        # Fail immediately if file doesn't exist or isn't readable
+        my $fh = open($path, :r, :bin)
+            or fail $fh ;
+
+        samewith($name, $fh, :time($path.modified), |c);
+    }
+
+    multi method create(Str:D() $name, Str:D() $str, |c --> Int:D)
+    {
+        my $p  = -> $compress-chunk {
+                       $compress-chunk($str.encode);
+                    } ;
+        self!create-zip-entry($p, :name($name), |c);
+    }
+
+    multi method create(Str:D() $name, Blob:D() $blob, |c --> Int:D)
+    {
+        my $p  = -> $compress-chunk {
+                        $compress-chunk($blob);
+                    } ;
+        self!create-zip-entry($p, :name($name), |c);
+    }
+
+    method !create-zip-entry(Code:D        $process-input,
+                             Str:D        :$name    = '',
+                             Str:D        :$comment = '',
+                             Instant:D    :$time    = $!now,
+                             Bool:D       :$stream  = $!default-stream,
+                             Bool:D       :$canonical-name = $!default-canonical,
+                             Zip-CM:D     :$method  = $!default-method
+                             --> Int:D)
     {
         my $compressed-size = 0;
         my $uncompressed-size = 0;
         my $crc32 = 0;
         my $hdr = Local-File-Header.new();
-
-        # say "   ADDING [$name]";
 
         $hdr.last-mod-file-time = get-DOS-time($time);
         $hdr.compression-method = $method ;
@@ -134,7 +204,7 @@ class SimpleZip does Callable is export
         $filename = make-canonical-name($filename)
             if $canonical-name ;
 
-        # Check if the filename or comment are not 7-bit ASCII
+        # Check if the filename or comment are 7-bit ASCII
         # If either is not, set the Language encoding bit
         # in general purpose flags.
         my Bool $high-bit = ( ? $filename.ords.first: * > 127 ) ||
@@ -154,7 +224,7 @@ class SimpleZip does Callable is export
         my $local-hdr = $hdr.get();
         $!zip-filehandle.write($local-hdr) ;
 
-        my $read-action;
+        my $compress-action;
         my $flush-action;
 
         given $method
@@ -162,41 +232,39 @@ class SimpleZip does Callable is export
             when Zip-CM-Deflate
             {
                 my $zlib = Compress::Zlib::Stream.new(:deflate);
-                $read-action  = -> $in { $zlib.deflate($in) } ;
-                $flush-action = ->     { $zlib.finish()     } ;
+                $compress-action  = -> $in { $zlib.deflate($in) } ;
+                $flush-action     = ->     { $zlib.finish()     } ;
             }
 
             # when Zip-CM-Bzip2
             # {
-            #     my $zlib = Compress::Bzip2::Stream.new(:deflate);
-            #     $read-action  = -> $in { $zlib.compress($in) } ;
-            #     $flush-action = ->     { $zlib.finish()      } ;
+            #     my $bzip2 = Compress::Bzip2::Stream.new(:deflate);
+            #     $compress-action  = -> $in { $bzip2.compress($in) } ;
+            #     $flush-action     = ->     { $bzip2.finish()      } ;
             # }
 
             when Zip-CM-Store
             {
-                $read-action  = -> $in { $in         } ;
-                $flush-action = ->     { Blob.new()  } ;
+                $compress-action  = -> $in { $in         } ;
+                $flush-action     = ->     { Blob.new()  } ;
             }
         }
 
         # These are done for all compression formats
-        my $reader  = -> $in { $uncompressed-size += $in.elems;
-                               $crc32 = crc32($crc32, $in);
-                               my $out = $read-action($in);
-                               $compressed-size += $out.elems;
-                               $out
-                             } ;
-        my $flusher = ->     { my $out = $flush-action();
-                               $compressed-size += $out.elems;
-                               $out
-                             } ;
+        my $compress-chunk  = -> $chunk { $uncompressed-size += $chunk.elems;
+                                          $crc32 = crc32($crc32, $chunk);
+                                          my $out = $compress-action($chunk);
+                                          $compressed-size += $out.elems;
+                                          $!zip-filehandle.write($out)
+                                        } ;
 
-        while $handle.read(1024 * 4) -> $chunk
-        {
-            $!zip-filehandle.write($reader($chunk));
-        }
-        $!zip-filehandle.write($flusher());
+        my $flusher = ->  { my $out = $flush-action();
+                            $compressed-size += $out.elems;
+                            $!zip-filehandle.write($out)
+                          } ;
+
+        $process-input($compress-chunk);
+        $flusher();
 
         $hdr.compressed-size = $compressed-size ;
         $hdr.uncompressed-size = $uncompressed-size;
