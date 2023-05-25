@@ -433,7 +433,7 @@ subtest # CALL-ME
 
     is @got2, 'gdata125';
 
-    is get-filenames-in-zip($zipfile2), [ $datafile1, $datafile2 ], "filename OK";
+    is get-filenames-in-zip($zipfile2).sort, [ $datafile1, $datafile2 ], "filename OK";
 
     unlink $zipfile;
     unlink $zipfile2;
