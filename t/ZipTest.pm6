@@ -158,7 +158,7 @@ sub get-filenames-in-zip($filename) is export
 
     # Get the filenames in Latin1 as a convenient way to get the them as a stream of 8-bit values
     # Means we can handle any badly-formed UTF8 encodngs, either from the zip file itself
-    # or from running unzip on .
+    # or from running unzip on it.
     my $proc = run |@comp, :out, :err, :enc('latin1') ;
 
     if $proc.exitcode
