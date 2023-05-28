@@ -559,7 +559,7 @@ Does the following
 
 =item1 closes the file
 
-=head1 Use in a Method Chain
+=head1 Use if C<SImpleZIp> in a Method Chain
 
 It is possible to use this module in a I<method chain>
 
@@ -573,8 +573,8 @@ does the following
 
 =item1 gets a list of file that match C<*.c>
 =item1 uses C<grep> to discard directories
-=item1 add them to the zip file
-=item1 converts the filename to uppader case
+=item1 add the remaining files to the zip file
+=item1 converts the filenames to upper case
 =item1 displays the uppercase filename
 
 =head1 TODO
