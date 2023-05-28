@@ -490,8 +490,8 @@ subtest # CALL-ME
         my $zip = SimpleZip.new($zipfile);
         isa-ok $zip, SimpleZip;
 
-        my $g1 = glob("$dir3/*0");
-        my $g2 = glob("$dir3/*1");
+        my $g1 = glob("$dir3/*0", :spec(IO::Spec::Unix));
+        my $g2 = glob("$dir3/*1", :spec(IO::Spec::Unix));
 
         isa-ok $g1, IO::Glob;
         isa-ok $g2, IO::Glob;
