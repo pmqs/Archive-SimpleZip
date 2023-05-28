@@ -29,7 +29,7 @@ my $exe = $*DISTRO.is-win ?? '.exe' !! '';
 my $ZIP   = 'zip' ~ $exe ;
 my $UNZIP = 'unzip' ~ $exe ;
 
-sub clean-filename(Str:D $filename) returns Str:D
+sub clean-filename(Str:D $filename --> Str:D) 
 {
     return $filename
             .chomp
@@ -37,7 +37,7 @@ sub clean-filename(Str:D $filename) returns Str:D
             .subst(/ '\\' + /, '/', :g) ;     # "\" => "/"
 }
 
-sub external-zip-works() returns Bool:D is export
+sub external-zip-works(--> Bool:D) is export
 {
     # my $outfile = t-file() ~ ".zip" ;
     my $outfile = $HERE ~ '/t/test.zip';
@@ -152,7 +152,7 @@ sub test-with-unzip($file) is export
     return False ;
 }
 
-sub get-filenames-in-zip($filename) is export
+sub get-filenames-in-zip($filename --> Seq) is export
 {
     my @comp = $UNZIP, '-Z1', $filename ;
 
@@ -163,14 +163,24 @@ sub get-filenames-in-zip($filename) is export
 
     if $proc.exitcode
     {
-        explain-failure "test-with-unzip", @comp, $proc ;
-        return False ;
+        # special case is empty zip file
+        # return code is 1
+        if $proc.exitcode == 1 && $proc.out.lines(:chomp) eq 'Empty zipfile.'
+        {
+            # return empty sequence
+            return ().Seq
+        }
+        else
+        {
+            explain-failure "test-with-unzip", @comp, $proc ;
+            return False ;
+        }
     }
 
     return $proc.out.lines(:chomp) ;
 }
 
-sub string-to-binary(Str:D $string) is export
+sub string-to-binary(Str:D $string --> Buf) is export
 {
     # Convert a string into a sequence of bytes
     return Buf[uint8]($string.encode('utf8'));

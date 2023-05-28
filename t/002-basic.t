@@ -6,7 +6,7 @@ use lib 't';
 
 use Test;
 
-plan 13;
+plan 14;
 
 use ZipTest;
 
@@ -39,6 +39,23 @@ my $datafile2 = "data125".IO;
 
 my $empty-file = "empty";
 spurt $empty-file, "";
+
+subtest # empty zip file
+{
+    unlink $zipfile;
+
+    nok $zipfile.IO.e, "$zipfile does not exists";
+
+    my $zip = SimpleZip.new($zipfile, :stream);
+    isa-ok $zip, SimpleZip;
+
+    ok $zip.close(), "closed";
+
+    ok $zipfile.IO.e, "$zipfile exists";
+
+    is get-filenames-in-zip($zipfile), [], "filename OK";
+
+}, 'empty zip file' ;
 
 subtest # add
 {

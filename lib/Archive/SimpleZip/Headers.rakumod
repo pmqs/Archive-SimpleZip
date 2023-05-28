@@ -51,23 +51,23 @@ class Local-File-Header is export # does CustomeMarshaller
 
     constant local-file-header-signature = 0x04034b50 ; # 4 bytes  (0x04034b50)
 
-    has int32 $.signature  = 0x04034b50;            # 4 bytes
-    has int16 $.version-needed-to-extract is rw ;   # 2 bytes
-    has int16 $.general-purpose-bit-flag is rw ;    # 2 bytes
-    has int16 $.compression-method is rw ;          # 2 bytes
-    has int32 $.last-mod-file-time is rw ;          # 4 bytes
-    has int32 $.crc32 is rw ;                       # 4 bytes
-    has int32 $.compressed-size is rw ;             # 4 bytes
-    has int32 $.uncompressed-size is rw ;           # 4 bytes
-    has int16 $.file-name-length is rw ;            # 2 bytes
-    has int16 $.extra-field-length is rw ;          # 2 bytes
+    has uint32 $.signature  = 0x04034b50;            # 4 bytes
+    has uint16 $.version-needed-to-extract is rw ;   # 2 bytes
+    has uint16 $.general-purpose-bit-flag is rw ;    # 2 bytes
+    has uint16 $.compression-method is rw ;          # 2 bytes
+    has uint32 $.last-mod-file-time is rw ;          # 4 bytes
+    has uint32 $.crc32 is rw ;                       # 4 bytes
+    has uint32 $.compressed-size is rw ;             # 4 bytes
+    has uint32 $.uncompressed-size is rw ;           # 4 bytes
+    has uint16 $.file-name-length is rw ;            # 2 bytes
+    has uint16 $.extra-field-length is rw ;          # 2 bytes
     has Blob  $.file-name is rw ;                   # variable size
     has Blob  $.extra-field is rw ;                 # variable size
 
-    has int16 $.version-made-by is rw = 0;             # 2 bytes
+    has uint16 $.version-made-by is rw = 0;             # 2 bytes
     has Blob  $.file-comment is rw  ;                  # 2 bytes
-    has int16 $.internal-file-attributes is rw = 0;    # 2 bytes
-    has int32 $.external-file-attributes is rw = 0;    # 4 bytes
+    has uint16 $.internal-file-attributes is rw = 0;    # 2 bytes
+    has uint32 $.external-file-attributes is rw = 0;    # 4 bytes
 
     method get()
     {
@@ -127,16 +127,16 @@ class Local-File-Header is export # does CustomeMarshaller
 
 class Central-Header-Directory is export
 {
-    has Blob  @.central-headers ;
-    has       $!entries = 0;
-    has       $!cd-len = 0;
+    has Blob   @.central-headers ;
+    has uint16 $!entries = 0;
+    has uint64 $!cd-len = 0;
 
     method get-hdrs()
     {
         return @!central-headers ;
     }
 
-    method end-central-directory(Int $cd_offset, Blob $comment)
+    method end-central-directory(Int $cd_offset, Blob $comment --> Buf:D)
     {
         #   4.3.16  End of central directory record:
         #

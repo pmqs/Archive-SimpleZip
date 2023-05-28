@@ -4,15 +4,15 @@ unit module Archive::SimpleZip::Utils:ver<0.2.0>:auth<zef:pmqs>;
 need Compress::Zlib::Raw;
 use NativeCall;
 
-sub crc32(int32 $crc, Blob $data) is export
+sub crc32(uint32 $crc, Blob $data --> uint32) is export
 {
     my $indata := nativecast CArray[uint8], $data ;
-    my int32 $newCRC = Compress::Zlib::Raw::crc32($crc, $indata, $data.bytes);
+    my uint32 $newCRC = Compress::Zlib::Raw::crc32($crc, $indata, $data.bytes);
 
     return $newCRC;
 }
 
-sub get-DOS-time(Instant $timestamp) is export
+sub get-DOS-time(Instant $timestamp --> Int) is export
 {
     # TODO - add something to cope with time < 1980
 
@@ -30,7 +30,7 @@ sub get-DOS-time(Instant $timestamp) is export
 	return $time;
 }
 
-sub make-canonical-name(Str $name, Bool $forceDir = False, :$SPEC = $*SPEC) is export
+sub make-canonical-name(Str $name, Bool $forceDir = False, :$SPEC = $*SPEC --> Str) is export
 {
     # This sub is derived from Archive::Zip::_asZipDirName
 
@@ -59,7 +59,7 @@ sub make-canonical-name(Str $name, Bool $forceDir = False, :$SPEC = $*SPEC) is e
         { @dirs.pop if @dirs[*-1] eq '' }   # remove empty component
     @dirs.push: $file // '' ;
 
-    my $normalised-path = @dirs.join: '/' ;
+    my Str $normalised-path = @dirs.join: '/' ;
 
     # Leading directory separators should not be stored in zip archives.
     # Example:
