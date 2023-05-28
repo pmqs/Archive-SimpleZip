@@ -37,6 +37,9 @@ my $datafile = "$dir1/data123";
 my $datafile1 = "data124";
 my $datafile2 = "data125".IO;
 
+my $empty-file = "empty";
+spurt $empty-file, "";
+
 subtest # add
 {
     unlink $zipfile;
@@ -45,6 +48,7 @@ subtest # add
     my $text = "line 1\nline 2\nline 3";
 
     spurt $datafile2, $text ;
+
 
     ok  $datafile.IO.e, "$datafile does exists";
     nok $zipfile.IO.e, "$zipfile does not exists";
@@ -58,6 +62,8 @@ subtest # add
     ok $zip.add($datafile2, :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string filename, STORE";
     # ok $zip.add(Buf.new([2,4,6]), :name</jim/>, :stream), "add string, Stream";
     ok $zip.add($datafile2.open, :name<handle>), "Add filehandle";
+    ok $zip.add($empty-file), "Add  empty-file file";
+    ok $zip.add($dir1), "Add  Directory";
     ok $zip.close(), "closed";
 
     ok $zipfile.IO.e, "$zipfile exists";
@@ -72,6 +78,9 @@ subtest # add
     # is pipe-in-from-unzip($zipfile, "jim", :binary).decode, "\x2\x4\x6", "member jim ok";
     # is pipe-in-from-unzip($zipfile, "bz", :binary).decode, "str", "member bz ok";
     is pipe-in-from-unzip($zipfile, "handle"), $text, "member handle ok";
+    is pipe-in-from-unzip($zipfile, $empty-file), "", "empty file ok";
+    is pipe-in-from-unzip($zipfile, $dir1 ~ '/'), "", "directory ok";
+    # is pipe-in-from-unzip($zipfile, $dir1), "", "directory ok";
 
 }, 'add' ;
 
@@ -394,50 +403,109 @@ subtest # List
 subtest # CALL-ME
 {
     use IO::Glob;
-    unlink $zipfile;
 
-    my $dir2 = 'dir2';
-    ok mkdir $dir2, 0o777;
+    my $dir3 = 'dir3';
+    ok mkdir $dir3, 0o777;
 
-    my $datafile = "$dir2/gdata123";
-    my $datafile1 = "gdata124";
-    my $datafile2 = "gdata125";
+    my @data-files ;
+    for 0 .. 5 -> $f
+    {
+        my $filename = "$dir3/data$f";
+        @data-files.push: $filename;
+        spurt $filename, "some data in $filename";
+        ok  $filename.IO.e, "$datafile does exists";
+    }
 
-    spurt $datafile, "some data" ;
-    spurt $datafile1, "more data" ;
-    spurt $datafile2, "even more data" ;
+    my $zipfile = "call-me.zip";
 
-    ok  $datafile.IO.e, "$datafile does exists";
-    nok $zipfile.IO.e, "$zipfile does not exists";
-    nok $zipfile2.IO.e, "$zipfile does not exists";
+    {
+        # IO
 
-    my $zip1 = SimpleZip.new($zipfile);
-    isa-ok $zip1, SimpleZip;
+        nok $zipfile.IO.e, "$zipfile does not exists";
 
-    $zip1($datafile);
+        my $zip = SimpleZip.new($zipfile);
+        isa-ok $zip, SimpleZip;
 
-    my @got1 = glob("gdata*").grep(/5/).$zip1.subst(/"gdata"/, "fred");
+        $zip(@data-files[0]);
 
-    ok $zip1.close(), "closed";
+        @data-files[1].$zip;
 
-    is @got1, 'fred125';
-    is get-filenames-in-zip($zipfile),  [$datafile, $datafile2], "filename OK";
+        $zip.close();
 
+        is get-filenames-in-zip($zipfile), @data-files[0..1], "filename OK";
+        unlink $zipfile;
+    }
 
-    my $zip2 = SimpleZip.new($zipfile2);
-    isa-ok $zip2, SimpleZip;
+    {
+        # List
+        nok $zipfile.IO.e, "$zipfile does not exists";
 
-    my @got2 = glob("gdata*").$zip2.grep(/5/);
+        my $zip = SimpleZip.new($zipfile);
+        isa-ok $zip, SimpleZip;
 
-    ok $zip2.close(), "closed";
+        my $l1 = @data-files[0..2];
+        my $l2 = @data-files[3..5];
 
-    is @got2, 'gdata125';
+        isa-ok $l1, List;
+        isa-ok $l2, List;
 
-    is get-filenames-in-zip($zipfile2).sort, [ $datafile1, $datafile2 ], "filename OK";
+        $zip($l1);
 
-    unlink $zipfile;
-    unlink $zipfile2;
+        $l2.$zip;
 
+        $zip.close();
+
+        is get-filenames-in-zip($zipfile), @data-files[0 .. 5], "filename OK";
+        unlink $zipfile;
+    }
+
+    {
+        # Seq
+        nok $zipfile.IO.e, "$zipfile does not exists";
+
+        my $zip = SimpleZip.new($zipfile);
+        isa-ok $zip, SimpleZip;
+
+        my $l1 = @data-files[0..2].Seq;
+        my $l2 = @data-files[3..5].Seq;
+
+        isa-ok $l1, Seq;
+        isa-ok $l2, Seq;
+
+        $zip($l1);
+
+        $l2.$zip;
+
+        $zip.close();
+
+        is get-filenames-in-zip($zipfile), @data-files[0 .. 5], "filename OK";
+        unlink $zipfile;
+    }
+
+    {
+        # IO::Glob
+
+        nok $zipfile.IO.e, "$zipfile does not exists";
+
+        my $zip = SimpleZip.new($zipfile);
+        isa-ok $zip, SimpleZip;
+
+        my $g1 = glob("$dir3/*0");
+        my $g2 = glob("$dir3/*1");
+
+        isa-ok $g1, IO::Glob;
+        isa-ok $g2, IO::Glob;
+
+        $zip($g1);
+
+        $g2.$zip;
+
+        $zip.close();
+
+        is get-filenames-in-zip($zipfile), @data-files[0 .. 1], "filename OK";
+        unlink $zipfile;
+
+    }
 
 }, "CALL-ME";
 
