@@ -559,19 +559,34 @@ Does the following
 
 =item1 closes the file
 
-=head1 Use if C<SImpleZIp> in a Method Chain
+=head1 Use of C<SimpleZIp> in a Method Chain
 
-It is possible to use this module in a I<method chain>
+It is possible to use this module in a I<method chain>. For example, you could
+add all the files matched by C<File::Find> using the C<add> method
 
-For example, this chain
+    use Archive::SimpleZip;
+    use File::Find;
 
-    my $z = SimpleZip: "my.zip";
-    glob("*.c").grep( ! *.d).$z.uc.sort.say ;
+    my $zip = SimpleZip.new: "test.zip";
+
+    $zip.add: find(:dir<.>));
+
+    $zip.close;
+
+Alternatively,instead of using the C<add> method
+you can use this to achieve the same thing
+
+    find(:dir<.>).$zip;
+
+Here is amore complex example
+
+    my $zip = SimpleZip: "my.zip";
+    find(:dir<.>).grep( ! *.d).$zip.uc.sort.say ;
     $z.close();
 
 does the following
 
-=item1 gets a list of file that match C<*.c>
+=item1 use C<find> to get a list of files 
 =item1 uses C<grep> to discard directories
 =item1 add the remaining files to the zip file
 =item1 converts the filenames to upper case
