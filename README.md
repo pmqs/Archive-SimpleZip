@@ -53,8 +53,8 @@ Please note - this is module is a prototype. The interface will change.
 
 Suggestions/patches are welcomed at [Archive-SimpleZip](https://github.com/pmqs/Archive-SimpleZip)
 
-## Licence
+## License
 
-Please see the LICENCE file in the distribution
+Please see the LICENSE file in the distribution
 
 (C) Paul Marquess 2016-2023
