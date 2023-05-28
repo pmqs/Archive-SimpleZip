@@ -128,8 +128,8 @@ class Local-File-Header is export # does CustomeMarshaller
 class Central-Header-Directory is export
 {
     has Blob  @.central-headers ;
-    has       $!entries;
-    has       $!cd-len ;
+    has       $!entries = 0;
+    has       $!cd-len = 0;
 
     method get-hdrs()
     {
