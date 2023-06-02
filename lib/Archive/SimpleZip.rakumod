@@ -74,17 +74,23 @@ class SimpleZip does Callable is export
 
     }
 
-    multi method AT-KEY (::?CLASS:D: $key) is rw {
+    # multi method AT-KEY (::?CLASS:D: $key) is rw
+    # {
 
-        my $self = self;
+    #     my $self = self;
 
-        Proxy.new(
-            FETCH => method () { $key },
+    #     Proxy.new(
+    #         FETCH => method () { $key },
 
-            STORE => method ($value) {
-                $self.create($key, $value);
-            }
-        );
+    #         STORE => method ($value) {
+    #             $self.create($key, $value);
+    #         }
+    #     );
+    # }
+
+    multi method ASSIGN-KEY (::?CLASS:D: $key, $value)
+    {
+        self.create($key, $value);
     }
 
     # method EXISTS-KEY ($key)       {  }
@@ -333,17 +339,16 @@ class SimpleZip does Callable is export
 
     use Archive::SimpleZip;
 
-    # Create a zip archive in filesystem
+    # Create a zip archive in the filesystem
     my $zip = SimpleZip.new("mine.zip");
 
     # Add a file to the zip archive
-    # Can read anything that coerced to an IO
+    # Will read anything that coerced to an IO()
     $zip.add("somefile.txt");
     $zip.add("somefile.txt".IO);
 
     # Add multiple files in one step
-    # will consume anything that is an Iterable
-
+    # It will consume anything that is an Iterable
     $z.add(@list_of_files);
 
     # Add a glob of files
@@ -351,7 +356,7 @@ class SimpleZip does Callable is export
     $zip.add(glob("*.c"));
 
     # When used in a method chain it will accept an Iterable and output a Seq
-
+    # here is a somewhat contrived example
     glob("*.c").map().sort.$zip.uc.say ;
 
     # Create a zip entry from a string/blob
@@ -363,6 +368,12 @@ class SimpleZip does Callable is export
     my $handle = "some file".IO.open;
     $zip.create("file3", $handle);
 
+    # below is equivalent to $zip.add: "somefile", name:("file5");
+    $zip.create("file5"), "somefile".IO;
+
+    # but means you can add a file like this as long as the value is an IO
+    $zip<file6> = "/some/other/file".IO ;
+
     $zip.close();
 
 =DESCRIPTION
@@ -373,13 +384,13 @@ Please note - this is module is a prototype. The interface will change.
 
 =head1 METHODS
 
-=head2 method new
+=head2 method new($filename [, options] )
 
 Instantiate a C<SimpleZip> object
 
     my $zip = SimpleZip.new: "my.zip";
 
-Takes one mandatoty parameter, the name of the zip file to create in the
+Takes one mandatoty parameter, namely the name of the zip file to create in the
 filesystem, and zero or more optional parameters.
 
 =head3 Options
@@ -411,7 +422,7 @@ Write the zip archive in I<streaming mode>. Default is C<False>.
 
     my $zip = SimpleZip.new($archive, :stream);
 
-Specify the C<stream> option on individual call to C<add>/C<create> to override
+Specify the C<stream> option on individual calls to C<add>/C<create> to override
 this default.
 
 =head4 method => Zip-CM-Deflate|Zip-CM-Store
@@ -419,7 +430,11 @@ this default.
 Used to set the default compression algorithm used for all members of the
 archive. If not specified then <Zip-CM-Deflate> is the default.
 
-Specify the C<method> option on individual call to C<add>/C<create> to override
+The exception is when the code is certain there is no payload data to be stored
+in the zip archive, in which case C<Zip-CM-Store> will be used.
+Examples are for empty files, or directories.
+
+Specify the C<method> option on individual calls to C<add>/C<create> to override
 this default.
 
 Valid values are
@@ -431,7 +446,7 @@ Valid values are
 
 Creates a comment for the archive.
 
-    my $zip = SimpleZip.new($archive, comment => "my comment");
+    my $zip = SimpleZip.new($archive, :comment<filefile comment>);
 
 =head4 canonical-name => True|False
 
@@ -443,7 +458,8 @@ For example, the following shows how to disable the normalization of filenames:
 
     my $zip = SimpleZip.new($archive, :!canonical-name);
 
-Below is what L<APPNOTE.TXT|https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT> (the specification for Zip archives)
+Below is what L<APPNOTE.TXT|https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT>
+(the specification for Zip archives)
 has to say on what should be stored in the zip name header field.
 
     The name of the file, with optional relative path.
@@ -458,8 +474,6 @@ should leave this option well alone.
 
 Unsurprizingly then, the default for this option is C<True>.
 
-
-
 =head4 Bool zip64 => True|False
 
 B<TODO> -- this option has not been implemented yet.
@@ -467,28 +481,34 @@ B<TODO> -- this option has not been implemented yet.
 Specify the C<zip64> option on individual call to C<add> to override
 this default.
 
-=head2 method add
+=head2 method add($filename|@filenames [,options])
 
 Used to add one or more a files to a Zip archive. The method expects one
 mandatory parameter and zero or more optional parameters.
-The first, mandatory, parameter contains the filename (or filenames) to be added to the zipi file.
-Returns the number of files added.
 
-To add a file from the filesystem the first parameter must be coercable to
+The first, mandatory, parameter contains the filename (or filenames) to be added to the zip file.
+The method returns the number of files added.
+
+To add a single file from the filesystem the first parameter must be coercable to
 C<IO::Path>
 
     # Add a single file to the zip archive
     $zip.add("/tmp/fred");
 
-To allow multiple fuile to be added in one step, C<add> will accept an C<Iterable>.
+Multiple files can be added in one step by passing C<add> an C<Iterable>,  like so
 
     my @files = 'file1.txt', 'file2.txt';
-    $zip.add(@files);
+    $zip.add: @files;
+
+or via the C<Seq> that C<File::Find> uses
+
+    use File::Find;
+    $zip.add: find(:dir<.>));
 
 or via an C<IO::Glob>
 
     use IO::Glob;
-    $zip.add(glob("*.c"));
+    $zip.add: glob("*.c");
 
 =head3 Options
 
@@ -500,8 +520,8 @@ By default C<add> will use a normalized version of the filename that is passed i
 When the C<name> option is supplied, the  value passed in the option will
 be stored in the Zip archive, rather than the filename.
 
-If the C<canonical-name> option is alseo C<True>, the name will be normalized to Unix
-format before being written to the Zip archive.
+If the C<canonical-name> option is also C<True>, the value of the C<name> option
+will be normalized to Unix format before being written to the Zip archive.
 
 =head4 method => Zip-CM-Deflate|Zip-CM-Store
 
@@ -518,38 +538,57 @@ Valid values are
 
 Write this member in streaming mode.
 
-=head4 comment
+=head4 comment => String
 
 Creates a comment for the member.
 
-    my $zip = SimpleZip.new($archive, comment => "my comment");
+    my $zip = SimpleZip.new($archive, :comment<my comment>);
 
 Note: this is different from the C<comment> option in the C<new> method.
 
 =head4 canonical-name  => True|False
 
-Controls how the I<name> field is written top the zip archive. See the
+Controls how the I<name> field is written top the zip archive.
 
 =head4 zip64 => True|False
 
 
 
-=head2 method create
+=head2 method create($name, $payload [, options])
 
 Create a zip entry using a string or a blob for the payload data.
+Takes two mandatory parameters, namely the name of the zip entry to be written to the zipfile
+and the payload data to be compressed.
+ Also takes zero or more optional parameters.
 
-To add a string/blob to the archive
+To add a string/blob to a zip archive
 
-    # Create a zip entry from a string/blob
-
+    # Create a zip entry from a string
     $zip.create("file1", "payload data here");
+
+    # Create a zip entry from a blob
     $zip.create("file2", Blob.new([2,4,6]));
 
-    # Drop a filehandle into the zip archive
+Drop a filehandle into the zip archive
+
     my $handle = "some file".IO.open;
     $zip.create("file3", $handle);
 
+C<create> also provides nother way to write the contents of a file into a zipfile.
+The payload paramter must of of type IO for this to work.
+
+    $zip.create("file4", "/a/real/filename".IO);
+
+Behind the scenes C<create> will be used if Associative syntax is used
+
+    $zip<file5> = "payload data";
+    $zip<file6> = Blob.new([2,4,6]);
+    $zip<file7> = $filehandle;
+    $zip<file8> = "/a/real/filename".IO;
+
 =head3 Options
+
+Same options as C<add>.
 
 =head2 method close
 
@@ -559,7 +598,7 @@ Does the following
 
 =item1 closes the file
 
-=head1 Use of C<SimpleZIp> in a Method Chain
+=head1 Use of C<SimpleZip> in a Method Chain
 
 It is possible to use this module in a I<method chain>. For example, you could
 add all the files matched by C<File::Find> using the C<add> method
@@ -578,15 +617,15 @@ you can use this to achieve the same thing
 
     find(:dir<.>).$zip;
 
-Here is amore complex example
+Here is a more complex example
 
     my $zip = SimpleZip: "my.zip";
     find(:dir<.>).grep( ! *.d).$zip.uc.sort.say ;
     $z.close();
 
-does the following
+this chain does the following
 
-=item1 use C<find> to get a list of files 
+=item1 use C<find> to get a list of files
 =item1 uses C<grep> to discard directories
 =item1 add the remaining files to the zip file
 =item1 converts the filenames to upper case
@@ -595,15 +634,15 @@ does the following
 =head1 TODO
 
 =item Zip64
+
 =item Bzip2
 
 Bzip2 suppport is written but disabled because C<Compress::Bzip2> isn't building
 on Winows or MacOS.
 
-=item Adding directories
-
 =item Support for extra fields
-=item Standard extra fields for better time
+
+=item Standard extra fields to store more accurate timestams.
 
 =AUTHOR Paul Marquess <pmqs@cpan.org>
 =end pod
