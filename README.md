@@ -2,9 +2,9 @@
 
 Raku (Perl6) module to write Zip archives.
 
-![Linux Build](https://github.com/github/pmqs/Archive-SimpleZip/workflows/linux.yml/badge.svg)
-![MacOS Build](https://github.com/github/pmqs/Archive-SimpleZip/workflows/macos.yml/badge.svg)
-![Windows Build](https://github.com/github/pmqs/Archive-SimpleZip/workflows/windows.yml/badge.svg)
+![Linux Build](https://github.com/pmqs/Archive-SimpleZip/workflows/linux.yml/badge.svg)
+![MacOS Build](https://github.com/pmqs/Archive-SimpleZip/workflows/macos.yml/badge.svg)
+![Windows Build](https://github.com/pmqs/Archive-SimpleZip/workflows/windows.yml/badge.svg)
 
 ## Synopsis
 
