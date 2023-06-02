@@ -28,8 +28,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          zef install --/test --deps-only .
+          zef install --/test --depends --build-depends -- test-depends .
           zef install --/test App::Prove6
-          
+
       - name: Run Tests
         run: prove6 -l t
