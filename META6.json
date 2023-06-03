@@ -4,8 +4,9 @@
     "Paul Marquess <pmqs@cpan.org>"
   ],
   "depends": [
-    "Compress::Zlib",
     "CompUnit::Util",
+    "Compress::Zlib",
+    "Compress::Zlib::Raw",
     "IO::Glob"
   ],
   "description": "Write Zip Files.",
