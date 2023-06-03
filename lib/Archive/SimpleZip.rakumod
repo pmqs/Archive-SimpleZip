@@ -7,7 +7,7 @@ need Compress::Zlib;
 use IO::Glob;
 
 use Archive::SimpleZip::Utils ;
-use Archive::SimpleZip::Headers ;#:ALL :DEFAULT<Zip-CM>;
+use Archive::SimpleZip::Headers ;
 
 # Use CompUnit::Util for now to re-export the Zip-CM enum
 # from Archive::SimpleZip::Headers.
