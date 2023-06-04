@@ -1,17 +1,23 @@
 
-0.5.0 19 March 2021
+0.6.0 2023-06-02
+
+    * Lots of fixes & documentation updates.
+
+    * No longer alpha quality
+
+0.5.0 2021-03-19
 
     * Don't use >>.grep if .grep is enough
       https://github.com/pmqs/Archive-SimpleZip/pull/4
 
-0.4.0 27 Juune 2020
+0.4.0 2020-06-27
 
     * Add support for adding lists and sequences of files in one go.
 
     * first stab at a CALL-ME
 
 
-0.2.0 10 March 2019
+0.2.0 2019-03-10
 
     * Drop support for in-memory zip files.
       IO::Blob doesn't allow seekable writing to a blob at the moment.
@@ -27,7 +33,7 @@
 
     * Set Language encoding bit when filename/comment not 7-bit ascii
 
-0.1.2
+0.1.2 2019-03-02
 
     * Checkpoint release to CPAN
 
