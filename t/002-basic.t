@@ -6,7 +6,7 @@ use lib 't';
 
 use Test;
 
-plan 14;
+plan 15;
 
 use ZipTest;
 
@@ -538,5 +538,33 @@ subtest # file does not exist
 
     throws-like($zip.add("file_does_not_exist".IO), X::AdHoc, message => rx:s/No such file or directory/) ;
 }, "file does not exist" ;
+
+subtest # add/create with algorithmic name
+{
+
+    unlink $zipfile;
+    spurt $datafile, "some data" ;
+    spurt $datafile1, "more data" ;
+    my $text = "line 1\nline 2\nline 3";
+
+    spurt $datafile2, $text ;
+
+    ok  $datafile.IO.e, "$datafile does exists";
+    nok $zipfile.IO.e, "$zipfile does not exists";
+
+    my $zip = SimpleZip.new: $zipfile ;
+    isa-ok $zip, SimpleZip;
+
+    ok $zip.add($datafile1, :name( *.subst: /^/, "abc-" )), "add file";
+
+    ok $zip.create("fred", "some data", :name( *.subst: /^/, 'xxx-' )), "created ok" ;
+    ok $zip.mkdir("joe", :name( *.subst: /^/, 'yyy-' )), "mkdir ok" ;
+
+    ok $zip.close();
+
+    is get-filenames-in-zip($zipfile), ["abc-$datafile1", "xxx-fred", "yyy-joe/"], "filenames changed OK" ;
+
+
+}, 'add/create with algorithmic name' ;
 
 done-testing();

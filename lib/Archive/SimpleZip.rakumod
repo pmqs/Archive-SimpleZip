@@ -71,7 +71,6 @@ class SimpleZip does Callable is export
         gather {
             $i.map: { self.add($^a, |c) ; take $^a } ;
         }
-
     }
 
     # multi method AT-KEY (::?CLASS:D: $key) is rw
@@ -110,7 +109,15 @@ class SimpleZip does Callable is export
             my $fh = open($path, :r, :bin)
                 or fail $fh ;
 
-            self!creater(Str($path), $fh, ! $path.s.Bool, :time($path.modified), |c);
+            my $p  = -> $compress-chunk {
+                            while $fh.read(1024 * 4) -> $chunk
+                            {
+                                $compress-chunk($chunk);
+                            }
+                        } ;
+
+            self!create-zip-entry($p, :original-path($path),
+                                  :time($path.modified), :empty(! $path.s.Bool), |c);
         }
     }
 
@@ -128,7 +135,7 @@ class SimpleZip does Callable is export
                        "";
                     } ;
 
-        self!create-zip-entry($p, :name($name), :empty, :is-directory, |c);
+        self!create-zip-entry($p, :original-path($name), :empty, :is-directory, |c);
     }
 
     multi method mkdir(Iterable:D $d, |c --> Int:D)
@@ -137,18 +144,6 @@ class SimpleZip does Callable is export
         $d.map: { samewith($^a, |c) ; ++ $count } ;
 
         return $count;
-    }
-
-    method !creater(Str:D() $name, IO::Handle:D  $handle, Bool:D $empty, |c --> Int:D)
-    {
-        my $p  = -> $compress-chunk {
-                        while $handle.read(1024 * 4) -> $chunk
-                        {
-                            $compress-chunk($chunk);
-                        }
-                    } ;
-
-        self!create-zip-entry($p, :name($name), :empty($empty), |c);
     }
 
     multi method create(Str:D() $name, IO::Handle:D  $handle, |c --> Int:D)
@@ -160,7 +155,7 @@ class SimpleZip does Callable is export
                         }
                     } ;
 
-        self!create-zip-entry($p, :name($name), |c);
+        self!create-zip-entry($p, :original-path($name), |c);
     }
 
     multi method create(Str:D() $name, IO:D() $path, |c --> Int:D)
@@ -177,7 +172,7 @@ class SimpleZip does Callable is export
         my $p  = -> $compress-chunk {
                        $compress-chunk($str.encode);
                     } ;
-        self!create-zip-entry($p, :name($name), :empty(! $str.elems.Bool), |c);
+        self!create-zip-entry($p, :original-path($name), :empty(! $str.elems.Bool), |c);
     }
 
     multi method create(Str:D() $name, Blob:D() $blob, |c --> Int:D)
@@ -185,13 +180,14 @@ class SimpleZip does Callable is export
         my $p  = -> $compress-chunk {
                         $compress-chunk($blob);
                     } ;
-        self!create-zip-entry($p, :name($name), :empty(! $blob.elems.Bool), |c);
+        self!create-zip-entry($p, :original-path($name), :empty(! $blob.elems.Bool), |c);
     }
 
 
 
     method !create-zip-entry(Code:D        $process-input,
-                             Str:D        :$name           = '',
+                                          :$name  where Str:D()|Code:D(),
+                             Str()        :$original-path  = '',
                              Str:D        :$comment        = '',
                              Instant:D    :$time           = $!now,
                              Bool:D       :$stream         = $!default-stream,
@@ -209,7 +205,13 @@ class SimpleZip does Callable is export
         $hdr.last-mod-file-time = get-DOS-time($time);
         $hdr.compression-method =  $empty ?? Zip-CM-Store !! $method ;
 
-        my Str $filename = $name ;
+        my Str $filename =
+                    do given $name {
+                        when Code:D { $name($original-path) }
+                        when Str:D  { $name.Str             }
+                        default     { $original-path        }
+                    } ;
+
         $filename = make-canonical-name($filename, $is-directory)
             if $canonical-name ;
 
@@ -517,8 +519,12 @@ or via an C<IO::Glob>
 Override the B<name> field in the zip archive.
 
 By default C<add> will use a normalized version of the filename that is passed in the first parameter.
-When the C<name> option is supplied, the  value passed in the option will
+When the C<name> option is supplied, the value passed in the option will
 be stored in the Zip archive, rather than the filename.
+
+The C<name< option can either be a string or executable code
+
+
 
 If the C<canonical-name> option is also C<True>, the value of the C<name> option
 will be normalized to Unix format before being written to the Zip archive.

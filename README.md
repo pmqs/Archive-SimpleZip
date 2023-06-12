@@ -12,30 +12,40 @@ Raku (Perl6) module to write Zip archives.
 ```
 use Archive::SimpleZip;
 
-# Create a zip file in filesystem
+# Create a zip file in the filesystem
 my $z = SimpleZip.new: "mine.zip";
 
 # Add a file to the zip archive
 $z.add: "/some/file.txt";
 
-# Multiple files in one step
+# Add multiple files in one step
 # the 'add' method will consume anything that is an Iterable
 $z.add: @list_of_files;
 
+# change the compression method to STORE
+$z.add: 'somefile', :method(Zip-CM-Store)l
+
+# add knpws what to do with IO::Glob
 use IO::Glob;
 $z.add: glob("*.c");
 
 # add a file, but call it something different in the zip file
 $z.add: "/some/file.txt", :name<better-name>;
 
+# algorithmically rename the files by passing code to the name option
+# in this instance chage file extension from '.tar.gz' to ;.tgz'
+$z.add: @list_of_files, :name( *.subst(/'.tar.gz' $/, '.tgz') ), :method(Zip-CM-Store);
+
 # when used in a method chain it will accept an Iterable and output a Seq of filenames
 
+# add all files matched by IO::Glob
 glob("*.c").dir.$z ;
 
+# or like this
 glob("*.c").$z ;
 
 # contrived example
-glob("*.c").grep( ! *.d).$z.uc.sort.say
+glob("*.c").grep( ! *.d).$z.uc.sort.say;
 
 # Create a zip entry from a string/blob
 
@@ -46,7 +56,7 @@ $z.create(:name<data2>, Blob.new([2,4,6]));
 my $handle = "/another/file".IO.open;
 $z.create("data3", $handle);
 
-# use Associative interface to call 'create'
+# use Associative interface to call 'create' behind the secenes
 $z<data4> = "more payload";
 
 # can also use Associative interface to add a file from the filesystem
