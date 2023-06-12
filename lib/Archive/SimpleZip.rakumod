@@ -1,5 +1,5 @@
 
-unit module Archive::SimpleZip:ver<0.6.0>:auth<zef:pmqs>;
+unit module Archive::SimpleZip:ver<0.7.0>:auth<zef:pmqs>;
 
 need Compress::Zlib;
 # need Compress::Bzip2;
