@@ -341,42 +341,64 @@ class SimpleZip does Callable is export
 
     use Archive::SimpleZip;
 
-    # Create a zip archive in the filesystem
-    my $zip = SimpleZip.new("mine.zip");
+    # Create a zip file in the filesystem
+    my $z = SimpleZip.new: "mine.zip";
 
     # Add a file to the zip archive
-    # Will read anything that coerced to an IO()
-    $zip.add("somefile.txt");
-    $zip.add("somefile.txt".IO);
+    $z.add: "/some/file.txt";
 
     # Add multiple files in one step
-    # It will consume anything that is an Iterable
-    $z.add(@list_of_files);
+    # the 'add' method will consume anything that is an Iterable
+    $z.add: @list_of_files;
 
-    # Add a glob of files
+    # change the compression method to STORE
+    $z.add: 'somefile', :method(Zip-CM-Store);
+
+    # add knows what to do with IO::Glob
     use IO::Glob;
-    $zip.add(glob("*.c"));
+    $z.add: glob("*.c");
 
-    # When used in a method chain it will accept an Iterable and output a Seq
-    # here is a somewhat contrived example
-    glob("*.c").map().sort.$zip.uc.say ;
+    # add a file, but call it something different in the zip file
+    $z.add: "/some/file.txt", :name<better-name>;
+
+    # algorithmically rename the files by passing code to the name option
+    # in this instance chage file extension from '.tar.gz' to ;.tgz'
+    $z.add: @list_of_files, :name( *.subst(/'.tar.gz' $/, '.tgz') ), :method(Zip-CM-Store);
+
+    # when used in a method chain it will accept an Iterable and output a Seq of filenames
+
+    # add all files matched by IO::Glob
+    glob("*.c").dir.$z ;
+
+    # or like this
+    glob("*.c").$z ;
+
+    # contrived example
+    glob("*.c").grep( ! *.d).$z.uc.sort.say;
 
     # Create a zip entry from a string/blob
 
-    $zip.create("file1", "payload data here");
-    $zip.create("file2", Blob.new([2,4,6]));
+    $z.create(:name<data1>, "payload data here");
+    $z.create(:name<data2>, Blob.new([2,4,6]));
 
     # Drop a filehandle into the zip archive
-    my $handle = "some file".IO.open;
-    $zip.create("file3", $handle);
+    my $handle = "/another/file".IO.open;
+    $z.create("data3", $handle);
 
-    # below is equivalent to $zip.add: "somefile", name:("file5");
-    $zip.create("file5"), "somefile".IO;
+    # use Associative interface to call 'create' behind the secenes
+    $z<data4> = "more payload";
 
-    # but means you can add a file like this as long as the value is an IO
-    $zip<file6> = "/some/other/file".IO ;
+    # can also use Associative interface to add a file from the filesystem
+    # just make sure it is of type IO
+    $z<data5> = "/real/file.txt".IO;
 
-    $zip.close();
+    # or a filehandle
+    $z<data5> = $handle;
+
+    # create a directory
+    $z.mkdir: "dir1";
+
+    $z.close;
 
 =DESCRIPTION
 
@@ -514,16 +536,35 @@ or via an C<IO::Glob>
 
 =head3 Options
 
-=head4 name => String
+=head4 name => String|Code
 
 Override the B<name> field in the zip archive.
 
-By default C<add> will use a normalized version of the filename that is passed in the first parameter.
+By default C<add> will use a normalized version of the filename that is passed
+in the first parameter.
 When the C<name> option is supplied, the value passed in the option will
 be stored in the Zip archive, rather than the filename.
 
-The C<name< option can either be a string or executable code
+The C<name> option can either be a literal string or executable code.
+For example, to change the filename to the literal string C<fred>
 
+    $zip.add: "/somefile/fred.txt", :name<fred>;
+
+alternatively you can supply a snippet of code to determine the filename.
+For example, to remove all the path components from the filenames
+
+    $zip.add: '/some/path/my.txt', :name( *.subst: rx[ ^ .+ '/'], '') ) ;
+
+will mean the filename will be transformed from C</some/path/my.txt> to C<my.txt>
+before being written to the zip file.
+
+This option is particularly usefule when you have a list of filenames.
+For example, to remove all the paths from the filenames returned from
+C<File::Find> you can use this
+
+    use File::Find;
+
+    $zip.add: find(:dir<.>), :name( *.subst: rx[ ^ .+ '/'], '') ) ;
 
 
 If the C<canonical-name> option is also C<True>, the value of the C<name> option
