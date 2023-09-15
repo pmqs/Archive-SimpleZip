@@ -1,6 +1,14 @@
 name: Test with Raku/setup-raku
 
-on: [push, pull_request, workflow_dispatch]
+# Disabled
+on:
+  # push:
+  #   branches:
+  #     - '*'
+  #   tags-ignore:
+  #     - '*'
+  # pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
