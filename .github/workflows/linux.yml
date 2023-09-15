@@ -28,12 +28,12 @@ jobs:
           raku-version: ${{ matrix.raku-version }}
 
       - name: raku -v
-      run: |
-        raku -v
+        run: |
+          raku -v
 
-    - name: raku -V
-      run: |
-        raku -V
+      - name: raku -V
+        run: |
+          raku -V
 
       - name: Install Dependencies
         run: |
