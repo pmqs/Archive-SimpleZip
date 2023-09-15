@@ -526,19 +526,6 @@ subtest # CALL-ME
 
 }, "CALL-ME";
 
-subtest # file does not exist
-{
-    # Add file that doesn't exist
-    unlink $zipfile;
-
-    nok $zipfile.IO.e, "$zipfile does not exists";
-
-    my $zip = SimpleZip.new($zipfile);
-    isa-ok $zip, SimpleZip;
-
-    throws-like($zip.add("file_does_not_exist".IO), X::AdHoc, message => rx:s/No such file or directory/) ;
-}, "file does not exist" ;
-
 subtest # add/create with algorithmic name
 {
 
@@ -566,5 +553,18 @@ subtest # add/create with algorithmic name
 
 
 }, 'add/create with algorithmic name' ;
+
+subtest # file does not exist
+{
+    # Add file that doesn't exist
+    unlink $zipfile;
+
+    nok $zipfile.IO.e, "$zipfile does not exists";
+
+    my $zip = SimpleZip.new($zipfile);
+    isa-ok $zip, SimpleZip;
+
+    throws-like($zip.add("file_does_not_exist".IO), X::AdHoc, message => rx:s/No such file or directory/) ;
+}, "file does not exist" ;
 
 done-testing();
