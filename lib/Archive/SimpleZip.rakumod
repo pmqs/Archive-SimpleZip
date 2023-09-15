@@ -40,6 +40,12 @@ class SimpleZip does Callable is export
         self.bless(:$zip-filehandle, filename => $filename.IO, |c);
     }
 
+    # multi method new(IO::Handle:D() $filehandle, Str:D() $filename,, |c)
+    # {
+    #     my $zip-filehandle = $filehandle ;
+    #     self.bless(:$zip-filehandle, filename => $filename.IO, |c);
+    # }
+
     multi submethod BUILD(IO::Handle:D :$!zip-filehandle?,
                           IO::Path:D   :$!filename?,
                           Str:D        :$!comment = "",

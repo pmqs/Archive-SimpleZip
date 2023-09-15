@@ -1,0 +1,2 @@
+raku -I lib --doc=HTML lib/Archive/SimpleZip.rakumod > scratch/sz.html
+raku -I lib --doc=Markdown lib/Archive/SimpleZip.rakumod > scratch/sz.md
