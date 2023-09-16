@@ -25,6 +25,9 @@ $z.add: @list_of_files;
 # change the compression method to STORE
 $z.add: 'somefile', :method(Zip-CM-Store);
 
+# change the compression method to use Bzip2 compression
+$z.add: 'somefile', :method(Zip-CM-Bzip2);
+
 # add knows what to do with IO::Glob
 use IO::Glob;
 $z.add: glob("*.c");

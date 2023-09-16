@@ -360,6 +360,9 @@ class SimpleZip does Callable is export
     # change the compression method to STORE
     $z.add: 'somefile', :method(Zip-CM-Store);
 
+    # change the compression method to use Bzip2 compression
+    $z.add: 'somefile', :method(Zip-CM-Bzip2);
+
     # add knows what to do with IO::Glob
     use IO::Glob;
     $z.add: glob("*.c");
@@ -455,7 +458,7 @@ Write the zip archive in I<streaming mode>. Default is C<False>.
 Specify the C<stream> option on individual calls to C<add>/C<create> to override
 this default.
 
-=head4 method => Zip-CM-Deflate|Zip-CM-Store
+=head4 method => Zip-CM-Deflate|Zip-CM-Store|Zip-CM-Bzip2
 
 Used to set the default compression algorithm used for all members of the
 archive. If not specified then <Zip-CM-Deflate> is the default.
@@ -471,6 +474,7 @@ Valid values are
 
 =item C<Zip-CM-Deflate>
 =item C<Zip-CM-Store>
+=item C<Zip-CM-Bzip2>
 
 =head4 comment => String
 
