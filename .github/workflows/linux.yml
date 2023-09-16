@@ -35,8 +35,11 @@ jobs:
         run: |
           raku -V
 
+      # temp - get Bzip2 from git
       - name: Install Dependencies
         run: |
+          zef install --/test https://github.com/Altai-man/perl6-Compress-Bzip2-Raw.git
+          zef install --/test https://github.com/Altai-man/perl6-Compress-Bzip2.git
           zef install --/test --deps-only --build-depends --test-depends .
 
       - name: Run Tests
