@@ -29,7 +29,7 @@ my $exe = $*DISTRO.is-win ?? '.exe' !! '';
 my $ZIP   = 'zip' ~ $exe ;
 my $UNZIP = 'unzip' ~ $exe ;
 
-sub clean-filename(Str:D $filename --> Str:D) 
+sub clean-filename(Str:D $filename --> Str:D)
 {
     return $filename
             .chomp
@@ -61,7 +61,8 @@ sub external-zip-works(--> Bool:D) is export
     }
 
     # Test zipinfo mode
-    $got = pipe-in-from-unzip($outfile, :options('-Z1'))
+    $got = get-filenames-in-zip($outfile)
+    # $got = pipe-in-from-unzip($outfile, :options('-Z1'))
         or return False;
 
     $filename = clean-filename($filename);
@@ -104,12 +105,16 @@ sub write-file-with-zip($file, $content, $options='-v')
     return False ;
 }
 
-sub pipe-in-from-unzip($file, $name='', :$options='', Bool :$binary=False) is export
+sub pipe-in-from-unzip($filename, $name='', :$options='', Bool :$binary=False) is export
 {
-    my @comp = $UNZIP ;
-    if $options { @comp.push($options) } else { @comp.push('-p') }
-    @comp.push: $file ;
-    @comp.push: $name if $name ;
+    # Need to use perl to do this because the unzip on MacOS
+    # doesn't have bzip2 support.
+
+    my @comp;
+    if $name
+        { @comp = 'perl',  '-MIO::Uncompress::Unzip=:all', '-e' , qq[unzip "$filename" => "-", name => "$name"  or die "\$UnzipError"] }
+    else
+        { @comp = 'perl',  '-MIO::Uncompress::Unzip=:all', '-e' , qq[unzip "$filename" => "-"  or die "\$UnzipError"] }
 
     my $proc;
 
@@ -124,25 +129,60 @@ sub pipe-in-from-unzip($file, $name='', :$options='', Bool :$binary=False) is ex
             if ! $binary;
 
         return $proc.out.read ;
-
     }
 
     explain-failure "pipe-in-from-unzip", @comp, $proc ;
     return False ;
 }
 
+# Can use this version of pipe-in-from-unzip once a MacOS unzip supports bzip2 content
+
+# sub pipe-in-from-unzip($file, $name='', :$options='', Bool :$binary=False) is export
+# {
+#     my @comp = $UNZIP ;
+#     if $options { @comp.push($options) } else { @comp.push('-p') }
+#     @comp.push: $file ;
+#     @comp.push: $name if $name ;
+
+#     my $proc;
+
+#     if $binary
+#         { $proc = run |@comp, :out :err :bin }
+#     else
+#         { $proc = run |@comp, :out :err }
+
+#     if $proc.exitcode == 0
+#     {
+#         return $proc.out.slurp but True
+#             if ! $binary;
+
+#         return $proc.out.read ;
+
+#     }
+
+#     explain-failure "pipe-in-from-unzip", @comp, $proc ;
+#     return False ;
+# }
+
 sub comment-from-unzip($filename) is export
 {
-    my $data = pipe-in-from-unzip($filename, '', :options('-qz'))
-        or return '';
+    my @comp = $UNZIP, '-qz', $filename ;
 
-    return $data.chomp;
+    my $proc = run |@comp, :out :err ;
+
+    if $proc.exitcode == 0
+    {
+         return $proc.out.read.decode.chomp ;
+    }
+
+    explain-failure "pipe-in-from-unzip", @comp, $proc ;
+    return '' ;
 }
 
 sub test-with-unzip($file) is export
 {
     my @comp = $UNZIP, '-t', $file;
-    # say "Running [{ @comp }]";
+    # diag "Running [{ @comp }]";
     my $proc = run |@comp, :out, :err ;
 
     return True
