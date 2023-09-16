@@ -7,6 +7,8 @@
     "CompUnit::Util",
     "Compress::Zlib",
     "Compress::Zlib::Raw",
+    "Compress::Bzip2",
+    "Compress::Bzip2::Raw",
     "IO::Glob"
   ],
   "description": "Write Zip Files.",

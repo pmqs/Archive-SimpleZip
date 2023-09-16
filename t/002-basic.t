@@ -6,7 +6,7 @@ use lib 't';
 
 use Test;
 
-plan 15;
+plan 16;
 
 use ZipTest;
 
@@ -101,27 +101,27 @@ subtest # add
 
 }, 'add' ;
 
-# subtest # bzip2
-# {
-#     unlink $zipfile;
-#     spurt $datafile, "some data" ;
+subtest # bzip2
+{
+    unlink $zipfile;
+    spurt $datafile, "some data" ;
 
-#     ok  $datafile.IO.e, "$datafile does exists";
-#     nok $zipfile.IO.e, "$zipfile does not exists";
+    ok  $datafile.IO.e, "$datafile does exists";
+    nok $zipfile.IO.e, "$zipfile does not exists";
 
-#     my $zip = SimpleZip.new: $zipfile;
-#     isa-ok $zip, SimpleZip;
+    my $zip = SimpleZip.new: $zipfile;
+    isa-ok $zip, SimpleZip;
 
-#     ok $zip.add($datafile.IO, :method(Zip-CM-Bzip2), :stream), "add filename, Bzip2";
-#     ok $zip.close(), "closed";
+    ok $zip.add($datafile.IO, :method(Zip-CM-Bzip2), :stream), "add filename, Bzip2";
+    ok $zip.close(), "closed";
 
-#     ok $zipfile.IO.e, "$zipfile exists";
+    ok $zipfile.IO.e, "$zipfile exists";
 
-#     ok test-with-unzip($zipfile), "unzip likes the zip file";
+    ok test-with-unzip($zipfile), "unzip likes the zip file";
 
-#     is pipe-in-from-unzip($zipfile, $datafile), "some data", "member $datafile ok";
+    is pipe-in-from-unzip($zipfile, $datafile), "some data", "member $datafile ok";
 
-# }, 'bzip2' ;
+}, 'bzip2' ;
 
 subtest # create
 {
