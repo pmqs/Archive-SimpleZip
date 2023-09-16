@@ -1,3 +1,15 @@
+0.8.0 2023-09-16
+
+     * Workflow & testing changes
+       e577b71df6aac98d5864183a57874dffd7829c90
+       89ad7fe3591fe6af589d6985abb853229bf1724e
+       c6ff3234bbd2d36fafe23beed54809b5288cf8e4
+       3d2f30682fa322fe7bebd2df44576d405b770447
+       d15b98071336e688845af59e626d5d520ff4e13f
+       21538f139fc8c731e1a0bfbf9031a9034a8c875b
+       bd45a39a3c7c7fe8c4daca1b7726fb78d5498405
+       e5153ca1d61762b853e278a772f9b3a820c3e19f
+
 0.7.0 2023-06-12
 
     * Added algorithmic name option
