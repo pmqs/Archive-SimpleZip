@@ -1,3 +1,13 @@
+0.8.1 2026-11-18
+
+    * Update to 0.8.1
+      Wed Nov 18 14:14:49 2026 +0000
+      548bf7b5138338d146b5e02660819fb292ef632d
+
+    * [SECURITY] Update zlib dependency (#8)
+      Wed Nov 18 14:11:59 2026 +0000
+      737c4a2effaf46d82ada82706c0fb37970267908
+
 0.8.0 2023-09-16
 
      * Workflow & testing changes
