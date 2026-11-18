@@ -5,8 +5,8 @@
   ],
   "depends": [
     "CompUnit::Util",
-    "Compress::Zlib",
-    "Compress::Zlib::Raw",
+    "Compress::Zlib:ver<2.0.0+>:auth<zef:apogee>",
+    "Compress::Zlib::Raw:ver<2.0.0+>:auth<zef:apogee>",
     "IO::Glob"
   ],
   "description": "Write Zip Files.",
